@@ -6,46 +6,40 @@
 <title>eyefind.info</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
   body {
     font-family: Arial, Helvetica, sans-serif;
     background: #c8c8c8;
     font-size: 13px;
     color: #333;
-    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
-  /* Browser Chrome */
-  .browser-top { background: #222; padding: 4px 0 0; }
-  .browser-title { text-align: center; color: #aaa; font-size: 11px; padding-bottom: 4px; letter-spacing: 0.5px; }
-  .browser-toolbar { background: #bebebe; display: flex; align-items: center; gap: 5px; padding: 5px 10px; }
-  .nav-group { display: flex; gap: 2px; }
-  .tb-btn {
-    background: linear-gradient(180deg, #d8d8d8, #b8b8b8);
-    border: 1px solid #888; border-radius: 3px; width: 30px; height: 26px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 13px; color: #333; font-weight: bold; user-select: none;
-  }
-  .tb-btn:hover { background: linear-gradient(180deg, #e0e0e0, #c4c4c4); }
-  .url-bar {
-    flex: 1; height: 26px; border: 1px solid #999; border-radius: 3px;
-    padding: 0 10px; font-size: 13px; background: #fff; color: #444; outline: none;
+  /* ─── MAIN VIEW ─── */
+  #main-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
   }
 
-  /* Site Header */
+  /* Header */
   .site-header {
     background: linear-gradient(180deg, #5fb3d4 0%, #3d90b4 55%, #2e7fa3 100%);
     padding: 12px 24px 0;
+    flex-shrink: 0;
   }
   .header-top { display: flex; align-items: center; gap: 20px; margin-bottom: 14px; }
 
-  .logo-wrap { display: flex; flex-direction: column; line-height: 1; text-decoration: none; flex-shrink: 0; cursor: pointer; }
+  .logo-wrap { display: flex; flex-direction: column; line-height: 1; flex-shrink: 0; }
   .logo-main { font-size: 46px; font-style: italic; font-weight: 900; font-family: 'Georgia','Times New Roman',serif; letter-spacing: -1px; }
   .logo-eye  { color: #ffffff; }
   .logo-find { color: #f5d020; }
   .logo-sub  { font-size: 21px; font-style: italic; font-weight: 700; font-family: 'Georgia','Times New Roman',serif; color: #f5d020; margin-top: -7px; margin-left: 2px; }
 
   .header-links { display: flex; align-items: center; flex: 1; justify-content: center; }
-  .header-link  { color: #fff; text-decoration: none; font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 7px; padding: 0 26px; cursor: pointer; }
+  .header-link  { color: #fff; font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 7px; padding: 0 26px; cursor: pointer; }
   .header-link:hover { text-decoration: underline; }
   .header-link-divider { width: 1px; height: 26px; background: rgba(255,255,255,0.5); }
 
@@ -71,27 +65,27 @@
   }
   .random-btn:hover { background: linear-gradient(180deg, #33aaaa, #268888); }
 
-  .gold-bar { height: 5px; background: linear-gradient(90deg, #c8a010, #f5d020, #c8a010); }
+  .gold-bar { height: 5px; background: linear-gradient(90deg, #c8a010, #f5d020, #c8a010); flex-shrink: 0; }
 
-  .nav-bar { background: #d4d4d4; display: flex; border-bottom: 2px solid #b8b8b8; }
+  .nav-bar { background: #d4d4d4; display: flex; border-bottom: 2px solid #b8b8b8; flex-shrink: 0; }
   .nav-item {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 10px 4px; cursor: pointer; border-right: 1px solid #b8b8b8;
     text-align: center; font-size: 11.5px; font-weight: bold; color: #333;
-    text-transform: uppercase; line-height: 1.3; text-decoration: none; transition: background 0.1s;
+    text-transform: uppercase; line-height: 1.3; transition: background 0.1s;
   }
   .nav-item:last-child { border-right: none; }
   .nav-item:hover { background: #c4c4c4; }
   .nav-icon { font-size: 20px; color: #3d90b4; flex-shrink: 0; }
 
-  .content { background: #d0d0d0; padding: 14px 24px 30px; }
+  .content { background: #d0d0d0; padding: 14px 24px 20px; flex: 1; }
 
   /* Ads */
   .ads-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
   .ad-block { border: 2px solid #4a8faf; overflow: hidden; cursor: pointer; display: block; }
-  .ad-label { background: linear-gradient(180deg, #5fb3d4, #3d90b4); color: #fff; font-size: 10px; font-weight: bold; text-align: center; padding: 4px 0; letter-spacing: 1px; text-transform: uppercase; }
-  .ad-image { width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; overflow: hidden; }
   .ad-block:hover .ad-image { opacity: 0.85; }
+  .ad-label { background: linear-gradient(180deg, #5fb3d4, #3d90b4); color: #fff; font-size: 10px; font-weight: bold; text-align: center; padding: 4px 0; letter-spacing: 1px; text-transform: uppercase; }
+  .ad-image { width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; overflow: hidden; transition: opacity 0.15s; }
 
   .ad-ph1 { background: linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); color: #c8a010; }
   .ad-ph1 .big { font-size: 22px; font-style: italic; font-family: 'Georgia',serif; }
@@ -104,19 +98,17 @@
   .ad-ph3 .big  { font-size: 24px; font-style: italic; font-family: 'Georgia',serif; }
   .ad-ph3 .sub  { font-size: 9px; color: #999; letter-spacing: 2px; }
 
-  /* Website Grid */
+  /* Tiles */
   .websites-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
   .site-tile {
     aspect-ratio: 16/9; border: 2px solid #b0b0b0; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden; position: relative;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
     transition: border-color 0.15s, transform 0.12s;
   }
   .site-tile:hover { border-color: #3d90b4; transform: scale(1.03); z-index: 2; }
   .tile-inner {
     width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-    font-weight: bold; font-size: 11px; text-align: center; padding: 6px;
-    flex-direction: column; gap: 5px;
+    font-weight: bold; text-align: center; padding: 6px; flex-direction: column; gap: 5px;
   }
   .tile-icon  { font-size: 24px; }
   .tile-label { font-size: 10px; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -132,72 +124,54 @@
   .t9  { background: linear-gradient(135deg,#3a1a00,#6a3000); color: #ff9944; }
   .t10 { background: linear-gradient(135deg,#1a3a3a,#2a6a6a); color: #44ffff; }
 
-  .site-footer { background: #2e7fa3; color: rgba(255,255,255,0.75); text-align: center; padding: 8px; font-size: 10px; letter-spacing: 1px; }
+  .site-footer { background: #2e7fa3; color: rgba(255,255,255,0.75); text-align: center; padding: 8px; font-size: 10px; letter-spacing: 1px; flex-shrink: 0; }
 
-  /* ══ IFRAME OVERLAY ══ */
-  #iframe-overlay {
+  /* ─── IFRAME VIEW ─── */
+  #iframe-view {
     display: none;
-    position: fixed;
+    flex-direction: column;
+    height: 100%;
+    position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     z-index: 9999;
-    background: rgba(0,0,0,0.85);
-    flex-direction: column;
-  }
-  #iframe-overlay.active { display: flex; }
-
-  #iframe-topbar {
     background: #222;
+  }
+  #iframe-view.active { display: flex; }
+
+  #iframe-bar {
+    background: #bebebe;
     display: flex;
     align-items: center;
     padding: 5px 10px;
-    gap: 8px;
-    flex-shrink: 0;
+    gap: 6px;
     height: 36px;
+    flex-shrink: 0;
+    border-bottom: 2px solid #999;
   }
-  #iframe-url {
-    flex: 1;
-    background: #fff;
-    border: 1px solid #999;
-    border-radius: 3px;
-    padding: 0 10px;
-    height: 24px;
-    font-size: 12px;
-    color: #444;
-    outline: none;
-    cursor: default;
-  }
-  #iframe-close {
-    background: #cc3333;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    width: 26px;
-    height: 24px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #iframe-close:hover { background: #ee4444; }
-
-  #iframe-back {
+  .ibar-btn {
     background: linear-gradient(180deg,#d8d8d8,#b8b8b8);
-    border: 1px solid #888;
-    border-radius: 3px;
-    width: 26px;
-    height: 24px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #333;
+    border: 1px solid #888; border-radius: 3px;
+    width: 28px; height: 24px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: bold; color: #333; flex-shrink: 0;
+    user-select: none;
   }
-  #iframe-back:hover { background: #e0e0e0; }
-
+  .ibar-btn:hover { background: #e0e0e0; }
+  .ibar-home {
+    background: linear-gradient(180deg, #3d90b4, #2e7fa3);
+    border: 1px solid #1a6a8a; border-radius: 3px;
+    padding: 0 12px; height: 24px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: bold; color: #fff; flex-shrink: 0;
+    user-select: none;
+  }
+  .ibar-home:hover { background: linear-gradient(180deg,#5fb3d4,#3d90b4); }
+  #iframe-url-display {
+    flex: 1; height: 24px; border: 1px solid #999; border-radius: 3px;
+    padding: 0 10px; font-size: 11px; background: #fff; color: #555;
+    display: flex; align-items: center; overflow: hidden; white-space: nowrap;
+    text-overflow: ellipsis;
+  }
   #inner-frame {
     flex: 1;
     width: 100%;
@@ -207,152 +181,168 @@
 </head>
 <body>
 
-<!-- Browser Chrome -->
-<div class="browser-top">
-  <div class="browser-title">--- EYEFIND... It's like a series of tubes ---</div>
-  <div class="browser-toolbar">
-    <div class="nav-group">
-      <div class="tb-btn">&#9664;</div>
-      <div class="tb-btn">&#9654;</div>
-    </div>
-    <div class="tb-btn">&#8962;</div>
-    <div class="tb-btn" style="width:40px;font-size:10px;">&#128337;&#9660;</div>
-    <input class="url-bar" type="text" value="www.eyefind.info" readonly />
-    <div class="tb-btn">&#x2715;</div>
-  </div>
-</div>
+<!-- ══ MAIN VIEW ══ -->
+<div id="main-view">
 
-<!-- Site -->
-<div class="site-header">
-  <div class="header-top">
-    <div class="logo-wrap" onclick="void(0)">
-      <div class="logo-main"><span class="logo-eye">eye</span><span class="logo-find">find</span></div>
-      <div class="logo-sub">.info</div>
-    </div>
-    <div class="header-links">
-      <span class="header-link">&#9993;&nbsp; Inbox</span>
-      <div class="header-link-divider"></div>
-      <span class="header-link">&#9998;&nbsp; Compose New</span>
-    </div>
-    <div class="weather-block">
-      <div class="weather-text">
-        <div class="weather-city">Downtown Vinewood</div>
-        <div class="weather-day">Sun</div>
+  <div class="site-header">
+    <div class="header-top">
+      <div class="logo-wrap">
+        <div class="logo-main"><span class="logo-eye">eye</span><span class="logo-find">find</span></div>
+        <div class="logo-sub">.info</div>
       </div>
-      <div class="w-divider"></div>
-      <div class="sun-icon">&#9728;</div>
-    </div>
-  </div>
-  <div class="search-row">
-    <div class="search-box">
-      <span class="search-icon">&#128269;</span>
-      <input class="search-input" type="text" placeholder="Search Eyefind" />
-    </div>
-    <button class="random-btn">RANDOM</button>
-  </div>
-</div>
-
-<div class="gold-bar"></div>
-
-<nav class="nav-bar">
-  <span class="nav-item"><span class="nav-icon">&#128241;</span><span>MEDIA AND<br>ENTERTAINMENT</span></span>
-  <span class="nav-item"><span class="nav-icon">&#127828;</span><span>FOOD<br>AND DRINK</span></span>
-  <span class="nav-item"><span class="nav-icon">&#36;</span><span>MONEY<br>AND SERVICES</span></span>
-  <span class="nav-item"><span class="nav-icon">&#9992;</span><span>TRAVEL<br>AND TRANSPORT</span></span>
-  <span class="nav-item"><span class="nav-icon">&#128092;</span><span>FASHION<br>AND HEALTH</span></span>
-</nav>
-
-<div class="content">
-
-  <!-- ══ ADS — URL bei href="..." anpassen ══ -->
-  <div class="ads-row">
-
-    <div class="ad-block" onclick="openSite('https://stevenbuchhorn03-dot.github.io/spectrev-autohaus/')">
-      <div class="ad-label">Sponsored Advertisement</div>
-      <div class="ad-image ad-ph1">
-        <span class="big">Legendary</span>
-        <span class="sub">Motorsport</span>
+      <div class="header-links">
+        <span class="header-link">&#9993;&nbsp; Inbox</span>
+        <div class="header-link-divider"></div>
+        <span class="header-link">&#9998;&nbsp; Compose New</span>
+      </div>
+      <div class="weather-block">
+        <div class="weather-text">
+          <div class="weather-city">Downtown Vinewood</div>
+          <div class="weather-day">Sun</div>
+        </div>
+        <div class="w-divider"></div>
+        <div class="sun-icon">&#9728;</div>
       </div>
     </div>
+    <div class="search-row">
+      <div class="search-box">
+        <span class="search-icon">&#128269;</span>
+        <input class="search-input" type="text" placeholder="Search Eyefind" />
+      </div>
+      <button class="random-btn">RANDOM</button>
+    </div>
+  </div>
 
-    <div class="ad-block" onclick="openSite('https://DEINE-SEITE-AD2.de')">
-      <div class="ad-label">Sponsored Advertisement</div>
-      <div class="ad-image ad-ph2">
-        <span class="big">DYNASTY<span style="color:#fff">8</span></span>
-        <span class="sub">EXECUTIVE</span>
+  <div class="gold-bar"></div>
+
+  <nav class="nav-bar">
+    <span class="nav-item"><span class="nav-icon">&#128241;</span><span>MEDIA AND<br>ENTERTAINMENT</span></span>
+    <span class="nav-item"><span class="nav-icon">&#127828;</span><span>FOOD<br>AND DRINK</span></span>
+    <span class="nav-item"><span class="nav-icon">&#36;</span><span>MONEY<br>AND SERVICES</span></span>
+    <span class="nav-item"><span class="nav-icon">&#9992;</span><span>TRAVEL<br>AND TRANSPORT</span></span>
+    <span class="nav-item"><span class="nav-icon">&#128092;</span><span>FASHION<br>AND HEALTH</span></span>
+  </nav>
+
+  <div class="content">
+
+    <!-- ══ ADS ══ -->
+    <div class="ads-row">
+
+      <div class="ad-block" onclick="openSite('https://stevenbuchhorn03-dot.github.io/spectrev-autohaus/')">
+        <div class="ad-label">Sponsored Advertisement</div>
+        <div class="ad-image ad-ph1">
+          <span class="big">Legendary</span>
+          <span class="sub">Motorsport</span>
+        </div>
+      </div>
+
+      <div class="ad-block" onclick="openSite('https://DEINE-SEITE-AD2.de')">
+        <div class="ad-label">Sponsored Advertisement</div>
+        <div class="ad-image ad-ph2">
+          <span class="big">DYNASTY<span style="color:#fff">8</span></span>
+          <span class="sub">EXECUTIVE</span>
+        </div>
+      </div>
+
+      <div class="ad-block" onclick="openSite('https://DEINE-SEITE-AD3.de')">
+        <div class="ad-label">Sponsored Advertisement</div>
+        <div class="ad-image ad-ph3">
+          <span class="tiny">The</span>
+          <span class="big">Diamond</span>
+          <span class="sub">Casino &amp; Resort &middot; Los Santos</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ TILES ══ -->
+    <div class="websites-grid">
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-1.de')">
+        <div class="tile-inner t1"><span class="tile-icon">🏦</span><span class="tile-label">Platzhalter<br>Website 1</span></div>
+      </div>
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-2.de')">
+        <div class="tile-inner t2"><span class="tile-icon">⚙️</span><span class="tile-label">Platzhalter<br>Website 2</span></div>
+      </div>
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-3.de')">
+        <div class="tile-inner t3"><span class="tile-icon">🎯</span><span class="tile-label">Platzhalter<br>Website 3</span></div>
+      </div>
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-4.de')">
+        <div class="tile-inner t4"><span class="tile-icon">✈️</span><span class="tile-label">Platzhalter<br>Website 4</span></div>
+      </div>
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-5.de')">
+        <div class="tile-inner t5"><span class="tile-icon">🚗</span><span class="tile-label">Platzhalter<br>Website 5</span></div>
+      </div>
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-6.de')">
+        <div class="tile-inner t6"><span class="tile-icon">🏠</span><span class="tile-label">Platzhalter<br>Website 6</span></div>
+      </div>
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-7.de')">
+        <div class="tile-inner t7"><span class="tile-icon">💊</span><span class="tile-label">Platzhalter<br>Website 7</span></div>
+      </div>
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-8.de')">
+        <div class="tile-inner t8"><span class="tile-icon">🌿</span><span class="tile-label">Platzhalter<br>Website 8</span></div>
+      </div>
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-9.de')">
+        <div class="tile-inner t9"><span class="tile-icon">🏛️</span><span class="tile-label">Platzhalter<br>Website 9</span></div>
+      </div>
+      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-10.de')">
+        <div class="tile-inner t10"><span class="tile-icon">⚡</span><span class="tile-label">Platzhalter<br>Website 10</span></div>
       </div>
     </div>
 
-    <div class="ad-block" onclick="openSite('https://DEINE-SEITE-AD3.de')">
-      <div class="ad-label">Sponsored Advertisement</div>
-      <div class="ad-image ad-ph3">
-        <span class="tiny">The</span>
-        <span class="big">Diamond</span>
-        <span class="sub">Casino &amp; Resort &middot; Los Santos</span>
-      </div>
-    </div>
-
   </div>
 
-  <!-- ══ TILES — URL + Label anpassen ══ -->
-  <div class="websites-grid">
+  <div class="site-footer">© EYEFIND.INFO — ALL RIGHTS RESERVED — SAN ANDREAS</div>
 
-    <div class="site-tile" onclick="openSite('https://stevenbuchhorn03-dot.github.io/spectrev-autohaus/')">
-      <div class="tile-inner t1"><span class="tile-icon">🏦</span><span class="tile-label">Platzhalter<br>Website 1</span></div>
-    </div>
-    <div class="site-tile" onclick="openSite('https://DEINE-SEITE-2.de')">
-      <div class="tile-inner t2"><span class="tile-icon">⚙️</span><span class="tile-label">Platzhalter<br>Website 2</span></div>
-    </div>
-    <div class="site-tile" onclick="openSite('https://DEINE-SEITE-3.de')">
-      <div class="tile-inner t3"><span class="tile-icon">🎯</span><span class="tile-label">Platzhalter<br>Website 3</span></div>
-    </div>
-    <div class="site-tile" onclick="openSite('https://DEINE-SEITE-4.de')">
-      <div class="tile-inner t4"><span class="tile-icon">✈️</span><span class="tile-label">Platzhalter<br>Website 4</span></div>
-    </div>
-    <div class="site-tile" onclick="openSite('https://DEINE-SEITE-5.de')">
-      <div class="tile-inner t5"><span class="tile-icon">🚗</span><span class="tile-label">Platzhalter<br>Website 5</span></div>
-    </div>
-    <div class="site-tile" onclick="openSite('https://DEINE-SEITE-6.de')">
-      <div class="tile-inner t6"><span class="tile-icon">🏠</span><span class="tile-label">Platzhalter<br>Website 6</span></div>
-    </div>
-    <div class="site-tile" onclick="openSite('https://DEINE-SEITE-7.de')">
-      <div class="tile-inner t7"><span class="tile-icon">💊</span><span class="tile-label">Platzhalter<br>Website 7</span></div>
-    </div>
-    <div class="site-tile" onclick="openSite('https://DEINE-SEITE-8.de')">
-      <div class="tile-inner t8"><span class="tile-icon">🌿</span><span class="tile-label">Platzhalter<br>Website 8</span></div>
-    </div>
-    <div class="site-tile" onclick="openSite('https://DEINE-SEITE-9.de')">
-      <div class="tile-inner t9"><span class="tile-icon">🏛️</span><span class="tile-label">Platzhalter<br>Website 9</span></div>
-    </div>
-    <div class="site-tile" onclick="openSite('https://DEINE-SEITE-10.de')">
-      <div class="tile-inner t10"><span class="tile-icon">⚡</span><span class="tile-label">Platzhalter<br>Website 10</span></div>
-    </div>
+</div><!-- end #main-view -->
 
+
+<!-- ══ IFRAME VIEW ══ -->
+<div id="iframe-view">
+  <div id="iframe-bar">
+    <div class="ibar-btn" onclick="iframeBack()">&#9664;</div>
+    <div class="ibar-btn" onclick="iframeForward()">&#9654;</div>
+    <div id="iframe-url-display">about:blank</div>
+    <div class="ibar-home" onclick="goHome()">&#8962; Zurück zu Eyefind</div>
   </div>
-</div>
-
-<div class="site-footer">© EYEFIND.INFO — ALL RIGHTS RESERVED — SAN ANDREAS</div>
-
-<!-- ══ IFRAME OVERLAY ══ -->
-<div id="iframe-overlay">
-  <div id="iframe-topbar">
-    <button id="iframe-back" onclick="history.back()">&#9664;</button>
-    <input id="iframe-url" type="text" readonly />
-    <button id="iframe-close" onclick="closeSite()">&#x2715;</button>
-  </div>
-  <iframe id="inner-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+  <iframe id="inner-frame"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox">
+  </iframe>
 </div>
 
 <script>
+  const mainView   = document.getElementById('main-view');
+  const iframeView = document.getElementById('iframe-view');
+  const frame      = document.getElementById('inner-frame');
+  const urlDisplay = document.getElementById('iframe-url-display');
+
   function openSite(url) {
-    document.getElementById('inner-frame').src = url;
-    document.getElementById('iframe-url').value = url;
-    document.getElementById('iframe-overlay').classList.add('active');
+    frame.src = url;
+    urlDisplay.textContent = url;
+    mainView.style.display   = 'none';
+    iframeView.classList.add('active');
   }
-  function closeSite() {
-    document.getElementById('iframe-overlay').classList.remove('active');
-    document.getElementById('inner-frame').src = 'about:blank';
+
+  function goHome() {
+    iframeView.classList.remove('active');
+    mainView.style.display = 'flex';
+    frame.src = 'about:blank';
+    urlDisplay.textContent = 'about:blank';
   }
+
+  function iframeBack() {
+    try { frame.contentWindow.history.back(); } catch(e) {}
+  }
+  function iframeForward() {
+    try { frame.contentWindow.history.forward(); } catch(e) {}
+  }
+
+  // Update URL display when iframe navigates
+  frame.addEventListener('load', function() {
+    try {
+      var u = frame.contentWindow.location.href;
+      if (u && u !== 'about:blank') urlDisplay.textContent = u;
+    } catch(e) {}
+  });
 </script>
 
 </body>
