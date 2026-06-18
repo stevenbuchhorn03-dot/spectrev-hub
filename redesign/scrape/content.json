@@ -1,0 +1,172 @@
+{
+  "meta": {
+    "source_url": "https://faktor-m.net/",
+    "scraped_at": "2026-06-18",
+    "cms_detected": "TYPO3",
+    "language": "de"
+  },
+  "company": {
+    "name": "Faktor M Consulting GmbH",
+    "brand_short": "Faktor M",
+    "claim": "Personalberatung für Unternehmer & Bewerber",
+    "tagline_formula": "EINS PLUS EINS GLEICH M — die Erfolgsformel für passgenaue Personalvermittlung",
+    "tagline_short": "1 + 1 = Faktor M. Ihre Personalberater.",
+    "industry": "Personalberatung / Personalvermittlung / Zeitarbeit (Recruiting & HR Services)",
+    "sectors_expertise": ["Automotive", "Maschinen- und Anlagenbau", "Bauwesen"]
+  },
+  "navigation": [
+    { "label": "Start", "href": "/" },
+    { "label": "Unternehmen", "href": "/unternehmen" },
+    { "label": "Bewerber", "href": "/bewerber" },
+    { "label": "Über uns", "href": "/ueber-uns" },
+    { "label": "Stellenangebote", "href": "/bewerber/stellenangebote" },
+    { "label": "Bewerberprofile", "href": "/unternehmen/bewerberprofile" },
+    { "label": "News", "href": "/news" },
+    { "label": "Kontakt", "href": "/kontakt" }
+  ],
+  "hero": {
+    "headline": "Personalberatung für Unternehmer & Bewerber",
+    "subline": "Der entscheidende Faktor, der Unternehmen und Bewerber perfekt zusammenbringt.",
+    "ctas": [
+      { "label": "Für Unternehmen", "href": "/unternehmen" },
+      { "label": "Für Bewerber", "href": "/bewerber" }
+    ]
+  },
+  "about": {
+    "heading": "Über uns",
+    "intro": "Der Erfolg eines Unternehmens hängt stark von der Qualität des Personals ab. Umso wichtiger ist es, die perfekte Kombination zu finden. Der perfekte Job. Der perfekte Bewerber. Wenn alles ganz einfach wird. Wenn Eins und Eins zusammenpasst - dafür sorgt Faktor M.",
+    "formula": "EINS PLUS EINS GLEICH M - die Erfolgsformel für passgenaue Personalvermittlung!",
+    "body": [
+      "Faktor M ist der entscheidende Faktor, der den Unterschied für Unternehmen und Bewerber macht. Durch unser ausgezeichnetes Netzwerk, umfassende Branchenkenntnisse und ausgeprägte Berufsexpertise helfen wir Ihnen, freie Stellen optimal zu besetzen oder den idealen Job zu finden. Dabei verfolgen wir kein geringeres Ziel als Ihr perfektes Gegenstück zu finden. Denn anders als übliche Personalvermittler sind wir gern bereit, neue Wege zu gehen. Durch innovative Ansätze ist es uns möglich, festgefahrene Recruiting-Prozesse zu transformieren und bisher nicht ausgeschöpftes Potenzial zu nutzen.",
+      "Für uns geht die Gleichung erst auf, wenn Mensch und Unternehmen perfekt zueinander passen. Denn wir wollen auch nur das EINE: den einen richtigen Bewerber für Ihre Stelle oder den einen freien Job, der perfekt zu Ihnen passt. Das ist unsere Leidenschaft. Tag für Tag mit neuer Energie. Für uns gilt: 1 + 1 = Faktor M. Ihre Personalberater."
+    ]
+  },
+  "audience_unternehmen": {
+    "kicker": "Sie haben eine Stelle zu besetzen?",
+    "headline": "Wir finden den einen Mitarbeiter, der wirklich passt.",
+    "formula_intro": "Die Erfolgsformel für passgenaue Personalvermittlung",
+    "intro": "Wir wollen auch nur das Eine: den einen richtigen Bewerber für Ihre freie Stelle. Das ist unsere Leidenschaft. Um dieses Ziel zu erreichen gehen wir Wege, die nicht nur innovativ sondern auch effizient sind. Tag für Tag mit neuer Energie. Faktor M. Ihre Personalberater.",
+    "ctas": [
+      { "label": "Bewerberprofile ansehen", "href": "/unternehmen/bewerberprofile" },
+      { "label": "Stellenangebot übermitteln", "href": "/kontakt" }
+    ],
+    "vorteile": [
+      "Optimale Stellenbesetzung",
+      "Hohe Reichweite und Zugriff auf großen Kandidatenpool",
+      "Arbeitserleichterung und Zeitersparnis für Ihre Personalabteilung",
+      "Direktansprache von Kandidaten aus branchengleichen Unternehmen möglich",
+      "Zeitarbeit und Vermittlung – alles aus einer Hand",
+      "Ausgeprägte Berufskunde unserer Berater in den Branchen Automotive, Maschinen- und Anlagenbau, Bauwesen",
+      "Schnelle Reaktionszeiten",
+      "Kompetenz & Seriösität"
+    ],
+    "prozess": [
+      { "schritt": "Schritt 1", "titel": "Bedarfsanalyse", "text": "Gemeinsam mit Ihnen erstellen wir nach einem ausführlichen Vorgespräch ein individuelles Anforderungsprofil für Ihren idealen Bewerber. Ihr persönlicher Ansprechpartner bei uns im Hause berät Sie gerne zu den Optionen und Verfahren bei der Besetzung Ihrer Vakanz." },
+      { "schritt": "Schritt 2", "titel": "Recruiting", "text": "Anhand Ihres Anforderungsprofils schreiben wir für Sie eine Stelle in diversen Plattformen aus, identifizieren parallel potenzielle Kandidaten und halten erste Direktansprachen ab. Im Anschluss führen wir qualifizierte Bewerberinterviews mit den Interessenten durch und treffen nachfolgend eine Vorauswahl für Sie." },
+      { "schritt": "Schritt 3", "titel": "Bewerberprofil", "text": "Sobald wir den geeigneten Kandidaten identifiziert haben, erstellen wir für Sie ein aussagekräftiges und umfangreiches Bewerberprofil. Anhand dieses, bekommen Sie einen genauen Überblick über den Interessenten und können seinen Werdegang, seine beruflichen Stationen und Kenntnisse auf einen Blick nachvollziehen." },
+      { "schritt": "Schritt 4", "titel": "Kandidatenvorstellung", "text": "Wenn unser Bewerber Ihren Wünschen und Anforderungen entspricht, führen wir gemeinsam mit Ihnen ein Vorstellungsgespräch bei Ihnen vor Ort durch. Natürlich stehen wir Ihnen auch in dieser Phase des Bewerbungsprozesses beratend zur Seite und unterstützen Sie auch gerne bei einstellungsbezogenen Fragen." }
+    ]
+  },
+  "audience_bewerber": {
+    "kicker": "Sie suchen einen neuen Job?",
+    "headline": "Wir finden das Unternehmen, das wirklich zu Ihnen passt.",
+    "formula_intro": "Die Erfolgsformel für passgenaue Personalvermittlung",
+    "intro": "Wir wollen auch nur das Eine: den einen richtigen Job, der perfekt zu Ihnen passt. Das ist unsere Leidenschaft. Um dieses Ziel zu erreichen gehen wir Wege, die nicht nur innovativ sondern auch effizient sind. Tag für Tag mit neuer Energie. Faktor M. Ihre Personalberater.",
+    "ctas": [
+      { "label": "Stellenangebote ansehen", "href": "/bewerber/stellenangebote" },
+      { "label": "Bewerbung übermitteln", "href": "https://faktor-m.europersonal.com/stelle/initiativbewerbung-57258-freudenberg-westfalen-9161a22bdc814095b34ae992f0010ec3?origin=faktor-m-consulting-gmbh&source=faktor-m-consulting-gmbh" }
+    ],
+    "vorteile": [
+      "Eine Bewerbung – hohe Reichweite (viele Unternehmen und Zeitersparnis)",
+      "Langfristige Perspektiven, attraktive Stellen und Kunden",
+      "Zugang zum „verdeckten“ Arbeitsmarkt",
+      "Optimierung von Bewerbungsunterlagen",
+      "Anonymes Bewerben aus bestehender Festanstellung möglich",
+      "Mitarbeiter-Benefits (Tankkarten, Mitarbeiter-werben-Mitarbeiter)",
+      "Hohe Übernahmequoten im Bereich der „qualifizierten Arbeitnehmerüberlassung“",
+      "Umfassende Mitarbeiterbetreuung (Vorschüsse, Erreichbarkeit, hochwertige Arbeitskleidung)"
+    ],
+    "prozess": [
+      { "schritt": "Schritt 1", "titel": "Erstgespräch", "text": "Zunächst einmal möchten wir Sie kennenlernen, um Ihre Qualifikationen und Stärken zu ermitteln. Um für Sie die passende Position zu finden, ist es wichtig, dass wir Ihre persönlichen Ziele kennen. So können wir gemeinsam Ihre berufliche Entwicklung vorantreiben." },
+      { "schritt": "Schritt 2", "titel": "Matching", "text": "Anhand Ihrer Bewerbung und Ihren Wünschen suchen wir für Sie die passende Stelle. Dazu gleichen wir Ihre Qualifikation mit den Anforderungsprofilen der vakanten Positionen unserer Kunden ab, um die bestmögliche Übereinstimmung zu finden." },
+      { "schritt": "Schritt 3", "titel": "Bewerberprofil", "text": "Aus Ihren Bewerbungsunterlagen sowie den Informationen, die wir in einem persönlichen oder telefonischen Gespräch erhalten haben, erstellen wir ein aussagekräftiges Kompetenzprofil und senden dies an unseren Kunden. Das Unternehmen erhält auf diese Weise bereits umfassende Informationen zu Ihrer Person, ohne dass persönliche Daten weitergegeben werden." },
+      { "schritt": "Schritt 4", "titel": "Vorstellungsgespräch", "text": "Wenn unserem Kunden Ihr Kompetenzprofil zusagt, vereinbaren wir einen Termin für ein gemeinsames Vorstellungsgespräch. Zu diesem Gespräch im Kundenunternehmen begleiten wir Sie gern als moralische Stütze und beraten Sie bei allen Anliegen rund um die Einstellung im Unternehmen." }
+    ]
+  },
+  "stellenangebote_beispiele": [
+    { "ort": "Lennestadt", "titel": "Industriemechaniker (m/w/d)" },
+    { "ort": "Drolshagen", "titel": "Schweißer (m/w/d)" },
+    { "ort": "Wilnsdorf", "titel": "Produktionsmitarbeiter (m/w/d)" },
+    { "ort": "Lennestadt", "titel": "Maschinen- und Anlagenführer (m/w/d) in Frühschicht" },
+    { "ort": "Herborn", "titel": "Maschinen- und Anlagenführer (m/w/d)" }
+  ],
+  "team": [
+    { "name": "Jan-Philip Stender", "rolle": "Geschäftsführender Gesellschafter", "tel": "02734 47977-12", "email": "info@faktor-m.net" },
+    { "name": "Eduard Christiani", "rolle": "Geschäftsführender Gesellschafter", "tel": "02734 47977-13", "email": "info@faktor-m.net" },
+    { "name": "Jan Plaum", "rolle": "Geschäftsführender Gesellschafter", "tel": "02734 47977-11", "email": "info@faktor-m.net" },
+    { "name": "Chris Röhrig", "rolle": "Personalberater", "tel": "02734 47977-18", "email": "info@faktor-m.net" },
+    { "name": "Marek Studzinski", "rolle": "Personalberater", "tel": "02734 47977-19", "email": "info@faktor-m.net" },
+    { "name": "Melanie Neu", "rolle": "Personalberaterin", "tel": "02734 47977-15", "email": "info@faktor-m.net" },
+    { "name": "Sarah Schulz", "rolle": "Personalberaterin", "tel": "02734 47977-21", "email": "info@faktor-m.net" },
+    { "name": "Lilia Bazga", "rolle": "Backoffice", "tel": "02734 47977-22", "email": "info@faktor-m.net" },
+    { "name": "Irina Homrighausen", "rolle": "Backoffice", "tel": "02734 47977-16", "email": "info@faktor-m.net" }
+  ],
+  "news": [
+    { "datum": "05.06.2024", "titel": "Krisenkommunikation im HR-Bereich: Planung und Durchführung effektiver Kommunikation in Krisenzeiten", "teaser": "In der modernen Geschäftswelt ist keine Organisation gegen Krisen immun. Ob es sich um wirtschaftliche Turbulenzen, …" },
+    { "datum": "22.05.2024", "titel": "Umgang mit Jobabsagen: Feedback einholen und verstehen", "teaser": "Eine Jobabsage kann entmutigend sein, bietet jedoch auch eine wertvolle Gelegenheit zum Lernen und zur persönlichen …" },
+    { "datum": "08.05.2024", "titel": "Nutzung von Mitarbeitern zur Förderung der Unternehmensmarke", "teaser": "Die Mitarbeiter sind das Herzstück eines jeden Unternehmens. Ihre Zufriedenheit und ihr Engagement können einen …" }
+  ],
+  "contact": {
+    "company": "Faktor M Consulting GmbH",
+    "street": "Trulichstraße 2",
+    "zip": "57258",
+    "city": "Freudenberg",
+    "country": "Deutschland",
+    "phone": "+49 (0) 2734 / 47977-0",
+    "phone_link": "tel:+49273447977",
+    "fax": "+49 (0) 2734 / 4797729",
+    "email": "info@faktor-m.net",
+    "maps_url": "https://www.google.de/maps/place/Faktor+M+Consulting+GmbH/@50.8970251,7.8735389,17z/data=!4m12!1m6!3m5!1s0x47bea6375e147a9f:0x696c91d473396a3f!2sFaktor+M+Consulting+GmbH!8m2!3d50.8970217!4d7.8757276!3m4!1s0x47bea6375e147a9f:0x696c91d473396a3f!8m2!3d50.8970217!4d7.8757276",
+    "geo": { "lat": 50.8970217, "lng": 7.8757276 },
+    "external_application_portal": "https://faktor-m.europersonal.com/"
+  },
+  "impressum": {
+    "company": "Faktor M Consulting GmbH",
+    "address": "Trulichstraße 2, 57258 Freudenberg",
+    "handelsregister": "HRB 10243",
+    "registergericht": "Amtsgericht Siegen",
+    "geschaeftsfuehrer": ["Eduard Christiani", "Jan-Philip Stender", "Jan Plaum"],
+    "telefon": "+49 (0) 2734 / 47977-0",
+    "telefax": "+49 (0) 2734 / 4797729",
+    "email": "info@faktor-m.net",
+    "ust_id": "DE292159969",
+    "aufsichtsbehoerde": "Regionaldirektion NRW der Bundesagentur für Arbeit",
+    "redaktionell_verantwortlich": "Faktor M Consulting GmbH, Jan Plaum, Trulichstraße 2, 57258 Freudenberg"
+  },
+  "social_media": [],
+  "images": {
+    "note": "Original-Assets liegen unter https://faktor-m.net/fileadmin/ — Binärdownload war in dieser Umgebung durch die Netzwerk-Egress-Policy blockiert. Pfade dokumentiert; im Redesign durch eigene SVG-Grafiken/Branchen-Motive ersetzt.",
+    "keyvisuals": [
+      "/fileadmin/Resources/Public/content/startseite/keyvisual-links_startseite.png",
+      "/fileadmin/Resources/Public/content/startseite/keyvisual-rechts_startseite.png",
+      "/fileadmin/Resources/Public/content/kontakt/keyvisual.png"
+    ],
+    "team_photos": [
+      "/fileadmin/Redakteur/Ansprechpartner/Jan-Philip_2023_klein.png",
+      "/fileadmin/Redakteur/Ansprechpartner/Eduard_2023_klein.png",
+      "/fileadmin/Redakteur/Ansprechpartner/Jan_2023_klein.png",
+      "/fileadmin/Redakteur/Ansprechpartner/Chris_2023_klein.png",
+      "/fileadmin/Redakteur/Ansprechpartner/Marek_2024_klein.png",
+      "/fileadmin/user_upload/Melanie_Neu.jpg",
+      "/fileadmin/Redakteur/Ansprechpartner/Sarah_2023_klein.png",
+      "/fileadmin/Redakteur/Ansprechpartner/Lilia_2023_klein.png",
+      "/fileadmin/Redakteur/Ansprechpartner/Irina_2024_klein.png"
+    ],
+    "logo_url": "nicht als separate Datei extrahierbar (im Redesign als SVG-Wortmarke nachgebaut)"
+  },
+  "design_tokens_original": {
+    "brand_color_hint": "Grün (CSS-Klassen 'FontGruen', 'green-bg')",
+    "fonts": "nicht eindeutig extrahierbar (TYPO3-Theme, vermutlich serifenlose Standard-Websafe/Google-Font)",
+    "theme_motif": "Mathematische Erfolgsformel 1 + 1 = M"
+  }
+}

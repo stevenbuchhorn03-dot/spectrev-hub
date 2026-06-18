@@ -1,0 +1,4 @@
+Title: Faktor M
+Tagline: Personalberatung für Unternehmer & Bewerber
+Two entry paths: /unternehmen (employers) and /bewerber (applicants)
+Splash page with keyvisual images, news ticker.
