@@ -1,0 +1,76 @@
+# SpectreV - English labels & tooltips for the in-game shader menu
+# Format:  option.NAME=Label   /   option.NAME.comment=Tooltip
+
+# Screens
+screen.SHADOWS=Shadows
+screen.SKY_SUN=Sky & Sun
+screen.VOLUMETRICS=Volumetrics
+screen.WATER=Water
+screen.POST=Post Processing
+screen.PERFORMANCE=Performance
+
+# Shadows
+option.SHADOW_SOFTNESS=Shadow Softness
+option.SHADOW_SOFTNESS.comment=PCF blur radius. 0 = hard shadows, higher = softer penumbra. GPU cost rises with SHADOW_SAMPLES, not this.
+option.SHADOW_SAMPLES=Shadow PCF Samples
+option.SHADOW_SAMPLES.comment=Half-width of the PCF kernel. Total taps = (2N+1)^2. 1=9 taps (fast), 3=49 taps (smoothest, heavy).
+option.SHADOW_BIAS=Shadow Bias
+option.SHADOW_BIAS.comment=Raise to remove shadow acne, lower to remove peter-panning (floating shadows).
+option.SHADOW_BRIGHTNESS=Shadow Fill Light
+option.SHADOW_BRIGHTNESS.comment=How much ambient light remains inside shadows. 0 = pitch black shadows.
+option.shadowMapResolution=Shadow Resolution
+option.shadowMapResolution.comment=Texels in the shadow map. Higher = crisper shadows but more VRAM/fill. GPU-heavy.
+option.shadowDistance=Shadow Distance
+option.shadowDistance.comment=How far (blocks) shadows are rendered.
+
+# Sky & Sun
+option.SUN_INTENSITY=Sun Intensity
+option.SKY_INTENSITY=Sky Ambient Intensity
+option.GOLDEN_HOUR_WARMTH=Golden Hour Warmth
+option.GOLDEN_HOUR_WARMTH.comment=Extra warm tint at sunrise/sunset.
+option.NIGHT_BRIGHTNESS=Night Brightness
+
+# Volumetrics
+option.GODRAYS=God Rays
+option.GODRAYS.comment=Volumetric light shafts from the sun. GPU cost: HIGH.
+option.GODRAY_SAMPLES=God Ray Quality
+option.GODRAY_SAMPLES.comment=March steps. More = smoother shafts but slower.
+option.GODRAY_INTENSITY=God Ray Intensity
+option.VOLUMETRIC_CLOUDS=Volumetric Clouds
+option.VOLUMETRIC_CLOUDS.comment=Raymarched 3D clouds replacing vanilla ones. GPU cost: HIGH.
+option.CLOUD_STEPS=Cloud Quality
+option.CLOUD_STEPS.comment=Raymarch steps through the cloud slab. Biggest cloud perf knob.
+option.CLOUD_DENSITY=Cloud Density
+option.CLOUD_SPEED=Cloud Speed
+option.CLOUD_SCATTER=Cloud Sun Scatter
+option.CLOUD_SCATTER.comment=Forward scattering glow / silver lining when looking toward the sun.
+
+# Water
+option.WATER_REFLECTIONS=Water SSR
+option.WATER_REFLECTIONS.comment=Screen-space reflections on water. GPU cost: MEDIUM.
+option.SSR_STEPS=SSR Quality
+option.WATER_CAUSTICS=Water Caustics
+option.WATER_WAVE_HEIGHT=Wave Height
+option.WATER_FRESNEL_POW=Fresnel Falloff
+
+# SSAO
+option.SSAO=SSAO
+option.SSAO.comment=Screen-space ambient occlusion. Darkens crevices. GPU cost: MEDIUM.
+option.SSAO_SAMPLES=SSAO Samples
+option.SSAO_RADIUS=SSAO Radius
+option.SSAO_STRENGTH=SSAO Strength
+
+# Post
+option.TONEMAP_ACES=ACES Tonemap
+option.TONEMAP_ACES.comment=ON = ACES filmic (cinematic). OFF = Reinhard (flatter).
+option.EXPOSURE=Exposure
+option.CONTRAST=Contrast
+option.SATURATION=Saturation
+option.COLOR_TEMP=Color Temperature
+option.COLOR_TEMP.comment=Negative = cooler/blue, positive = warmer/orange.
+option.LIFT=Black Lift
+option.BLOOM=Bloom
+option.BLOOM_STRENGTH=Bloom Strength
+option.BLOOM_THRESHOLD=Bloom Threshold
+option.VIGNETTE=Vignette
+option.FILM_GRAIN=Film Grain
