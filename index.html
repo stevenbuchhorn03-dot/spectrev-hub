@@ -67,6 +67,7 @@
                     </div>
                 </section>
                 <section class="inventory-panel primary inv-blur-element" aria-labelledby="primary-label" data-hlsl data-blur-strength="14">
+                    <button type="button" id="btn-toggle-clothes" class="btn-toggle-clothes active" aria-pressed="true" data-i18n-aria-label="clothes_label" data-i18n-title="clothes_label" title="Kleidung"><i class="fas fa-shirt" aria-hidden="true"></i></button>
                     <div class="primary-topbar">
                         <div class="weight-display" data-i18n-aria-label="weight">
                             <span class="weight-label" data-i18n="weight">Ağırlık</span>
@@ -529,6 +530,45 @@
     <script src="./script.js" defer></script>
     <script src="./loot-creator.js" defer></script>
     <script src="./gamerender.js" defer></script>
+    <!-- Clothing panel toggle (T-shirt icon in the bag panel). Self-contained,
+         no Devix dependency; only collapses the clothing column visually. -->
+    <script>
+    (function () {
+        var KEY = 'devix_clothes_collapsed';
+        function collapsed() { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } }
+        function apply() {
+            var win = document.getElementById('inventory-window');
+            if (win) win.classList.toggle('clothes-collapsed', collapsed());
+            var btn = document.getElementById('btn-toggle-clothes');
+            if (btn) {
+                btn.classList.toggle('active', !collapsed());
+                btn.setAttribute('aria-pressed', String(!collapsed()));
+            }
+            if (typeof window.hlslRefresh === 'function') { try { window.hlslRefresh(); } catch (e) {} }
+        }
+        // Delegated click so it survives DOM rebuilds by the live resource
+        document.addEventListener('click', function (e) {
+            var t = e.target.closest ? e.target.closest('#btn-toggle-clothes') : null;
+            if (!t) return;
+            e.preventDefault();
+            e.stopPropagation();
+            try { localStorage.setItem(KEY, collapsed() ? '0' : '1'); } catch (err) {}
+            apply();
+            // gamerender re-samples blur rects each frame during the CSS transition
+            var n = 0, iv = setInterval(function () { if (typeof window.hlslRefresh === 'function') window.hlslRefresh(); if (++n > 24) clearInterval(iv); }, 16);
+        });
+        function init() {
+            apply();
+            var root = document.getElementById('inventory-root');
+            if (root && window.MutationObserver) {
+                // Re-apply saved state whenever the inventory is (re)shown
+                new MutationObserver(apply).observe(root, { attributes: true, attributeFilter: ['class'] });
+            }
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+    })();
+    </script>
 </body>
 
 </html>
