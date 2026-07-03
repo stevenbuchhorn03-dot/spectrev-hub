@@ -34,17 +34,17 @@
     --border-glow: var(--accent-soft);
 
     /* Warm gold accent — consistent with devix-appearance; overridden by settings (accent → --accent-*) */
-    --accent: #23d5a3;
-    --accent-hover: #45e6ba;
-    --accent-warm: #23d5a3;
-    --accent-muted: rgba(35, 213, 163, 0.35);
-    --accent-soft: rgba(35, 213, 163, 0.12);
-    --accent-bg-hi: rgba(35, 213, 163, 0.18);
-    --accent-bg-lo: rgba(35, 213, 163, 0.08);
-    --accent-border: rgba(35, 213, 163, 0.30);
-    --accent-border-hover: rgba(35, 213, 163, 0.50);
-    --accent-glow: rgba(35, 213, 163, 0.20);
-    --accent-glow-strong: rgba(35, 213, 163, 0.80);
+    --accent: #35e0c4;
+    --accent-hover: #5ceed6;
+    --accent-warm: #35e0c4;
+    --accent-muted: rgba(53, 224, 196, 0.35);
+    --accent-soft: rgba(53, 224, 196, 0.12);
+    --accent-bg-hi: rgba(53, 224, 196, 0.18);
+    --accent-bg-lo: rgba(53, 224, 196, 0.08);
+    --accent-border: rgba(53, 224, 196, 0.30);
+    --accent-border-hover: rgba(53, 224, 196, 0.50);
+    --accent-glow: rgba(53, 224, 196, 0.20);
+    --accent-glow-strong: rgba(53, 224, 196, 0.80);
     --accent-stripe: 2px;
 
     /* Text hierarchy */
@@ -232,10 +232,10 @@ body {
 .weight-bar-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, var(--accent), rgba(35, 213, 163, 0.6));
+    background: linear-gradient(90deg, var(--accent), rgba(53, 224, 196, 0.6));
     border-radius: 2px;
     transition: width 0.3s var(--ease-out), background 0.3s ease;
-    box-shadow: 0 0 8px rgba(35, 213, 163, 0.25);
+    box-shadow: 0 0 8px rgba(53, 224, 196, 0.25);
 }
 
 .weight-bar-fill.warning {
@@ -514,8 +514,8 @@ body {
 }
 
 .clothes-slot:hover {
-    border-color: rgba(35, 213, 163, 0.35);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 1px rgba(35, 213, 163, 0.08);
+    border-color: rgba(53, 224, 196, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 1px rgba(53, 224, 196, 0.08);
 }
 
 .inventory-panel.primary {
@@ -1080,7 +1080,7 @@ body {
 .floating-panel-drop.floating-panel-selected {
     z-index: 160;
     border: 2px solid var(--accent-warm);
-    box-shadow: 0 0 0 1px rgba(35, 213, 163, 0.25), 0 8px 32px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 0 0 1px rgba(53, 224, 196, 0.25), 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
 /* Sürükleme sırasında kompozitör ipucu (cam/blur panellerde daha akıcı konum güncellemesi) */
@@ -1095,7 +1095,7 @@ body {
     gap: var(--space-sm);
     padding: 12px 14px;
     background: var(--inv-bg, linear-gradient(180deg, var(--bg-overlay), var(--bg-elevated)));
-    border-bottom: 1px solid var(--accent-muted, rgba(35, 213, 163, 0.10));
+    border-bottom: 1px solid var(--accent-muted, rgba(53, 224, 196, 0.10));
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     cursor: move;
     user-select: none;
@@ -1377,7 +1377,7 @@ body {
     color: var(--text-tertiary);
     padding: 2px 6px;
     border-radius: 999px;
-    background: radial-gradient(circle at top left, rgba(35, 213, 163, 0.14), transparent 55%);
+    background: radial-gradient(circle at top left, rgba(53, 224, 196, 0.14), transparent 55%);
 }
 
 .shop-money-toggle-label {
@@ -1420,7 +1420,7 @@ body {
 }
 
 .shop-money-btn.active {
-    background: linear-gradient(135deg, rgba(35, 213, 163, 0.98), rgba(35, 213, 163, 0.82));
+    background: linear-gradient(135deg, rgba(53, 224, 196, 0.98), rgba(53, 224, 196, 0.82));
     color: #0a0a0c;
 }
 
@@ -2852,7 +2852,7 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
         0 10px 40px rgba(0, 0, 0, 0.55),
         0 0 0 1px rgba(255, 255, 255, 0.05) inset,
         inset 0 1px 0 rgba(255, 255, 255, 0.07),
-        0 0 40px rgba(35, 213, 163, 0.05);
+        0 0 40px rgba(53, 224, 196, 0.05);
     z-index: 1500;
     padding: var(--space-lg) var(--space-xl);
     font-family: var(--font-body);
@@ -2869,7 +2869,7 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--accent), rgba(35, 213, 163, 0.3));
+    background: linear-gradient(90deg, var(--accent), rgba(53, 224, 196, 0.3));
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
@@ -2896,8 +2896,8 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     color: var(--accent);
     margin-bottom: var(--space-sm);
     padding-bottom: var(--space-sm);
-    border-bottom: 1px solid rgba(35, 213, 163, 0.18);
-    text-shadow: 0 0 20px rgba(35, 213, 163, 0.25);
+    border-bottom: 1px solid rgba(53, 224, 196, 0.18);
+    text-shadow: 0 0 20px rgba(53, 224, 196, 0.25);
 }
 
 .item-tooltip .tooltip-desc {
@@ -3697,7 +3697,7 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     box-shadow:
         0 4px 20px rgba(0, 0, 0, 0.35),
         0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-        0 0 24px rgba(35, 213, 163, 0.06);
+        0 0 24px rgba(53, 224, 196, 0.06);
 }
 
 .food-hint-key {
@@ -4089,7 +4089,7 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     background: rgba(38, 38, 48, 0.98);
 }
 .item-meta-btn-primary {
-    background: linear-gradient(135deg, rgba(35, 213, 163, 0.95), rgba(234, 179, 8, 0.95));
+    background: linear-gradient(135deg, rgba(53, 224, 196, 0.95), rgba(234, 179, 8, 0.95));
     color: #0b0b10;
 }
 .item-meta-btn-primary:hover {
@@ -4130,7 +4130,7 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     z-index: 1;
 }
 .wa-slot-line {
-    stroke: rgba(35, 213, 163, 0.55);
+    stroke: rgba(53, 224, 196, 0.55);
     stroke-width: 1.5;
     vector-effect: non-scaling-stroke;
 }
@@ -4166,9 +4166,9 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid var(--accent-warm, #23d5a3);
+    border: 2px solid var(--accent-warm, #35e0c4);
     background: rgba(20, 20, 22, 0.32);
-    color: var(--accent-warm, #23d5a3);
+    color: var(--accent-warm, #35e0c4);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -4177,7 +4177,7 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     transition: transform 0.15s, background 0.15s;
 }
 .wa-btn-center:hover {
-    background: rgba(35, 213, 163, 0.25);
+    background: rgba(53, 224, 196, 0.25);
     transform: scale(1.05);
 }
 .wa-center-label {
@@ -4253,12 +4253,12 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     object-fit: contain;
 }
 .wa-slot-cell:hover {
-    border-color: var(--accent-warm, #23d5a3);
+    border-color: var(--accent-warm, #35e0c4);
     transform: scale(1.05);
 }
 .wa-slot-cell.selected {
-    border-color: var(--accent-warm, #23d5a3);
-    box-shadow: 0 0 0 2px rgba(35, 213, 163, 0.4);
+    border-color: var(--accent-warm, #35e0c4);
+    box-shadow: 0 0 0 2px rgba(53, 224, 196, 0.4);
 }
 .wa-slot-remove {
     color: rgba(255, 120, 120, 0.9);
@@ -4311,7 +4311,7 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
 .wa-slot-drop-box:hover {
     border-color: rgba(255, 255, 255, 0.18);
     background: rgba(24, 24, 28, 0.42);
-    box-shadow: 0 0 0 1px rgba(35, 213, 163, 0.25);
+    box-shadow: 0 0 0 1px rgba(53, 224, 196, 0.25);
 }
 .wa-slot-drop-box.wa-slot-drop-box-drop-over {
     border-color: rgba(34, 197, 94, 0.9);
@@ -4468,16 +4468,16 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     background: rgba(24, 24, 28, 0.42);
 }
 .wa-tint-item-cell.selected {
-    border-color: var(--accent-warm, #23d5a3);
-    box-shadow: 0 0 0 2px rgba(35, 213, 163, 0.5), 0 0 12px rgba(34, 197, 94, 0.25);
-    background: rgba(35, 213, 163, 0.12);
+    border-color: var(--accent-warm, #35e0c4);
+    box-shadow: 0 0 0 2px rgba(53, 224, 196, 0.5), 0 0 12px rgba(34, 197, 94, 0.25);
+    background: rgba(53, 224, 196, 0.12);
 }
 .wa-tint-item-cell.selected:hover {
-    border-color: var(--accent-warm, #23d5a3);
-    box-shadow: 0 0 0 2px rgba(35, 213, 163, 0.6), 0 0 16px rgba(35, 213, 163, 0.3);
+    border-color: var(--accent-warm, #35e0c4);
+    box-shadow: 0 0 0 2px rgba(53, 224, 196, 0.6), 0 0 16px rgba(53, 224, 196, 0.3);
 }
 .wa-tint-btn:hover { border-color: rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.1); }
-.wa-tint-btn.selected { border-color: var(--accent-warm, #23d5a3); background: rgba(35, 213, 163, 0.2); }
+.wa-tint-btn.selected { border-color: var(--accent-warm, #35e0c4); background: rgba(53, 224, 196, 0.2); }
 
 .weapon-attachment-root #wa-confirm,
 .weapon-attachment-root .wa-center-label {
@@ -5191,7 +5191,7 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
 .lc-edit-rarity-chip.lc-edit-rarity-chip-uncommon { border-color: #6b9b6b; background: rgba(107, 155, 107, 0.15); }
 .lc-edit-rarity-chip.lc-edit-rarity-chip-rare { border-color: #5a7fc9; background: rgba(90, 127, 201, 0.15); }
 .lc-edit-rarity-chip.lc-edit-rarity-chip-epic { border-color: #9b59b6; background: rgba(155, 89, 182, 0.15); }
-.lc-edit-rarity-chip.lc-edit-rarity-chip-legendary { border-color: #23d5a3; background: rgba(35, 213, 163, 0.2); }
+.lc-edit-rarity-chip.lc-edit-rarity-chip-legendary { border-color: #35e0c4; background: rgba(53, 224, 196, 0.2); }
 .lc-edit-rarity-chip-remove {
     padding: 0;
     margin: 0;
@@ -5232,7 +5232,7 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
 .lc-edit-rarity-option.lc-edit-rarity-option-uncommon { border-color: #6b9b6b; }
 .lc-edit-rarity-option.lc-edit-rarity-option-rare { border-color: #5a7fc9; }
 .lc-edit-rarity-option.lc-edit-rarity-option-epic { border-color: #9b59b6; }
-.lc-edit-rarity-option.lc-edit-rarity-option-legendary { border-color: #23d5a3; }
+.lc-edit-rarity-option.lc-edit-rarity-option-legendary { border-color: #35e0c4; }
 .lc-edit-rarity-option-added {
     opacity: 0.5;
     cursor: default;
@@ -5240,91 +5240,117 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
 }
 
 /* ==========================================================================
-   Storyline Look — teal glass re-theme overrides
-   Applies the Storyline reference styling (mint/teal accent, glass panels,
-   centered panel headings, clothing figure) on top of the Devix structure.
-   Only elements that map to real Devix functions are styled; purely
-   decorative Storyline chrome (side nav, HUD status icons) is not added.
+   Storyline Look — 1:1 re-theme
+   No outer window chrome: the panels themselves are tall, dark, free-
+   standing glass cards with big centered mint titles (Storyline reference).
+   Only elements with real Devix functions are styled; decorative Storyline
+   chrome (side icon rail, HUD status icons, crafting center panel) is
+   intentionally not reproduced.
    ========================================================================== */
 
-/* Accent: Storyline mint/teal */
 :root {
-    --accent: #23d5a3;
-    --accent-hover: #45e6ba;
-    --accent-warm: #23d5a3;
-    --sl-panel-bg: rgba(9, 12, 14, 0.55);
-    --sl-panel-border: rgba(35, 213, 163, 0.14);
-    --sl-slot-bg: rgba(6, 9, 11, 0.5);
-    --sl-slot-border: rgba(255, 255, 255, 0.06);
-    --sl-green-a: #22c98f;
-    --sl-green-b: #17a877;
+    --accent: #35e0c4;
+    --accent-hover: #5ceed6;
+    --accent-warm: #35e0c4;
+    --font-title: "Poppins", "Montserrat", "Inter", sans-serif;
+    --clothes-cell-size: 64px;
+    --inv-bg: rgba(10, 15, 15, 0.60);
+    --sl-panel-border: rgba(120, 220, 200, 0.10);
+    --sl-slot-bg: rgba(12, 18, 18, 0.45);
+    --sl-slot-border: rgba(255, 255, 255, 0.07);
+    --sl-btn-a: #1ec9a2;
+    --sl-btn-b: #109478;
 }
 
-/* --- Window: let the two panels read as Storyline cards --- */
+/* Dim the game slightly while the inventory is open (Storyline backdrop) */
+#inventory-root:not(.hidden) {
+    background: rgba(0, 0, 0, 0.30);
+}
+
+/* --- Shell: kill the outer window chrome; panels are the cards --- */
+#inventory-window,
 .inventory-window,
 .inventory-window-glass {
-    background: rgba(8, 10, 12, 0.30);
-    border: 1px solid rgba(35, 213, 163, 0.10);
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
+/* Header: slim floating strip, no bar — window title hidden
+   (the panel titles carry the headings, like Storyline) */
 .inventory-header {
     background: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 16px 20px;
+    border-bottom: none;
+    border-radius: 0;
+    padding: 4px 12px 10px;
 }
+#inventory-title { display: none; }
 
-.inventory-title {
+/* Header icon buttons: bare icons like the Storyline "✕" */
+.btn-craft, .btn-settings, .btn-close {
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 1rem;
+}
+.btn-craft:hover, .btn-settings:hover {
     color: var(--accent);
-    letter-spacing: 0.10em;
-    text-shadow: 0 0 18px rgba(35, 213, 163, 0.35);
+    background: transparent;
+    border-color: transparent;
+}
+.btn-close:hover {
+    color: #ff6b6b;
+    background: transparent;
+    border-color: transparent;
 }
 
-/* --- Panels as separate glass cards --- */
+/* Weight: minimal, unobtrusive */
+.weight-label { color: rgba(255, 255, 255, 0.35); }
+.weight-bar { background: rgba(255, 255, 255, 0.08); }
+.weight-bar-fill { box-shadow: 0 0 10px rgba(53, 224, 196, 0.35); }
+
+/* --- Panels: tall dark glass cards, side by side --- */
+.inventory-body {
+    gap: 14px;
+    padding: 0 12px 12px;
+    min-height: min(66vh, 760px);
+}
+
 .inventory-panel {
-    background: var(--sl-panel-bg);
+    background: var(--inv-bg, rgba(10, 15, 15, 0.60));
     border: 1px solid var(--sl-panel-border);
-    border-radius: 16px;
-    padding: 18px 16px;
+    border-radius: 14px;
+    padding: 24px 20px 20px;
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.04),
-        0 8px 24px rgba(0, 0, 0, 0.30);
+        0 14px 44px rgba(0, 0, 0, 0.45);
 }
 
-/* --- Panel headings: large, centered, teal (Storyline titles) --- */
+/* --- Storyline headings: large, centered, mint, soft glow --- */
 .panel-title,
 .panel-label {
     font-family: var(--font-title);
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: 0.01em;
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
     text-transform: none;
     text-align: center;
     color: var(--accent);
-    text-shadow: 0 0 18px rgba(35, 213, 163, 0.30);
+    text-shadow: 0 0 26px rgba(53, 224, 196, 0.45);
     border-bottom: none;
     padding-bottom: 0;
-    margin: 0 0 14px 0;
+    margin: 2px 0 18px;
 }
 .panel-title::after { display: none; }
 
-/* Primary (inventory) panel header: center the title, keep actions below */
-.primary-panel-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-}
-.primary-panel-header .panel-title { margin: 0; }
-.primary-panel-actions { justify-content: center; }
-
-/* --- Clothing panel: figure flanked by slot columns (Storyline) --- */
+/* --- Clothing panel: slot columns flanking the glowing figure --- */
 .inventory-panel.clothes-panel {
-    min-width: 250px;
-    width: 250px;
+    width: 330px;
+    min-width: 330px;
     align-items: stretch;
-    padding: 18px 16px;
+    padding: 24px 18px 20px;
 }
 
 .clothes-figure-wrap {
@@ -5332,110 +5358,180 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     flex: 1 1 auto;
     display: flex;
     align-items: center;
-    justify-content: center;
-    min-height: 300px;
     width: 100%;
+    min-height: 480px;
 }
 
 .clothes-figure {
     position: absolute;
-    top: 50%;
     left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%);
-    height: 90%;
+    height: 86%;
     width: auto;
-    fill: var(--accent);
-    opacity: 0.18;
-    filter: drop-shadow(0 0 26px rgba(35, 213, 163, 0.35));
+    fill: #2f9e93;
+    opacity: 0.85;
+    filter: drop-shadow(0 0 30px rgba(53, 224, 196, 0.35));
     pointer-events: none;
 }
 
-/* Flat JS-filled slot list -> two edge columns around the figure */
+/* JS fills #clothes-slots flat — split into two edge columns */
 .clothes-slots {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: repeat(2, max-content);
+    grid-template-columns: max-content max-content;
     justify-content: space-between;
     align-content: center;
-    row-gap: 14px;
-    column-gap: 20px;
+    row-gap: 13px;
     width: 100%;
-    height: 100%;
+    height: auto;
 }
 
 .clothes-slot {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
-    min-height: 52px;
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    min-height: 64px;
     background: var(--sl-slot-bg);
     border: 1px solid var(--sl-slot-border);
-    border-radius: 12px;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 .clothes-slot:hover {
-    border-color: rgba(35, 213, 163, 0.45);
-    box-shadow: 0 0 0 1px rgba(35, 213, 163, 0.18), 0 0 16px rgba(35, 213, 163, 0.15);
+    border-color: rgba(53, 224, 196, 0.50);
+    box-shadow: 0 0 14px rgba(53, 224, 196, 0.12);
+}
+/* Occupied clothing slot: mint outline (Storyline equipped state) */
+.clothes-slot:has(img),
+.clothes-slot:has(.item-box),
+.clothes-slot:has(.item-cell) {
+    border-color: rgba(53, 224, 196, 0.55);
+    box-shadow:
+        0 0 0 1px rgba(53, 224, 196, 0.15),
+        0 0 16px rgba(53, 224, 196, 0.10);
 }
 
-/* --- Inventory grid cells: Storyline card slots --- */
-.grid-container {
-    border: none;
-    gap: 4px;
+/* --- Primary (inventory) panel --- */
+.primary-panel-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
 }
-.grid-cell {
-    background: var(--sl-slot-bg);
-    border: 1px solid var(--sl-slot-border);
-    border-radius: 10px;
-}
-.grid-cell:hover {
-    border-color: rgba(35, 213, 163, 0.35);
-    box-shadow: 0 0 0 1px rgba(35, 213, 163, 0.15);
-}
-.item-cell {
-    border-radius: 10px;
-    background: rgba(10, 14, 16, 0.55);
-}
+.primary-panel-header .panel-title { margin: 2px 0 4px; }
+.primary-panel-actions { justify-content: center; }
 
-/* --- Header icon buttons: teal glass --- */
-.btn-craft, .btn-settings, .btn-close {
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 10px;
-}
-
-/* --- Search + sort: Storyline pills --- */
 .primary-item-search {
-    border-radius: 20px;
-    background: rgba(6, 9, 11, 0.5);
-    max-width: 180px;
+    border-radius: 999px;
+    background: rgba(10, 16, 16, 0.55);
+    border-color: rgba(255, 255, 255, 0.08);
+    padding: 7px 14px;
+    max-width: 200px;
 }
-.btn-sort-az {
-    border-radius: 20px;
-}
+.btn-sort-az { border-radius: 999px; }
 
-/* --- Quick-slots footer: teal glass hotbar --- */
+.primary-grid-frame { margin: 0 auto; }
+
+/* --- Grid: tight dark lattice (keep original gap/padding — the live
+   resource positions item cells with those exact metrics) --- */
+.grid-container { border: none; }
+.grid-cell {
+    background: rgba(14, 20, 20, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 4px;
+}
+.grid-cell:hover { border-color: rgba(53, 224, 196, 0.35); }
+.item-cell {
+    border-radius: 4px;
+    background: rgba(13, 19, 19, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+.item-cell:hover:not(.dragging) { border-color: rgba(53, 224, 196, 0.60); }
+
+/* --- Footer quick slots: free-floating strip, no bar --- */
 .quick-slots-wrap {
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: transparent;
+    border-top: none;
 }
-.quick-slots-label { color: var(--text-tertiary); }
 .quick-slots-keys, #quick-slots-keys { color: var(--accent); }
+.inventory-hint-bar { opacity: 0.55; }
 
-/* --- Weight fill uses accent already; give it the Storyline glow --- */
-.weight-bar-fill {
-    box-shadow: 0 0 10px rgba(35, 213, 163, 0.35);
+/* --- Floating panels (stash / trunk / drop): same card language --- */
+.floating-panel,
+.floating-panel-glass {
+    background: var(--inv-bg, rgba(10, 15, 15, 0.62));
+    border: 1px solid var(--sl-panel-border);
+    border-radius: 14px;
+}
+.floating-panel .panel-title {
+    font-size: 1.1rem;
+    text-align: left;
+    color: var(--accent);
+    text-shadow: 0 0 18px rgba(53, 224, 196, 0.35);
 }
 
-/* --- Green pill action buttons (context menu primary / meta save / loot save) --- */
+/* --- Pill buttons: Storyline teal gradient ("Herstellen" style) --- */
 .item-meta-btn-primary,
 .loot-creator-btn-primary {
-    background: linear-gradient(180deg, var(--sl-green-a), var(--sl-green-b));
+    background: linear-gradient(180deg, var(--sl-btn-a), var(--sl-btn-b));
     border: none;
-    color: #04120d;
+    color: #05201a;
     font-weight: 700;
-    border-radius: 22px;
-    box-shadow: 0 6px 18px rgba(23, 168, 119, 0.35);
+    border-radius: 999px;
+    box-shadow: 0 6px 18px rgba(16, 148, 120, 0.35);
 }
 .item-meta-btn-primary:hover,
-.loot-creator-btn-primary:hover {
-    filter: brightness(1.08);
+.loot-creator-btn-primary:hover { filter: brightness(1.08); }
+.item-meta-btn-secondary,
+.loot-creator-btn-secondary { border-radius: 999px; }
+
+/* --- Context menu / tooltip: dark with mint accents --- */
+.context-menu {
+    border: 1px solid rgba(53, 224, 196, 0.15);
+    border-radius: 12px;
 }
+.context-menu button:hover {
+    background: rgba(53, 224, 196, 0.10);
+    color: var(--accent);
+}
+.item-tooltip { border: 1px solid rgba(53, 224, 196, 0.18); }
+
+/* --- Storyline polish pass --- */
+/* Header: right-aligned floating controls (title is hidden) */
+.inventory-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.btn-craft, .btn-settings, .btn-close { color: rgba(255, 255, 255, 0.65); }
+
+/* Figure: dimmer, desaturated teal like the reference */
+.clothes-figure {
+    fill: #2a8c82;
+    opacity: 0.72;
+    filter: drop-shadow(0 0 26px rgba(53, 224, 196, 0.28));
+}
+/* Same-color stroke hides the antialiasing seam where the
+   torso and leg paths overlap */
+.clothes-figure path,
+.clothes-figure circle {
+    stroke: #2a8c82;
+    stroke-width: 3;
+    stroke-linejoin: round;
+}
+
+/* Hint bar: plain floating text, no box */
+.inventory-hint-bar {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Quick slots: centered floating strip */
+.quick-slots-wrap { align-items: center; }
+.quick-slots { justify-content: center; }
+.quick-slots-label { text-align: center; }
+
+/* Resize handle: keep functional, visually quiet */
+.resize-handle { opacity: 0.35; }
+.resize-handle:hover { opacity: 0.85; }

@@ -7,7 +7,7 @@
     <title data-i18n="inv_title">Envanter</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -49,7 +49,7 @@
         </div>
     </div>
     <div id="inventory-root" class="hidden">
-        <div id="inventory-window" class="inventory-window inventory-window-glass inv-blur-element" data-draggable data-hlsl data-blur-strength="16">
+        <div id="inventory-window" class="inventory-window" data-draggable>
             <header id="inventory-header" class="inventory-header">
                 <h1 id="inventory-title" class="inventory-title" data-i18n="inv_title">Envanter</h1>
                 <div class="header-meta">
@@ -65,18 +65,20 @@
             </header>
             <main class="inventory-body">
                 <!-- Sol: Kıyafet slotları -->
-                <section class="inventory-panel clothes-panel" aria-labelledby="clothes-label">
-                    <h2 id="clothes-label" class="panel-title" data-i18n="clothes_label">Kıyafet</h2>
+                <section class="inventory-panel clothes-panel inv-blur-element" aria-labelledby="clothes-label" data-hlsl data-blur-strength="14">
+                    <h2 id="clothes-label" class="panel-title" data-i18n="clothes_label">Kleidung</h2>
                     <div class="clothes-figure-wrap">
-                        <svg class="clothes-figure" viewBox="0 0 120 260" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-                            <path d="M60 6c8 0 14 6 14 15 0 6-3 11-8 14 9 2 15 7 17 15l6 30c1 5-2 9-7 9-4 0-6-2-7-6l-4-16-1 34c0 2 1 4 2 6l7 46c1 7-4 11-10 11-5 0-8-3-9-9l-6-40h-2l-6 40c-1 6-4 9-9 9-6 0-11-4-10-11l7-46c1-2 2-4 2-6l-1-34-4 16c-1 4-3 6-7 6-5 0-8-4-7-9l6-30c2-8 8-13 17-15-5-3-8-8-8-14 0-9 6-15 14-15z"/>
+                        <svg class="clothes-figure" viewBox="0 0 200 460" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+                            <circle cx="100" cy="42" r="27"/>
+                            <path d="M100 70c-24 0-40 12-44 32l-14 96c-1 8 4 14 11 15 7 1 12-4 14-11l13-66 2 44c0 6-1 10-2 15l-11 82h62l-11-82c-1-5-2-9-2-15l2-44 13 66c2 7 7 12 14 11 7-1 12-7 11-15l-14-96c-4-20-20-32-44-32z"/>
+                            <path d="M69 277l-6 153c0 8 6 14 14 14 8 0 13-5 14-13l9-104 9 104c1 8 6 13 14 13 8 0 14-6 14-14l-6-153z"/>
                         </svg>
                         <div id="clothes-slots" class="clothes-slots" role="list" data-i18n-aria-label="clothes_slots_aria"></div>
                     </div>
                 </section>
-                <section class="inventory-panel primary" aria-labelledby="primary-label">
+                <section class="inventory-panel primary inv-blur-element" aria-labelledby="primary-label" data-hlsl data-blur-strength="14">
                     <div class="primary-panel-header">
-                        <h2 id="primary-label" class="panel-title" data-i18n="primary_label">Çantam</h2>
+                        <h2 id="primary-label" class="panel-title" data-i18n="primary_label">Inventar</h2>
                         <div class="primary-panel-actions">
                             <input type="text" id="primary-item-search" class="primary-item-search" data-i18n-placeholder="search_placeholder" autocomplete="off" data-i18n-aria-label="search_aria" />
                             <button type="button" id="btn-sort-az" class="btn-sort-az" data-i18n-title="sort_az_title" data-i18n-aria-label="sort_az_aria" data-i18n="sort_az_label">A–Z</button>
@@ -146,13 +148,13 @@
                     <div class="settings-row settings-row-range" data-settings-field="invBgOpacity">
                         <span class="settings-label" data-i18n="settings_inv_bg_opacity">Arka plan saydamlığı</span>
                         <div class="settings-range-wrap">
-                            <input type="range" id="setting-inv-bg-opacity" class="settings-range" min="0" max="100" value="26" />
-                            <span id="setting-inv-bg-opacity-value" class="settings-range-value">26%</span>
+                            <input type="range" id="setting-inv-bg-opacity" class="settings-range" min="0" max="100" value="60" />
+                            <span id="setting-inv-bg-opacity-value" class="settings-range-value">60%</span>
                         </div>
                     </div>
                     <div class="settings-row" data-settings-field="accent">
                         <span class="settings-label" data-i18n="settings_accent">Vurgu rengi</span>
-                        <input type="color" id="setting-accent" class="settings-color" value="#23d5a3" />
+                        <input type="color" id="setting-accent" class="settings-color" value="#35e0c4" />
                     </div>
                     <div class="settings-row" data-settings-field="durabilityHigh">
                         <span class="settings-label" data-i18n="settings_durability_high">Dayanıklılık (yüksek)</span>
