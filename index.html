@@ -58,10 +58,23 @@
                 <section class="inventory-panel clothes-panel inv-blur-element" aria-labelledby="clothes-label" data-hlsl data-blur-strength="14">
                     <h2 id="clothes-label" class="panel-title" data-i18n="clothes_label">Kleidung</h2>
                     <div class="clothes-figure-wrap">
-                        <svg class="clothes-figure" viewBox="0 0 200 460" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-                            <circle cx="100" cy="42" r="27"/>
-                            <path d="M100 70c-24 0-40 12-44 32l-14 96c-1 8 4 14 11 15 7 1 12-4 14-11l13-66 2 44c0 6-1 10-2 15l-11 82h62l-11-82c-1-5-2-9-2-15l2-44 13 66c2 7 7 12 14 11 7-1 12-7 11-15l-14-96c-4-20-20-32-44-32z"/>
-                            <path d="M69 277l-6 153c0 8 6 14 14 14 8 0 13-5 14-13l9-104 9 104c1 8 6 13 14 13 8 0 14-6 14-14l-6-153z"/>
+                        <svg class="clothes-figure" viewBox="0 0 200 470" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
+                            <g class="clothes-figure-body">
+                                <!-- head -->
+                                <ellipse cx="100" cy="50" rx="27" ry="31"/>
+                                <!-- neck -->
+                                <rect x="87" y="72" width="26" height="22" rx="10"/>
+                                <!-- shoulders + V-taper torso -->
+                                <path d="M100 86 C128 86 150 95 154 116 C156 132 150 150 144 168 C139 184 134 200 131 214 C129 230 116 240 100 240 C84 240 71 230 69 214 C66 200 61 184 56 168 C50 150 44 132 46 116 C50 95 72 86 100 86 Z"/>
+                                <!-- pelvis -->
+                                <path d="M67 202 C63 242 74 278 89 290 L111 290 C126 278 137 242 133 202 Z"/>
+                                <!-- arms -->
+                                <rect x="40" y="112" width="22" height="188" rx="11" transform="rotate(5 51 206)"/>
+                                <rect x="138" y="112" width="22" height="188" rx="11" transform="rotate(-5 149 206)"/>
+                                <!-- legs -->
+                                <rect x="74" y="258" width="26" height="200" rx="13" transform="rotate(1.5 87 358)"/>
+                                <rect x="100" y="258" width="26" height="200" rx="13" transform="rotate(-1.5 113 358)"/>
+                            </g>
                         </svg>
                         <div id="clothes-slots" class="clothes-slots" role="list" data-i18n-aria-label="clothes_slots_aria"></div>
                     </div>
