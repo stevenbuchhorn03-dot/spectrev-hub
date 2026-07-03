@@ -392,34 +392,36 @@ Config.VehicleInventory = {
     -- Priority: vehicle > class > Config.Inventories.trunk/glovebox
     -- Set trunk = false or glovebox = false to disable that inventory for the vehicle
     vehicles = {
-        ["issi2"] = { trunk = { rows = 15, cols = 15, maxWeight = 150000 }, glovebox = { rows = 4, cols = 4, maxWeight = 30000 } },
+        ["issi2"] = { trunk = { rows = 3, cols = 6, maxWeight = 150000 }, glovebox = { rows = 2, cols = 3, maxWeight = 30000 } },
         -- ["faggio"] = { trunk = false, glovebox = false }, -- Motorcycle: no trunk/glovebox
     },
     -- Per-class trunk/glovebox config (GetVehicleClass IDs 0-21)
     -- Set trunk = false or glovebox = false to disable for entire class
     classes = {
-        [0] = { trunk = { rows = 5, cols = 5, maxWeight = 120000 }, glovebox = { rows = 5, cols = 5, maxWeight = 40000 } },   -- Compacts
-        [1] = { trunk = { rows = 18, cols = 18, maxWeight = 180000 }, glovebox = { rows = 6, cols = 6, maxWeight = 50000 } },   -- Sedans
-        [2] = { trunk = { rows = 25, cols = 20, maxWeight = 250000 }, glovebox = { rows = 6, cols = 6, maxWeight = 50000 } },   -- SUVs
-        [3] = { trunk = { rows = 14, cols = 14, maxWeight = 140000 }, glovebox = { rows = 5, cols = 5, maxWeight = 40000 } },   -- Coupes
-        [4] = { trunk = { rows = 16, cols = 16, maxWeight = 160000 }, glovebox = { rows = 5, cols = 5, maxWeight = 40000 } },   -- Muscle
-        [5] = { trunk = { rows = 14, cols = 14, maxWeight = 140000 }, glovebox = { rows = 5, cols = 5, maxWeight = 40000 } },   -- Sports Classics
-        [6] = { trunk = { rows = 14, cols = 14, maxWeight = 140000 }, glovebox = { rows = 5, cols = 5, maxWeight = 40000 } },   -- Sports
-        [7] = { trunk = { rows = 12, cols = 12, maxWeight = 120000 }, glovebox = { rows = 4, cols = 4, maxWeight = 30000 } },   -- Super
-        [8] = { trunk = false, glovebox = false },                                                                              -- Motorcycles (no trunk/glovebox)
-        [9] = { trunk = { rows = 18, cols = 18, maxWeight = 180000 }, glovebox = { rows = 5, cols = 5, maxWeight = 40000 } },   -- Off-road
-        [10] = { trunk = { rows = 28, cols = 22, maxWeight = 280000 }, glovebox = { rows = 6, cols = 6, maxWeight = 50000 } }, -- Industrial
-        [11] = { trunk = { rows = 20, cols = 18, maxWeight = 200000 }, glovebox = { rows = 5, cols = 5, maxWeight = 40000 } }, -- Utility
-        [12] = { trunk = { rows = 30, cols = 25, maxWeight = 300000 }, glovebox = { rows = 6, cols = 6, maxWeight = 50000 } }, -- Vans
-        [13] = { trunk = false, glovebox = false },                                                                             -- Cycles (bicycles)
-        [14] = { trunk = { rows = 20, cols = 18, maxWeight = 200000 }, glovebox = false },                                     -- Boats (no glovebox)
-        [15] = { trunk = false, glovebox = { rows = 5, cols = 5, maxWeight = 40000 } },                                         -- Helicopters (no trunk)
-        [16] = { trunk = false, glovebox = { rows = 5, cols = 5, maxWeight = 40000 } },                                        -- Planes (no trunk)
-        [17] = { trunk = { rows = 22, cols = 20, maxWeight = 220000 }, glovebox = { rows = 6, cols = 6, maxWeight = 50000 } }, -- Service
-        [18] = { trunk = { rows = 25, cols = 22, maxWeight = 250000 }, glovebox = { rows = 6, cols = 6, maxWeight = 50000 } }, -- Emergency
-        [19] = { trunk = { rows = 28, cols = 24, maxWeight = 280000 }, glovebox = { rows = 6, cols = 6, maxWeight = 50000 } }, -- Military
-        [20] = { trunk = { rows = 35, cols = 28, maxWeight = 350000 }, glovebox = { rows = 6, cols = 6, maxWeight = 50000 } }, -- Commercial
-        [21] = { trunk = false, glovebox = false },                                                                             -- Trains
+        -- Storyline coarse slots (72px, 1 item = 1 slot, long weapons 2x1):
+        -- trunks tiered 15-64 slots, gloveboxes 3x2 / 4x2. maxWeight unchanged.
+        [0] = { trunk = { rows = 3, cols = 6, maxWeight = 120000 }, glovebox = { rows = 2, cols = 3, maxWeight = 40000 } },   -- Compacts (18)
+        [1] = { trunk = { rows = 4, cols = 6, maxWeight = 180000 }, glovebox = { rows = 2, cols = 4, maxWeight = 50000 } },   -- Sedans (24)
+        [2] = { trunk = { rows = 4, cols = 7, maxWeight = 250000 }, glovebox = { rows = 2, cols = 4, maxWeight = 50000 } },   -- SUVs (28)
+        [3] = { trunk = { rows = 3, cols = 6, maxWeight = 140000 }, glovebox = { rows = 2, cols = 4, maxWeight = 40000 } },   -- Coupes (18)
+        [4] = { trunk = { rows = 4, cols = 6, maxWeight = 160000 }, glovebox = { rows = 2, cols = 4, maxWeight = 40000 } },   -- Muscle (24)
+        [5] = { trunk = { rows = 3, cols = 6, maxWeight = 140000 }, glovebox = { rows = 2, cols = 4, maxWeight = 40000 } },   -- Sports Classics (18)
+        [6] = { trunk = { rows = 3, cols = 6, maxWeight = 140000 }, glovebox = { rows = 2, cols = 4, maxWeight = 40000 } },   -- Sports (18)
+        [7] = { trunk = { rows = 3, cols = 5, maxWeight = 120000 }, glovebox = { rows = 2, cols = 3, maxWeight = 30000 } },   -- Super (15)
+        [8] = { trunk = false, glovebox = false },                                                                            -- Motorcycles (no trunk/glovebox)
+        [9] = { trunk = { rows = 4, cols = 7, maxWeight = 180000 }, glovebox = { rows = 2, cols = 4, maxWeight = 40000 } },   -- Off-road (28)
+        [10] = { trunk = { rows = 6, cols = 8, maxWeight = 280000 }, glovebox = { rows = 2, cols = 4, maxWeight = 50000 } },  -- Industrial (48)
+        [11] = { trunk = { rows = 5, cols = 8, maxWeight = 200000 }, glovebox = { rows = 2, cols = 4, maxWeight = 40000 } },  -- Utility (40)
+        [12] = { trunk = { rows = 6, cols = 8, maxWeight = 300000 }, glovebox = { rows = 2, cols = 4, maxWeight = 50000 } },  -- Vans (48)
+        [13] = { trunk = false, glovebox = false },                                                                           -- Cycles (bicycles)
+        [14] = { trunk = { rows = 5, cols = 8, maxWeight = 200000 }, glovebox = false },                                      -- Boats (40, no glovebox)
+        [15] = { trunk = false, glovebox = { rows = 2, cols = 4, maxWeight = 40000 } },                                       -- Helicopters (no trunk)
+        [16] = { trunk = false, glovebox = { rows = 2, cols = 4, maxWeight = 40000 } },                                       -- Planes (no trunk)
+        [17] = { trunk = { rows = 5, cols = 8, maxWeight = 220000 }, glovebox = { rows = 2, cols = 4, maxWeight = 50000 } },  -- Service (40)
+        [18] = { trunk = { rows = 5, cols = 8, maxWeight = 250000 }, glovebox = { rows = 2, cols = 4, maxWeight = 50000 } },  -- Emergency (40)
+        [19] = { trunk = { rows = 6, cols = 8, maxWeight = 280000 }, glovebox = { rows = 2, cols = 4, maxWeight = 50000 } },  -- Military (48)
+        [20] = { trunk = { rows = 8, cols = 8, maxWeight = 350000 }, glovebox = { rows = 2, cols = 4, maxWeight = 50000 } },  -- Commercial (64)
+        [21] = { trunk = false, glovebox = false },                                                                           -- Trains
     },
 }
 
@@ -435,8 +437,8 @@ Config.Inventories = {
         maxWeight = 120000,
     },
     glovebox = {
-        rows = 6,
-        cols = 6,
+        rows = 2,
+        cols = 4,
         label = "Glovebox",
         maxWeight = 50000,
         -- primaryFrameMaxRows/Cols = max visible rows/columns for this inventory on screen (otherwise Config.GridUI values are used)
@@ -444,8 +446,8 @@ Config.Inventories = {
         primaryFrameMaxCols = 5,
     },
     trunk = {
-        rows = 10,
-        cols = 10,
+        rows = 4,
+        cols = 7,
         label = "Trunk",
         maxWeight = 200000,
         primaryFrameMaxRows = 10,
@@ -454,8 +456,8 @@ Config.Inventories = {
     -- scrollable = true → panel shows a scroll bar if row count exceeds visible area (useful for police/EMS/mechanic stashes)
     -- scrollMaxRows = maximum visible rows before overflow
     stash = {
-        rows = 20,
-        cols = 20,
+        rows = 8,
+        cols = 8,
         label = "Stash",
         maxWeight = 200000,
         primaryFrameMaxRows = 10,
@@ -463,8 +465,8 @@ Config.Inventories = {
     },
     -- Loot (EFT-style): panel boyutu config_loots.lua'dan (DefaultGrid / LootTypes[].grid). Buradaki rows/cols sadece fallback.
     loot = {
-        rows = 20,
-        cols = 20,
+        rows = 5,
+        cols = 6,
         label = "Loot",
         maxWeight = 1000000,
         primaryFrameMaxRows = 10,
@@ -476,16 +478,16 @@ Config.Inventories = {
     --         exports[GetCurrentResourceName()]:OpenStashInventory(source, "mechanic_stash", "Mechanic Stash")
     -- identifier (e.g. "police_stash") must be unique per stash; same ID opens the same stash.
     bag = {
-        rows = 10,
-        cols = 10,
+        rows = 3,
+        cols = 5,
         label = "Bag",
         maxWeight = 30000,
         primaryFrameMaxRows = 10,
         primaryFrameMaxCols = 10,
     },
     drop = {
-        rows = 20,
-        cols = 20,
+        rows = 6,
+        cols = 8,
         label = "Searched Player",
         maxWeight = 99999999999999999,
         primaryFrameMaxRows = 10,
@@ -501,7 +503,7 @@ Config.Inventories = {
     -- rows = upper limit (max rows), cols = number of columns.
     shop = {
         rows = 20,
-        cols = 20,
+        cols = 8,
         label = "Shop",
         maxWeight = 0,
         primaryFrameMaxRows = 10,
@@ -510,24 +512,24 @@ Config.Inventories = {
     -- Searched player inventory (second-player-inventory: hands-up search / admin search)
     -- primaryFrameMaxRows/Cols: max visible rows/cols before scroll. Can be 23+; NUI caps panel to viewport so it never overflows.
     searched_player = {
-        rows = 20,
-        cols = 20,
+        rows = 6,
+        cols = 8,
         label = "Searched Player",
         maxWeight = 120000,
         primaryFrameMaxRows = 10,
         primaryFrameMaxCols = 10,
     },
     jacket = {
-        rows = 20,
-        cols = 20,
+        rows = 2,
+        cols = 4,
         label = "Jacket",
         maxWeight = 120000,
         primaryFrameMaxRows = 10,
         primaryFrameMaxCols = 10,
     },
     wallet = {
-        rows = 12,
-        cols = 12,
+        rows = 2,
+        cols = 3,
         label = "Wallet",
         primaryFrameMaxRows = 10,
         primaryFrameMaxCols = 10,
