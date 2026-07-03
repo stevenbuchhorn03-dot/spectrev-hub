@@ -1,5 +1,9 @@
--- ESX-Objekt (imports.lua setzt es bereits global; Guard zur Sicherheit)
-ESX = ESX or exports['es_extended']:getSharedObject()
+-- devix-core Objekt (client-seitig: Notify)
+local DEVIX = exports['devix-core']:getObjects()
+
+local function notify(msg, kind)
+    DEVIX.Notify(msg, kind or 'inform')
+end
 
 -- Lokal gespawnte Nagelbänder auf DIESEM Client: [id] = { entity = handle, coords = vec3 }
 -- Jedes Band wird als lokales (nicht-networked) Objekt auf jedem Client gespawnt,
@@ -55,7 +59,7 @@ local function addTarget(id, entity)
             icon     = Config.Target.icon,
             label    = Config.Target.label,
             distance = Config.Target.distance,
-            groups   = Config.Job, -- ox_target/ESX-Bridge beschränkt die Option auf den Job
+            groups   = Config.Job, -- Option nur für den Job anzeigen (ox_target Framework-Bridge)
             onSelect = function()
                 TriggerServerEvent('spectrev_spikes:pickup', id)
             end,
@@ -144,13 +148,13 @@ CreateThread(function()
     end
 end)
 
--- ─── Auslegen (vom Server angestoßen nach Item-Nutzung) ───────────────
+-- ─── Auslegen (vom Server angestoßen: Item-Nutzung oder Admin-Command) ─
 
-RegisterNetEvent('spectrev_spikes:tryDeploy', function()
+RegisterNetEvent('spectrev_spikes:tryDeploy', function(isAdmin)
     local ped = PlayerPedId()
 
     if IsPedInAnyVehicle(ped, false) then
-        ESX.ShowNotification('Du kannst kein Nagelband im Fahrzeug auslegen.')
+        notify('Du kannst kein Nagelband im Fahrzeug auslegen.', 'error')
         return
     end
 
@@ -164,7 +168,7 @@ RegisterNetEvent('spectrev_spikes:tryDeploy', function()
 
     playDeployAnim()
 
-    TriggerServerEvent('spectrev_spikes:confirmDeploy', vector3(place.x, place.y, z), heading)
+    TriggerServerEvent('spectrev_spikes:confirmDeploy', vector3(place.x, place.y, z), heading, isAdmin == true)
 end)
 
 RegisterNetEvent('spectrev_spikes:create', function(id, coords, heading)
@@ -177,16 +181,13 @@ end)
 
 -- ─── Sync beim Laden / Aufräumen ──────────────────────────────────────
 
-AddEventHandler('esx:playerLoaded', function()
-    TriggerServerEvent('spectrev_spikes:requestSync')
-end)
-
 CreateThread(function()
-    -- Falls die Resource neu gestartet wird, während der Spieler schon geladen ist
-    Wait(1000)
-    if ESX.IsPlayerLoaded and ESX.IsPlayerLoaded() then
-        TriggerServerEvent('spectrev_spikes:requestSync')
+    -- Warten bis die Session steht, dann aktive Bänder vom Server anfordern
+    while not NetworkIsSessionStarted() do
+        Wait(500)
     end
+    Wait(1000)
+    TriggerServerEvent('spectrev_spikes:requestSync')
 end)
 
 AddEventHandler('onResourceStop', function(resource)

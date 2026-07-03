@@ -5,9 +5,14 @@ Config.Job          = 'police'        -- Job, der Nagelbänder nutzen & einsamme
 Config.MinGrade     = 0               -- Mindest-Dienstgrad zum Auslegen (0 = jeder Polizist)
 
 -- ─── Item ─────────────────────────────────────────────────────────────
-Config.Item         = 'nagelband'     -- Item-Name in ox_inventory (siehe README)
+Config.Item         = 'nagelband'     -- Item-Name in devix-inventory (siehe README)
 Config.ReturnItem   = true            -- Item beim Einsammeln zurückgeben (wiederverwendbar)
 Config.MaxPerPlayer = 5               -- Max. gleichzeitig ausgelegte Nagelbänder pro Beamtem
+
+-- ─── Admin-Command ────────────────────────────────────────────────────
+-- Legt ohne Item ein Nagelband ab. Zugriff über ACE-Rechte (siehe README):
+--   add_ace group.admin command.spikestrip allow
+Config.AdminCommand = 'spikestrip'
 
 -- ─── Prop ─────────────────────────────────────────────────────────────
 Config.Prop         = 'p_ld_stinger_s' -- Standard-GTA-Nagelband-Prop

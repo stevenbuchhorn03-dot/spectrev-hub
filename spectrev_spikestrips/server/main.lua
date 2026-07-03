@@ -1,75 +1,106 @@
--- ESX-Objekt (imports.lua setzt es bereits global; Guard zur Sicherheit)
-ESX = ESX or exports['es_extended']:getSharedObject()
+-- devix-core Objekt (Framework-Bridge: GetPlayer, GetPlayerJob, AddItem, RemoveItem, Notify)
+local DEVIX = exports['devix-core']:getObjects()
 
--- Ausgelegte Nagelbänder: [id] = { owner = identifier, coords = vec3, heading = number }
+-- Ausgelegte Nagelbänder: [id] = { owner = src, coords = vec3, heading = number }
 local strips = {}
 local nextId = 0
 
--- Zählt die aktuell ausgelegten Bänder eines Beamten
-local function countStrips(identifier)
+-- Zählt die aktuell ausgelegten Bänder eines Beamten (per Server-ID)
+local function countStrips(src)
     local count = 0
     for _, data in pairs(strips) do
-        if data.owner == identifier then
+        if data.owner == src then
             count = count + 1
         end
     end
     return count
 end
 
--- Prüft Job + Dienstgrad
-local function isAuthorized(xPlayer)
-    local job = xPlayer.getJob()
-    return job.name == Config.Job and job.grade >= Config.MinGrade
+-- Liest den Dienstgrad robust aus (Zahl oder Tabelle {level=...})
+local function getGradeLevel(job)
+    local grade = job and job.grade
+    if type(grade) == 'table' then
+        grade = grade.level or grade.grade or 0
+    end
+    return tonumber(grade) or 0
+end
+
+-- Prüft Job + Dienstgrad anhand des Player-Objekts
+local function isAuthorized(player)
+    if not player then return false end
+    local job = DEVIX.GetPlayerJob(player)
+    return job ~= nil and job.name == Config.Job and getGradeLevel(job) >= Config.MinGrade
 end
 
 -- ─── Item benutzt → Auslegen anstoßen ─────────────────────────────────
+-- Wird von devix aufgerufen, wenn das Item benutzt wird.
+-- In der Item-Config: server = { useExport = 'spectrev_spikestrips.useNagelband' }
+exports('useNagelband', function(src, itemData)
+    local player = DEVIX.GetPlayer(src)
+    if not player then return end
 
-ESX.RegisterUsableItem(Config.Item, function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    if not xPlayer then return end
-
-    if not isAuthorized(xPlayer) then
-        xPlayer.showNotification('Nur die Polizei kann Nagelbänder benutzen.')
+    if not isAuthorized(player) then
+        DEVIX.Notify(src, 'Nur die Polizei kann Nagelbänder benutzen.', 'error')
         return
     end
 
-    if countStrips(xPlayer.identifier) >= Config.MaxPerPlayer then
-        xPlayer.showNotification(('Du hast bereits das Maximum von %s Nagelbändern ausgelegt.'):format(Config.MaxPerPlayer))
+    if countStrips(src) >= Config.MaxPerPlayer then
+        DEVIX.Notify(src, ('Du hast bereits das Maximum von %s Nagelbändern ausgelegt.'):format(Config.MaxPerPlayer), 'error')
         return
     end
 
     -- Item wird erst nach erfolgreicher Platzierung (confirmDeploy) verbraucht
-    TriggerClientEvent('spectrev_spikes:tryDeploy', source)
+    TriggerClientEvent('spectrev_spikes:tryDeploy', src, false)
 end)
 
--- ─── Platzierung bestätigen → Item verbrauchen & Band registrieren ────
+-- ─── Admin-Command: Nagelband ohne Item ablegen ───────────────────────
+RegisterCommand(Config.AdminCommand, function(source, args, rawCommand)
+    if source == 0 then
+        print('[spectrev_spikestrips] Dieser Befehl kann nur im Spiel benutzt werden.')
+        return
+    end
+    -- Sichtbarkeit/Ausführung über restricted=true (ACE command.<name>)
+    TriggerClientEvent('spectrev_spikes:tryDeploy', source, true)
+end, true) -- restricted = true → nur Spieler mit ACE-Recht command.<AdminCommand>
 
-RegisterNetEvent('spectrev_spikes:confirmDeploy', function(coords, heading)
+-- ─── Platzierung bestätigen → ggf. Item verbrauchen & Band registrieren ─
+
+RegisterNetEvent('spectrev_spikes:confirmDeploy', function(coords, heading, isAdmin)
     local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if not xPlayer or not isAuthorized(xPlayer) then return end
+
+    if isAdmin then
+        -- Server-seitige Absicherung: Client-Flag alleine reicht nicht
+        if not IsPlayerAceAllowed(src, 'command.' .. Config.AdminCommand) then
+            return
+        end
+    else
+        local player = DEVIX.GetPlayer(src)
+        if not isAuthorized(player) then return end
+
+        if countStrips(src) >= Config.MaxPerPlayer then
+            DEVIX.Notify(src, ('Du hast bereits das Maximum von %s Nagelbändern ausgelegt.'):format(Config.MaxPerPlayer), 'error')
+            return
+        end
+
+        -- Item vorhanden? Dann verbrauchen (1 Stück)
+        local hasItem = exports['devix-inventory']:GetItemCount(src, Config.Item) or 0
+        if hasItem < 1 then return end
+        if not DEVIX.RemoveItem(player, Config.Item, 1) then return end
+    end
 
     -- Anti-Cheat: gemeldete Position muss nah am Spieler sein
     local serverCoords = GetEntityCoords(GetPlayerPed(src))
     if #(serverCoords - vector3(coords.x, coords.y, coords.z)) > Config.MaxDeployDistance then
+        -- Bei regulärem Auslegen wurde das Item schon entfernt → zurückgeben
+        if not isAdmin then
+            DEVIX.AddItem(DEVIX.GetPlayer(src), Config.Item, 1)
+        end
         return
     end
-
-    if countStrips(xPlayer.identifier) >= Config.MaxPerPlayer then
-        xPlayer.showNotification(('Du hast bereits das Maximum von %s Nagelbändern ausgelegt.'):format(Config.MaxPerPlayer))
-        return
-    end
-
-    local item = xPlayer.getInventoryItem(Config.Item)
-    if not item or item.count < 1 then
-        return
-    end
-
-    xPlayer.removeInventoryItem(Config.Item, 1)
 
     nextId = nextId + 1
     local id = nextId
-    strips[id] = { owner = xPlayer.identifier, coords = coords, heading = heading }
+    strips[id] = { owner = src, coords = coords, heading = heading }
 
     -- Alle Clients spawnen das Band lokal
     TriggerClientEvent('spectrev_spikes:create', -1, id, coords, heading)
@@ -79,8 +110,8 @@ end)
 
 RegisterNetEvent('spectrev_spikes:pickup', function(id)
     local src = source
-    local xPlayer = ESX.GetPlayerFromId(src)
-    if not xPlayer or not isAuthorized(xPlayer) then return end
+    local player = DEVIX.GetPlayer(src)
+    if not isAuthorized(player) then return end
 
     local strip = strips[id]
     if not strip then return end
@@ -92,10 +123,10 @@ RegisterNetEvent('spectrev_spikes:pickup', function(id)
     end
 
     if Config.ReturnItem then
-        if xPlayer.canCarryItem(Config.Item, 1) then
-            xPlayer.addInventoryItem(Config.Item, 1)
+        if exports['devix-inventory']:CanCarryItem(src, Config.Item, 1) then
+            DEVIX.AddItem(player, Config.Item, 1)
         else
-            xPlayer.showNotification('Dein Inventar ist voll.')
+            DEVIX.Notify(src, 'Dein Inventar ist voll.', 'error')
             return
         end
     end
