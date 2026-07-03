@@ -5535,9 +5535,17 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
 .quick-slots { justify-content: center; }
 .quick-slots-label { text-align: center; }
 
-/* Resize handle: keep functional, visually quiet */
-.resize-handle { opacity: 0.35; }
-.resize-handle:hover { opacity: 0.85; }
+/* Resize disabled: users may not scale the inventory or any storage
+   panel (trunk/stash/glovebox/drop). Hide every resize handle — the
+   live resource binds resize to these elements, so removing them from
+   the layout and blocking pointer events kills the grab entirely. */
+.resize-handle,
+.resize-handle-secondary,
+#resize-handle,
+#resize-handle-drop {
+    display: none !important;
+    pointer-events: none !important;
+}
 
 /* --- Uniform Storyline sizing: every slot type = 72px ---
    Grid cells follow --cell-size (fallback; in-game the live resource
