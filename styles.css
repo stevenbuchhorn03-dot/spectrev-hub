@@ -5568,3 +5568,64 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     border: 1px solid var(--sl-slot-border);
     border-radius: 10px;
 }
+
+/* ==========================================================================
+   Toolbar + quick access moved INTO the bag panel (self-contained card)
+   ========================================================================== */
+
+/* Window header now only holds the (hidden) title — drop it from layout */
+.inventory-header { display: none !important; }
+
+/* Bag panel is the positioning context for the top toolbar */
+.inventory-panel.primary {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Weight + craft/settings/close pinned top-right, title stays centered */
+.primary-topbar {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 3;
+}
+.primary-topbar .weight-display {
+    min-width: 0;
+    gap: 3px;
+}
+.primary-topbar-btns {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+/* keep the centered title clear of the toolbar on the right */
+.inventory-panel.primary .primary-panel-header { padding-right: 96px; padding-left: 96px; }
+
+/* Grid grows so quick access sits at the panel's bottom edge */
+.inventory-panel.primary .primary-grid-frame { flex: 1 1 auto; }
+
+/* Quick access: bottom strip inside the panel (not a floating footer) */
+.inventory-panel.primary .quick-slots-wrap {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    margin-top: 16px;
+    padding: 14px 0 2px;
+    background: transparent;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 0;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    overflow: visible;
+}
+.inventory-panel.primary .quick-slots { justify-content: center; flex-wrap: wrap; }
+
+/* Hint bar deleted from the layout (hidden stub kept for JS toggle target) */
+#inventory-hint-bar { display: none !important; }

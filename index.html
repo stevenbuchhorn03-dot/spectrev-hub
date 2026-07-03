@@ -52,16 +52,6 @@
         <div id="inventory-window" class="inventory-window" data-draggable>
             <header id="inventory-header" class="inventory-header">
                 <h1 id="inventory-title" class="inventory-title" data-i18n="inv_title">Envanter</h1>
-                <div class="header-meta">
-                    <div class="weight-display" data-i18n-aria-label="weight">
-                        <span class="weight-label" data-i18n="weight">Ağırlık</span>
-                        <span class="weight-value"><span id="weight-current">0</span><span class="weight-sep">/</span><span id="weight-max">0</span> <span data-i18n="weight_unit">kg</span></span>
-                        <div class="weight-bar"><div id="weight-bar-fill" class="weight-bar-fill"></div></div>
-                    </div>
-                    <button type="button" id="btn-craft" class="btn-craft" data-i18n-aria-label="btn_craft_title" data-i18n-title="btn_craft_title"><i class="fas fa-hammer" aria-hidden="true"></i></button>
-                    <button type="button" id="btn-settings" class="btn-settings" data-i18n-aria-label="btn_settings_title" data-i18n-title="btn_settings_title"><i class="fas fa-cog" aria-hidden="true"></i></button>
-                    <button type="button" id="btn-close" class="btn-close" data-i18n-aria-label="close"><i class="fas fa-times" aria-hidden="true"></i></button>
-                </div>
             </header>
             <main class="inventory-body">
                 <!-- Sol: Kıyafet slotları -->
@@ -77,6 +67,18 @@
                     </div>
                 </section>
                 <section class="inventory-panel primary inv-blur-element" aria-labelledby="primary-label" data-hlsl data-blur-strength="14">
+                    <div class="primary-topbar">
+                        <div class="weight-display" data-i18n-aria-label="weight">
+                            <span class="weight-label" data-i18n="weight">Ağırlık</span>
+                            <span class="weight-value"><span id="weight-current">0</span><span class="weight-sep">/</span><span id="weight-max">0</span> <span data-i18n="weight_unit">kg</span></span>
+                            <div class="weight-bar"><div id="weight-bar-fill" class="weight-bar-fill"></div></div>
+                        </div>
+                        <div class="primary-topbar-btns">
+                            <button type="button" id="btn-craft" class="btn-craft" data-i18n-aria-label="btn_craft_title" data-i18n-title="btn_craft_title"><i class="fas fa-hammer" aria-hidden="true"></i></button>
+                            <button type="button" id="btn-settings" class="btn-settings" data-i18n-aria-label="btn_settings_title" data-i18n-title="btn_settings_title"><i class="fas fa-cog" aria-hidden="true"></i></button>
+                            <button type="button" id="btn-close" class="btn-close" data-i18n-aria-label="close"><i class="fas fa-times" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
                     <div class="primary-panel-header">
                         <h2 id="primary-label" class="panel-title" data-i18n="primary_label">Inventar</h2>
                         <div class="primary-panel-actions">
@@ -87,23 +89,14 @@
                     <div class="primary-grid-frame" id="primary-grid-frame" role="region" aria-labelledby="primary-label">
                         <div id="grid-primary" class="grid-container" role="list" data-i18n-aria-label="grid_primary_aria"></div>
                     </div>
+                    <div class="quick-slots-wrap">
+                        <span class="quick-slots-label"><span data-i18n="quick_access_label">Hızlı erişim</span> <span id="quick-slots-keys" class="quick-slots-keys" data-i18n="quick_slots_keys">1–6</span></span>
+                        <div id="quick-slots" class="quick-slots"><!-- slots filled by JS from Config.QuickSlots --></div>
+                    </div>
                 </section>
             </main>
-            <footer class="quick-slots-wrap">
-                <span class="quick-slots-label"><span data-i18n="quick_access_label">Hızlı erişim</span> <span id="quick-slots-keys" class="quick-slots-keys" data-i18n="quick_slots_keys">1–6</span></span>
-                <div id="quick-slots" class="quick-slots"><!-- slots filled by JS from Config.QuickSlots --></div>
-                <div id="inventory-hint-bar" class="inventory-hint-bar" aria-hidden="true" data-i18n>
-                    <span class="hint-group" data-hint-key="hint_drag"></span>
-                    <span class="hint-group" data-hint-key="hint_shift_left"></span>
-                    <span class="hint-group" data-hint-key="hint_shift_right"></span>
-                    <span class="hint-group" data-hint-key="hint_ctrl_batch"></span>
-                    <span class="hint-group" data-hint-key="hint_quick_slot"></span>
-                    <span class="hint-group" data-hint-key="hint_middle_clear"></span>
-                    <span class="hint-group" data-hint-key="hint_rotate_r"></span>
-                    <span class="hint-group" data-hint-key="hint_cancel_x"></span>
-                    <span class="hint-group" data-hint-key="hint_esc"></span>
-                </div>
-            </footer>
+            <!-- Tuş ipuçları kaldırıldı; boş gizli stub bırakıldı ki Devix'in "hint göster" toggle'ı null'a düşmesin -->
+            <div id="inventory-hint-bar" class="inventory-hint-bar" aria-hidden="true" hidden></div>
             <div id="resize-handle" class="resize-handle" data-i18n-title="resize_handle_title" aria-hidden="true"><i class="fas fa-expand-alt"></i></div>
         </div>
         <!-- Ayarlar paneli (blur, renkler, hint) -->
