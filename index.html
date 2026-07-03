@@ -1,349 +1,534 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>eyefind.info</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; overflow: hidden; }
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #c8c8c8;
-    font-size: 13px;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ─── MAIN VIEW ─── */
-  #main-view {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-  }
-
-  /* Header */
-  .site-header {
-    background: linear-gradient(180deg, #5fb3d4 0%, #3d90b4 55%, #2e7fa3 100%);
-    padding: 12px 24px 0;
-    flex-shrink: 0;
-  }
-  .header-top { display: flex; align-items: center; gap: 20px; margin-bottom: 14px; }
-
-  .logo-wrap { display: flex; flex-direction: column; line-height: 1; flex-shrink: 0; }
-  .logo-main { font-size: 46px; font-style: italic; font-weight: 900; font-family: 'Georgia','Times New Roman',serif; letter-spacing: -1px; }
-  .logo-eye  { color: #ffffff; }
-  .logo-find { color: #f5d020; }
-  .logo-sub  { font-size: 21px; font-style: italic; font-weight: 700; font-family: 'Georgia','Times New Roman',serif; color: #f5d020; margin-top: -7px; margin-left: 2px; }
-
-  .header-links { display: flex; align-items: center; flex: 1; justify-content: center; }
-  .header-link  { color: #fff; font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 7px; padding: 0 26px; cursor: pointer; }
-  .header-link:hover { text-decoration: underline; }
-  .header-link-divider { width: 1px; height: 26px; background: rgba(255,255,255,0.5); }
-
-  .weather-block { display: flex; align-items: center; gap: 10px; color: #fff; flex-shrink: 0; }
-  .weather-text { text-align: right; line-height: 1.4; }
-  .weather-city { font-weight: bold; font-size: 14px; }
-  .weather-day  { font-size: 13px; }
-  .w-divider    { width: 1px; height: 38px; background: rgba(255,255,255,0.5); }
-  .sun-icon     { font-size: 40px; color: #f5d020; line-height: 1; filter: drop-shadow(0 0 7px rgba(245,208,32,0.7)); }
-
-  .search-row { display: flex; align-items: stretch; }
-  .search-box {
-    flex: 1; display: flex; align-items: center;
-    background: #fff; border: 2px solid #ccc; border-right: none;
-    border-radius: 4px 0 0 4px; height: 46px; padding: 0 14px; gap: 10px;
-  }
-  .search-icon  { font-size: 23px; color: #3d90b4; }
-  .search-input { border: none; outline: none; font-size: 17px; color: #aaa; background: transparent; width: 100%; }
-  .random-btn {
-    background: linear-gradient(180deg, #2a9090, #1f7070);
-    color: #fff; border: none; font-size: 18px; font-weight: bold;
-    letter-spacing: 2px; padding: 0 36px; border-radius: 0 4px 4px 0; cursor: pointer; height: 46px;
-  }
-  .random-btn:hover { background: linear-gradient(180deg, #33aaaa, #268888); }
-
-  .gold-bar { height: 5px; background: linear-gradient(90deg, #c8a010, #f5d020, #c8a010); flex-shrink: 0; }
-
-  .nav-bar { background: #d4d4d4; display: flex; border-bottom: 2px solid #b8b8b8; flex-shrink: 0; }
-  .nav-item {
-    flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 10px 4px; cursor: pointer; border-right: 1px solid #b8b8b8;
-    text-align: center; font-size: 11.5px; font-weight: bold; color: #333;
-    text-transform: uppercase; line-height: 1.3; transition: background 0.1s;
-  }
-  .nav-item:last-child { border-right: none; }
-  .nav-item:hover { background: #c4c4c4; }
-  .nav-icon { font-size: 20px; color: #3d90b4; flex-shrink: 0; }
-
-  .content { background: #d0d0d0; padding: 14px 24px 20px; flex: 1; }
-
-  /* Ads */
-  .ads-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
-  .ad-block { border: 2px solid #4a8faf; overflow: hidden; cursor: pointer; display: block; }
-  .ad-block:hover .ad-image { opacity: 0.85; }
-  .ad-label { background: linear-gradient(180deg, #5fb3d4, #3d90b4); color: #fff; font-size: 10px; font-weight: bold; text-align: center; padding: 4px 0; letter-spacing: 1px; text-transform: uppercase; }
-  .ad-image { width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; overflow: hidden; transition: opacity 0.15s; }
-
-  .ad-ph1 { background: linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); color: #c8a010; }
-  .ad-ph1 .big { font-size: 22px; font-style: italic; font-family: 'Georgia',serif; }
-  .ad-ph1 .sub { font-size: 11px; color: #cc3333; letter-spacing: 3px; text-transform: uppercase; }
-  .ad-ph2 { background: linear-gradient(135deg,#1a4a1a,#0d3b0d); color: #f5d020; }
-  .ad-ph2 .big { font-size: 26px; font-weight: 900; }
-  .ad-ph2 .sub { font-size: 13px; color: #f5d020; letter-spacing: 2px; }
-  .ad-ph3 { background: linear-gradient(135deg,#111,#222); color: #fff; }
-  .ad-ph3 .tiny { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #bbb; }
-  .ad-ph3 .big  { font-size: 24px; font-style: italic; font-family: 'Georgia',serif; }
-  .ad-ph3 .sub  { font-size: 9px; color: #999; letter-spacing: 2px; }
-
-  /* Tiles */
-  .websites-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
-  .site-tile {
-    aspect-ratio: 16/9; border: 2px solid #b0b0b0; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; overflow: hidden;
-    transition: border-color 0.15s, transform 0.12s;
-  }
-  .site-tile:hover { border-color: #3d90b4; transform: scale(1.03); z-index: 2; }
-  .tile-inner {
-    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-    font-weight: bold; text-align: center; padding: 6px; flex-direction: column; gap: 5px;
-  }
-  .tile-icon  { font-size: 24px; }
-  .tile-label { font-size: 10px; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; }
-
-  .t1  { background: linear-gradient(135deg,#1a3a1a,#2d5a2d); color: #90ee90; }
-  .t2  { background: linear-gradient(135deg,#1a1a1a,#333);    color: #fff;    }
-  .t3  { background: linear-gradient(135deg,#3a0000,#660000); color: #ff7777; }
-  .t4  { background: linear-gradient(135deg,#003a5a,#005a8a); color: #66ccff; }
-  .t5  { background: linear-gradient(135deg,#3a2a00,#6a4a00); color: #ffcc44; }
-  .t6  { background: linear-gradient(135deg,#1a1a3a,#2a2a6a); color: #aaaaff; }
-  .t7  { background: linear-gradient(135deg,#2a0a3a,#5a1a6a); color: #dd88ff; }
-  .t8  { background: linear-gradient(135deg,#003a1a,#006a30); color: #44ff88; }
-  .t9  { background: linear-gradient(135deg,#3a1a00,#6a3000); color: #ff9944; }
-  .t10 { background: linear-gradient(135deg,#1a3a3a,#2a6a6a); color: #44ffff; }
-
-  .site-footer { background: #2e7fa3; color: rgba(255,255,255,0.75); text-align: center; padding: 8px; font-size: 10px; letter-spacing: 1px; flex-shrink: 0; }
-
-  /* ─── IFRAME VIEW ─── */
-  #iframe-view {
-    display: none;
-    flex-direction: column;
-    height: 100%;
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 9999;
-    background: #222;
-  }
-  #iframe-view.active { display: flex; }
-
-  #iframe-bar {
-    background: #bebebe;
-    display: flex;
-    align-items: center;
-    padding: 5px 10px;
-    gap: 6px;
-    height: 36px;
-    flex-shrink: 0;
-    border-bottom: 2px solid #999;
-  }
-  .ibar-btn {
-    background: linear-gradient(180deg,#d8d8d8,#b8b8b8);
-    border: 1px solid #888; border-radius: 3px;
-    width: 28px; height: 24px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: bold; color: #333; flex-shrink: 0;
-    user-select: none;
-  }
-  .ibar-btn:hover { background: #e0e0e0; }
-  .ibar-home {
-    background: linear-gradient(180deg, #3d90b4, #2e7fa3);
-    border: 1px solid #1a6a8a; border-radius: 3px;
-    padding: 0 12px; height: 24px; cursor: pointer;
-    display: flex; align-items: center; gap: 5px;
-    font-size: 12px; font-weight: bold; color: #fff; flex-shrink: 0;
-    user-select: none;
-  }
-  .ibar-home:hover { background: linear-gradient(180deg,#5fb3d4,#3d90b4); }
-  #iframe-url-display {
-    flex: 1; height: 24px; border: 1px solid #999; border-radius: 3px;
-    padding: 0 10px; font-size: 11px; background: #fff; color: #555;
-    display: flex; align-items: center; overflow: hidden; white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  #inner-frame {
-    flex: 1;
-    width: 100%;
-    border: none;
-  }
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="inv_title">Envanter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body>
-
-<!-- ══ MAIN VIEW ══ -->
-<div id="main-view">
-
-  <div class="site-header">
-    <div class="header-top">
-      <div class="logo-wrap">
-        <div class="logo-main"><span class="logo-eye">eye</span><span class="logo-find">find</span></div>
-        <div class="logo-sub">.info</div>
-      </div>
-      <div class="header-links">
-        <span class="header-link">&#9993;&nbsp; Inbox</span>
-        <div class="header-link-divider"></div>
-        <span class="header-link">&#9998;&nbsp; Compose New</span>
-      </div>
-      <div class="weather-block">
-        <div class="weather-text">
-          <div class="weather-city">Downtown Vinewood</div>
-          <div class="weather-day">Sun</div>
+    <!-- Quick slot bar (TAB): rahat, sade, dikkat dağıtmayan önizleme -->
+    <div id="quick-slot-bar-root" class="quick-slot-bar-root quick-slot-bar-hidden" aria-hidden="true">
+        <div class="quick-slot-bar-inner inv-blur-element" data-hlsl data-blur-strength="8">
+            <span id="quick-slot-bar-hint" class="quick-slot-bar-hint" data-i18n="quick_slot_bar_hint">1–6</span>
+            <div id="quick-slot-bar-boxes" class="quick-slot-bar-boxes"><!-- slots filled by JS from Config.QuickSlots --></div>
         </div>
-        <div class="w-divider"></div>
-        <div class="sun-icon">&#9728;</div>
-      </div>
     </div>
-    <div class="search-row">
-      <div class="search-box">
-        <span class="search-icon">&#128269;</span>
-        <input class="search-input" type="text" placeholder="Search Eyefind" />
-      </div>
-      <button class="random-btn">RANDOM</button>
-    </div>
-  </div>
-
-  <div class="gold-bar"></div>
-
-  <nav class="nav-bar">
-    <span class="nav-item"><span class="nav-icon">&#128241;</span><span>MEDIA AND<br>ENTERTAINMENT</span></span>
-    <span class="nav-item"><span class="nav-icon">&#127828;</span><span>FOOD<br>AND DRINK</span></span>
-    <span class="nav-item"><span class="nav-icon">&#36;</span><span>MONEY<br>AND SERVICES</span></span>
-    <span class="nav-item"><span class="nav-icon">&#9992;</span><span>TRAVEL<br>AND TRANSPORT</span></span>
-    <span class="nav-item"><span class="nav-icon">&#128092;</span><span>FASHION<br>AND HEALTH</span></span>
-  </nav>
-
-  <div class="content">
-
-    <!-- ══ ADS ══ -->
-    <div class="ads-row">
-
-      <div class="ad-block" onclick="openSite('https://stevenbuchhorn03-dot.github.io/spectrev-autohaus/')">
-        <div class="ad-label">Sponsored Advertisement</div>
-        <div class="ad-image ad-ph1">
-          <span class="big">Legendary</span>
-          <span class="sub">Motorsport</span>
+    <!-- Yemek / içecek hint: sağ üst — [E] Ye · %20 kaldı (quickslot 1'deki item) -->
+    <div id="food-hint-root" class="food-hint-root hidden" aria-hidden="true">
+        <div class="food-hint-inner inv-blur-element" data-hlsl data-blur-strength="8">
+            <span id="food-hint-key" class="food-hint-key">E</span>
+            <div class="food-hint-text">
+                <div class="food-hint-main">
+                    <span id="food-hint-label" class="food-hint-label">Ye</span>
+                    <span id="food-hint-durability" class="food-hint-durability">100%</span>
+                </div>
+                <span id="food-hint-cancel" class="food-hint-cancel"></span>
+            </div>
         </div>
-      </div>
-
-      <div class="ad-block" onclick="openSite('https://DEINE-SEITE-AD2.de')">
-        <div class="ad-label">Sponsored Advertisement</div>
-        <div class="ad-image ad-ph2">
-          <span class="big">DYNASTY<span style="color:#fff">8</span></span>
-          <span class="sub">EXECUTIVE</span>
-        </div>
-      </div>
-
-      <div class="ad-block" onclick="openSite('https://DEINE-SEITE-AD3.de')">
-        <div class="ad-label">Sponsored Advertisement</div>
-        <div class="ad-image ad-ph3">
-          <span class="tiny">The</span>
-          <span class="big">Diamond</span>
-          <span class="sub">Casino &amp; Resort &middot; Los Santos</span>
-        </div>
-      </div>
-
     </div>
-
-    <!-- ══ TILES ══ -->
-    <div class="websites-grid">
-      <div class="site-tile" onclick="openSite('https://stevenbuchhorn03-dot.github.io/spectrev-autohaus/')">
-        <div class="tile-inner t1"><span class="tile-icon">🏦</span><span class="tile-label">Platzhalter<br>Website 1</span></div>
-      </div>
-      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-2.de')">
-        <div class="tile-inner t2"><span class="tile-icon">⚙️</span><span class="tile-label">Platzhalter<br>Website 2</span></div>
-      </div>
-      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-3.de')">
-        <div class="tile-inner t3"><span class="tile-icon">🎯</span><span class="tile-label">Platzhalter<br>Website 3</span></div>
-      </div>
-      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-4.de')">
-        <div class="tile-inner t4"><span class="tile-icon">✈️</span><span class="tile-label">Platzhalter<br>Website 4</span></div>
-      </div>
-      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-5.de')">
-        <div class="tile-inner t5"><span class="tile-icon">🚗</span><span class="tile-label">Platzhalter<br>Website 5</span></div>
-      </div>
-      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-6.de')">
-        <div class="tile-inner t6"><span class="tile-icon">🏠</span><span class="tile-label">Platzhalter<br>Website 6</span></div>
-      </div>
-      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-7.de')">
-        <div class="tile-inner t7"><span class="tile-icon">💊</span><span class="tile-label">Platzhalter<br>Website 7</span></div>
-      </div>
-      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-8.de')">
-        <div class="tile-inner t8"><span class="tile-icon">🌿</span><span class="tile-label">Platzhalter<br>Website 8</span></div>
-      </div>
-      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-9.de')">
-        <div class="tile-inner t9"><span class="tile-icon">🏛️</span><span class="tile-label">Platzhalter<br>Website 9</span></div>
-      </div>
-      <div class="site-tile" onclick="openSite('https://DEINE-SEITE-10.de')">
-        <div class="tile-inner t10"><span class="tile-icon">⚡</span><span class="tile-label">Platzhalter<br>Website 10</span></div>
-      </div>
+    <!-- Eşya bildirimi: eklendi / silindi / kullanıldı — ekran orta-alt -->
+    <div id="item-notify-root" class="item-notify-root hidden" data-type="used">
+        <div class="item-notify-card overlay-glass inv-blur-element" data-hlsl data-hlsl-layer="overlay" data-blur-strength="14">
+            <div class="item-notify-icon-wrap">
+                <i id="item-notify-type-icon" class="item-notify-type-icon fas fa-check" aria-hidden="true"></i>
+            </div>
+            <img id="item-notify-img" class="item-notify-img" src="" alt="" />
+            <div class="item-notify-body">
+                <span id="item-notify-label" class="item-notify-label"></span>
+                <span id="item-notify-meta" class="item-notify-meta"></span>
+                <span id="item-notify-type" class="item-notify-type"></span>
+            </div>
+            <div id="item-notify-amount-badge" class="item-notify-amount-badge"></div>
+        </div>
     </div>
-
-  </div>
-
-  <div class="site-footer">© EYEFIND.INFO — ALL RIGHTS RESERVED — SAN ANDREAS</div>
-
-</div><!-- end #main-view -->
-
-
-<!-- ══ IFRAME VIEW ══ -->
-<div id="iframe-view">
-  <div id="iframe-bar">
-    <div class="ibar-btn" onclick="iframeBack()">&#9664;</div>
-    <div class="ibar-btn" onclick="iframeForward()">&#9654;</div>
-    <div id="iframe-url-display">about:blank</div>
-    <div class="ibar-home" onclick="goHome()">&#8962; Zurück zu Eyefind</div>
-  </div>
-  <iframe id="inner-frame"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox">
-  </iframe>
-</div>
-
-<script>
-  const mainView   = document.getElementById('main-view');
-  const iframeView = document.getElementById('iframe-view');
-  const frame      = document.getElementById('inner-frame');
-  const urlDisplay = document.getElementById('iframe-url-display');
-
-  function openSite(url) {
-    frame.src = url;
-    urlDisplay.textContent = url;
-    mainView.style.display   = 'none';
-    iframeView.classList.add('active');
-  }
-
-  function goHome() {
-    iframeView.classList.remove('active');
-    mainView.style.display = 'flex';
-    frame.src = 'about:blank';
-    urlDisplay.textContent = 'about:blank';
-  }
-
-  function iframeBack() {
-    try { frame.contentWindow.history.back(); } catch(e) {}
-  }
-  function iframeForward() {
-    try { frame.contentWindow.history.forward(); } catch(e) {}
-  }
-
-  // Update URL display when iframe navigates
-  frame.addEventListener('load', function() {
-    try {
-      var u = frame.contentWindow.location.href;
-      if (u && u !== 'about:blank') urlDisplay.textContent = u;
-    } catch(e) {}
-  });
-</script>
-
+    <div id="inventory-root" class="hidden">
+        <div id="inventory-window" class="inventory-window inventory-window-glass inv-blur-element" data-draggable data-hlsl data-blur-strength="16">
+            <header id="inventory-header" class="inventory-header">
+                <h1 id="inventory-title" class="inventory-title" data-i18n="inv_title">Envanter</h1>
+                <div class="header-meta">
+                    <div class="weight-display" data-i18n-aria-label="weight">
+                        <span class="weight-label" data-i18n="weight">Ağırlık</span>
+                        <span class="weight-value"><span id="weight-current">0</span><span class="weight-sep">/</span><span id="weight-max">0</span> <span data-i18n="weight_unit">kg</span></span>
+                        <div class="weight-bar"><div id="weight-bar-fill" class="weight-bar-fill"></div></div>
+                    </div>
+                    <button type="button" id="btn-craft" class="btn-craft" data-i18n-aria-label="btn_craft_title" data-i18n-title="btn_craft_title"><i class="fas fa-hammer" aria-hidden="true"></i></button>
+                    <button type="button" id="btn-settings" class="btn-settings" data-i18n-aria-label="btn_settings_title" data-i18n-title="btn_settings_title"><i class="fas fa-cog" aria-hidden="true"></i></button>
+                    <button type="button" id="btn-close" class="btn-close" data-i18n-aria-label="close"><i class="fas fa-times" aria-hidden="true"></i></button>
+                </div>
+            </header>
+            <main class="inventory-body">
+                <!-- Sol: Kıyafet slotları -->
+                <section class="inventory-panel clothes-panel" aria-labelledby="clothes-label">
+                    <h2 id="clothes-label" class="panel-title" data-i18n="clothes_label">Kıyafet</h2>
+                    <div id="clothes-slots" class="clothes-slots" role="list" data-i18n-aria-label="clothes_slots_aria"></div>
+                </section>
+                <section class="inventory-panel primary" aria-labelledby="primary-label">
+                    <div class="primary-panel-header">
+                        <h2 id="primary-label" class="panel-title" data-i18n="primary_label">Çantam</h2>
+                        <div class="primary-panel-actions">
+                            <input type="text" id="primary-item-search" class="primary-item-search" data-i18n-placeholder="search_placeholder" autocomplete="off" data-i18n-aria-label="search_aria" />
+                            <button type="button" id="btn-sort-az" class="btn-sort-az" data-i18n-title="sort_az_title" data-i18n-aria-label="sort_az_aria" data-i18n="sort_az_label">A–Z</button>
+                        </div>
+                    </div>
+                    <div class="primary-grid-frame" id="primary-grid-frame" role="region" aria-labelledby="primary-label">
+                        <div id="grid-primary" class="grid-container" role="list" data-i18n-aria-label="grid_primary_aria"></div>
+                    </div>
+                </section>
+            </main>
+            <footer class="quick-slots-wrap">
+                <span class="quick-slots-label"><span data-i18n="quick_access_label">Hızlı erişim</span> <span id="quick-slots-keys" class="quick-slots-keys" data-i18n="quick_slots_keys">1–6</span></span>
+                <div id="quick-slots" class="quick-slots"><!-- slots filled by JS from Config.QuickSlots --></div>
+                <div id="inventory-hint-bar" class="inventory-hint-bar" aria-hidden="true" data-i18n>
+                    <span class="hint-group" data-hint-key="hint_drag"></span>
+                    <span class="hint-group" data-hint-key="hint_shift_left"></span>
+                    <span class="hint-group" data-hint-key="hint_shift_right"></span>
+                    <span class="hint-group" data-hint-key="hint_ctrl_batch"></span>
+                    <span class="hint-group" data-hint-key="hint_quick_slot"></span>
+                    <span class="hint-group" data-hint-key="hint_middle_clear"></span>
+                    <span class="hint-group" data-hint-key="hint_rotate_r"></span>
+                    <span class="hint-group" data-hint-key="hint_cancel_x"></span>
+                    <span class="hint-group" data-hint-key="hint_esc"></span>
+                </div>
+            </footer>
+            <div id="resize-handle" class="resize-handle" data-i18n-title="resize_handle_title" aria-hidden="true"><i class="fas fa-expand-alt"></i></div>
+        </div>
+        <!-- Ayarlar paneli (blur, renkler, hint) -->
+        <div id="settings-panel" class="settings-panel hidden" aria-labelledby="settings-title" aria-modal="true">
+            <div class="settings-panel-inner">
+                <header class="settings-header">
+                    <h2 id="settings-title" class="settings-title">Ayarlar</h2>
+                    <button type="button" id="btn-settings-close" class="btn-settings-close" data-i18n-aria-label="close"><i class="fas fa-times"></i></button>
+                </header>
+                <div class="settings-body">
+                    <div class="settings-row" data-settings-field="language">
+                        <span class="settings-label" data-i18n="settings_language">Dil</span>
+                        <select id="setting-language" class="settings-select" aria-label="Dil">
+                            <option value="tr">Türkçe</option>
+                            <option value="en">English</option>
+                            <option value="de">Deutsch</option>
+                            <option value="fr">Français</option>
+                            <option value="es">Español</option>
+                            <option value="pt">Português</option>
+                        </select>
+                    </div>
+                    <label class="settings-row settings-row-toggle" data-settings-field="blur">
+                        <span class="settings-label" data-i18n="settings_blur">Arka plan bulanıklığı</span>
+                        <input type="checkbox" id="setting-blur" class="settings-checkbox" checked />
+                    </label>
+                    <label class="settings-row settings-row-toggle" data-settings-field="showHint">
+                        <span class="settings-label" data-i18n="settings_show_hint">Tuş ipuçlarını göster</span>
+                        <input type="checkbox" id="setting-show-hint" class="settings-checkbox" checked />
+                    </label>
+                    <label class="settings-row settings-row-toggle" data-settings-field="showItemRarity">
+                        <span class="settings-label" data-i18n="settings_show_item_rarity">Eşya nadirliği (parlama)</span>
+                        <input type="checkbox" id="setting-show-item-rarity" class="settings-checkbox" checked />
+                    </label>
+                    <label class="settings-row settings-row-toggle" data-settings-field="inventoryCamera">
+                        <span class="settings-label" data-i18n="settings_inventory_camera">Envanter kamerası</span>
+                        <input type="checkbox" id="setting-inventory-camera" class="settings-checkbox" checked />
+                    </label>
+                    <div class="settings-row" data-settings-field="invBg">
+                        <span class="settings-label" data-i18n="settings_inv_bg">Envanter arka plan</span>
+                        <input type="color" id="setting-inv-bg" class="settings-color" value="#0a0a0c" />
+                    </div>
+                    <div class="settings-row settings-row-range" data-settings-field="invBgOpacity">
+                        <span class="settings-label" data-i18n="settings_inv_bg_opacity">Arka plan saydamlığı</span>
+                        <div class="settings-range-wrap">
+                            <input type="range" id="setting-inv-bg-opacity" class="settings-range" min="0" max="100" value="26" />
+                            <span id="setting-inv-bg-opacity-value" class="settings-range-value">26%</span>
+                        </div>
+                    </div>
+                    <div class="settings-row" data-settings-field="accent">
+                        <span class="settings-label" data-i18n="settings_accent">Vurgu rengi</span>
+                        <input type="color" id="setting-accent" class="settings-color" value="#d4a853" />
+                    </div>
+                    <div class="settings-row" data-settings-field="durabilityHigh">
+                        <span class="settings-label" data-i18n="settings_durability_high">Dayanıklılık (yüksek)</span>
+                        <input type="color" id="setting-durability-high" class="settings-color" value="#63d38c" />
+                    </div>
+                    <div class="settings-row" data-settings-field="durabilityLow">
+                        <span class="settings-label" data-i18n="settings_durability_low">Dayanıklılık (düşük)</span>
+                        <input type="color" id="setting-durability-low" class="settings-color" value="#e36a6a" />
+                    </div>
+                    <div class="settings-row" data-settings-field="gridBorder">
+                        <span class="settings-label" data-i18n="settings_grid_border">Izgara kenar</span>
+                        <input type="color" id="setting-grid-border" class="settings-color" value="#ffffff" />
+                    </div>
+                    <div class="settings-row settings-row-range" data-settings-field="gridBorderOpacity">
+                        <span class="settings-label" data-i18n="settings_grid_border_opacity">Saydamlık</span>
+                        <div class="settings-range-wrap">
+                            <input type="range" id="setting-grid-border-opacity" class="settings-range" min="0" max="100" value="15" />
+                            <span id="setting-grid-border-opacity-value" class="settings-range-value">15%</span>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-settings-reset" class="btn-settings-reset" data-settings-field="reset" data-i18n="settings_reset">Varsayılana dön</button>
+                </div>
+            </div>
+        </div>
+        <!-- Çoklu ikinci envanter panelleri (stash, bag, clothes vb.) — script ile doldurulur -->
+        <div id="panel-secondary-container" class="panel-secondary-container hidden"></div>
+        <!-- Üçüncü panel: Yerdeki eşya (drop) — player + second (çanta) + drop -->
+        <div id="panel-drop-window" class="floating-panel floating-panel-drop floating-panel-glass hidden inv-blur-element" aria-labelledby="drop-label" data-draggable-panel data-hlsl data-blur-strength="12">
+            <header class="floating-panel-header" data-panel-drag-handle-drop>
+                <h2 id="drop-label" class="panel-title" data-i18n="drop_label"></h2>
+                <i class="fas fa-grip-vertical panel-drag-icon" aria-hidden="true"></i>
+                <button type="button" id="drop-close-btn" class="panel-close-btn" data-i18n-aria-label="close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </header>
+            <div class="floating-panel-body">
+                <div class="secondary-grid-frame">
+                    <div id="grid-drop" class="grid-container" role="list" data-i18n-aria-label="grid_drop_aria"></div>
+                </div>
+            </div>
+            <div id="resize-handle-drop" class="resize-handle resize-handle-secondary" data-i18n-title="resize_handle_title" aria-hidden="true"><i class="fas fa-expand-alt"></i></div>
+        </div>
+        <!-- Sürüklenen eşya clone -->
+        <div id="drag-ghost" class="item-cell item-ghost hidden"></div>
+        <!-- Sürüklerken bırakma önizlemesi (yeşil/kırmızı) -->
+        <div id="drop-preview" class="drop-preview hidden"></div>
+        <!-- Eşya bilgi tooltip -->
+        <div id="item-tooltip" class="item-tooltip item-tooltip-dark hidden"></div>
+        <!-- Sağ tık menü -->
+        <div id="give-player-list-root" class="give-player-list-root hidden">
+            <div class="give-player-list-backdrop"></div>
+            <div class="give-player-list-box give-player-list-box-dark">
+                <h3 class="give-player-list-title" data-i18n="give_list_title">Eşyayı kime vermek istiyorsun?</h3>
+                <div id="give-player-list" class="give-player-list"></div>
+                <button type="button" id="give-player-list-cancel" class="give-player-list-cancel"><i class="fas fa-times"></i> <span data-i18n="cancel">İptal</span></button>
+            </div>
+        </div>
+        <div id="context-menu" class="context-menu context-menu-dark hidden">
+            <button type="button" data-action="use"><i class="fas fa-hand-pointer"></i> <span data-i18n="use">Kullan</span></button>
+            <button type="button" data-action="openBag" class="hidden"><i class="fas fa-folder-open"></i> <span data-i18n="open_bag">Aç</span></button>
+            <button type="button" data-action="fold" class="hidden"><i class="fas fa-compress-alt"></i> <span data-i18n="fold">Katla</span></button>
+            <button type="button" data-action="attachments" class="hidden"><i class="fas fa-puzzle-piece"></i> <span data-i18n="attachments">Parçalar</span></button>
+            <button type="button" data-action="note" class="hidden"><i class="fas fa-sticky-note"></i> <span data-i18n="note_add">Not ekle</span></button>
+            <button type="button" data-action="tag" class="hidden"><i class="fas fa-tag"></i> <span data-i18n="tag">Etiketle</span></button>
+            <button type="button" data-action="give"><i class="fas fa-hand-holding"></i> <span data-i18n="give">Ver</span></button>
+            <div id="context-menu-amount-row" class="context-menu-amount-row">
+                <span class="context-menu-amount-label" data-i18n="amount_label">Miktar:</span>
+                <input type="range" id="split-slider" min="0" value="0" />
+                <input type="number" id="split-amount-input" class="split-amount-input" min="0" value="0" inputmode="numeric" />
+                <span id="split-slider-value" class="split-value" data-i18n="split_all">Tümü</span>
+            </div>
+            <button type="button" data-action="split"><i class="fas fa-cut"></i> <span data-i18n="split">Böl</span></button>
+            <button type="button" data-action="drop"><i class="fas fa-trash-alt"></i> <span data-i18n="drop">Bırak</span></button>
+            <button type="button" data-action="throw"><i class="fas fa-baseball-ball"></i> <span data-i18n="throw">At</span></button>
+            <div id="context-menu-custom-buttons" class="context-menu-custom-buttons"></div>
+        </div>
+        <!-- Eşya not / etiket düzenleme penceresi -->
+        <div id="item-meta-modal-root" class="item-meta-modal-root hidden">
+            <div class="item-meta-modal-backdrop"></div>
+            <div class="item-meta-modal inv-blur-element" data-hlsl data-blur-strength="10">
+                <header class="item-meta-modal-header">
+                    <h3 id="item-meta-title" class="item-meta-title" data-i18n="item_meta_title">Eşya notu / etiketi</h3>
+                    <button type="button" id="item-meta-close" class="item-meta-close" data-i18n-aria-label="close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </header>
+                <div class="item-meta-modal-body">
+                    <div class="item-meta-row">
+                        <span class="item-meta-label" data-i18n="item_meta_item_label">Eşya</span>
+                        <span id="item-meta-item-label" class="item-meta-value">-</span>
+                    </div>
+                    <div class="item-meta-row">
+                        <span class="item-meta-label" data-i18n="item_meta_serial_label">Seri</span>
+                        <span id="item-meta-item-serial" class="item-meta-value item-meta-serial">-</span>
+                    </div>
+                    <div class="item-meta-field">
+                        <label for="item-meta-note-input" class="item-meta-field-label">
+                            <i class="fas fa-sticky-note"></i> <span data-i18n="item_meta_note_label">Not</span>
+                        </label>
+                        <textarea id="item-meta-note-input" class="item-meta-textarea" rows="3" data-i18n-placeholder="item_meta_note_placeholder"></textarea>
+                    </div>
+                    <div class="item-meta-field">
+                        <label for="item-meta-tag-input" class="item-meta-field-label">
+                            <i class="fas fa-tag"></i> <span data-i18n="item_meta_tag_label">Etiket</span>
+                        </label>
+                        <input id="item-meta-tag-input" class="item-meta-input" type="text" maxlength="32" data-i18n-placeholder="item_meta_tag_placeholder" />
+                        <p class="item-meta-hint" data-i18n="item_meta_tag_hint">Etiket, hücre üzerinde küçük bir rozet olarak görünür.</p>
+                    </div>
+                </div>
+                <footer class="item-meta-modal-footer">
+                    <button type="button" id="item-meta-cancel" class="item-meta-btn item-meta-btn-secondary" data-i18n="cancel">
+                        İptal
+                    </button>
+                    <button type="button" id="item-meta-save" class="item-meta-btn item-meta-btn-primary" data-i18n="save">
+                        Kaydet
+                    </button>
+                </footer>
+            </div>
+        </div>
+        <!-- Silah parça menüsü: sabit haç + silah slotlarından UI kutusuna çizgiler; mouse/scroll UI üzerinde -->
+        <div id="weapon-attachment-root" class="weapon-attachment-root hidden">
+            <div id="wa-preview-capture" class="wa-preview-capture" data-i18n-title="wa_preview_title"></div>
+            <svg id="wa-slot-lines" class="wa-slot-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <line id="wa-line-scope" class="wa-slot-line" x1="50" y1="50" x2="50" y2="15" />
+                <line id="wa-line-magazine" class="wa-slot-line" x1="50" y1="50" x2="50" y2="85" />
+                <line id="wa-line-barrel" class="wa-slot-line" x1="50" y1="50" x2="15" y2="50" />
+                <line id="wa-line-grip" class="wa-slot-line" x1="50" y1="50" x2="85" y2="50" />
+                <line id="wa-line-flash" class="wa-slot-line" x1="50" y1="50" x2="15" y2="75" />
+                <line id="wa-line-tint" class="wa-slot-line" x1="50" y1="50" x2="50" y2="92" />
+            </svg>
+            <div id="wa-viewport-center" class="wa-viewport-item" data-i18n-title="wa_confirm">
+                <div class="wa-center">
+                    <button type="button" id="wa-confirm" class="wa-btn wa-btn-center"><i class="fas fa-check"></i></button>
+                    <span class="wa-center-label" data-i18n="wa_confirm">Onayla</span>
+                </div>
+            </div>
+            <div id="wa-viewport-scope" class="wa-viewport-item wa-viewport-arm" data-slot="scope">
+                <div class="wa-arm wa-arm-top">
+                    <span class="wa-arm-label" data-i18n="wa_scope">Nişangah</span>
+                    <div class="wa-slots" id="wa-slots-scope"></div>
+                </div>
+            </div>
+            <div id="wa-viewport-magazine" class="wa-viewport-item wa-viewport-arm" data-slot="magazine">
+                <div class="wa-arm wa-arm-bottom">
+                    <span class="wa-arm-label" data-i18n="wa_magazine">Şarjör</span>
+                    <div class="wa-slots" id="wa-slots-magazine"></div>
+                </div>
+            </div>
+            <div id="wa-viewport-barrel" class="wa-viewport-item wa-viewport-arm" data-slot="barrel">
+                <div class="wa-arm wa-arm-left">
+                    <span class="wa-arm-label" data-i18n="wa_barrel">Namlu</span>
+                    <div class="wa-slots" id="wa-slots-barrel"></div>
+                </div>
+            </div>
+            <div id="wa-viewport-flash" class="wa-viewport-item wa-viewport-arm" data-slot="flash">
+                <div class="wa-arm wa-arm-left">
+                    <span class="wa-arm-label" data-i18n="wa_flash">El Feneri</span>
+                    <div class="wa-slots" id="wa-slots-flash"></div>
+                </div>
+            </div>
+            <div id="wa-viewport-grip" class="wa-viewport-item wa-viewport-arm" data-slot="grip">
+                <div class="wa-arm wa-arm-right">
+                    <span class="wa-arm-label" data-i18n="wa_grip">Kabza</span>
+                    <div class="wa-slots" id="wa-slots-grip"></div>
+                </div>
+            </div>
+            <div id="wa-viewport-tint" class="wa-viewport-item wa-viewport-arm" data-slot="tint">
+                <div class="wa-arm wa-arm-bottom">
+                    <span class="wa-tint-label" data-i18n="wa_tint">Renk (Tint)</span>
+                    <div id="wa-tint-wrap" class="wa-tint-wrap wa-tint-box">
+                        <div id="wa-tint-drop-slot" class="wa-slot-drop-box wa-tint-drop-slot" data-slot="tint" data-i18n-title="wa_tint_drop_title"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="wa-hint-bar" class="wa-hint-bar" aria-hidden="true">
+                <span data-i18n="wa_hint_drag"><kbd>Sol tık</kbd> sürükle</span>
+                <span data-i18n="wa_hint_rotate"><kbd>Sağ tık</kbd> çevir</span>
+                <span data-i18n="wa_hint_scroll"><kbd>Scroll</kbd> yakınlaştır / uzaklaştır</span>
+                <span data-i18n="wa_hint_esc"><kbd>ESC</kbd> kapat</span>
+            </div>
+            <button type="button" id="wa-close" class="wa-close-btn" data-i18n-aria-label="close"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+    </div>
+    <!-- Loot Creator: inventory-root'tan bağımsız, body altında ayrı root -->
+    <div id="loot-creator-root" class="loot-creator-root hidden" aria-hidden="true">
+        <!-- Eşya listesi paneli: sağ panelin solunda, üstte arama -->
+        <div id="loot-creator-itemlist-panel" class="loot-creator-itemlist-panel hidden inv-blur-element" data-hlsl data-blur-strength="10">
+            <div id="lc-list-view" class="lc-list-view">
+                <h3 class="loot-creator-subtitle" data-i18n="lc_item_list_title">Eşya listesi (Config.ItemList)</h3>
+                <input type="text" id="lc-item-search" class="loot-creator-input loot-creator-input-full" data-i18n-placeholder="lc_item_search_placeholder" placeholder="Eşya adı veya etiket yazın..." autocomplete="off" />
+                <div id="lc-item-list" class="loot-creator-item-list"></div>
+            </div>
+            <div id="lc-edit-view" class="lc-edit-view hidden" aria-hidden="true">
+                <h3 class="lc-edit-view-title" data-i18n="lc_edit_item_title">Eşya düzenle</h3>
+                <div class="lc-edit-view-image-wrap">
+                    <img id="lc-edit-image" src="" alt="" />
+                </div>
+                <hr class="lc-edit-view-separator" />
+                <div class="lc-edit-view-item-name" id="lc-edit-item-name"></div>
+                <div id="lc-edit-clothe-wrap" class="lc-edit-view-field lc-edit-view-field-full lc-edit-clothe-wrap hidden">
+                    <label class="loot-creator-label" data-i18n="lc_clothe_label">Kıyafet (Drawable / Texture)</label>
+                    <div class="lc-edit-view-field-row">
+                        <div class="lc-edit-view-field">
+                            <label class="loot-creator-label" for="lc-edit-drawable" data-i18n="lc_drawable_id">Drawable ID</label>
+                            <input type="number" id="lc-edit-drawable" class="loot-creator-input" min="0" value="0" />
+                        </div>
+                        <div class="lc-edit-view-field">
+                            <label class="loot-creator-label" for="lc-edit-texture" data-i18n="lc_texture_id">Texture ID</label>
+                            <input type="number" id="lc-edit-texture" class="loot-creator-input" min="0" value="0" />
+                        </div>
+                    </div>
+                </div>
+                <div class="lc-edit-view-fields">
+                    <div class="lc-edit-view-field-row">
+                        <div class="lc-edit-view-field">
+                            <label class="loot-creator-label" for="lc-edit-chance" data-i18n="lc_chance_pct">Şans %</label>
+                            <input type="number" id="lc-edit-chance" class="loot-creator-input" min="0" max="100" />
+                        </div>
+                        <div class="lc-edit-view-field">
+                            <label class="loot-creator-label" for="lc-edit-weight" data-i18n="weight">Ağırlık</label>
+                            <input type="number" id="lc-edit-weight" class="loot-creator-input" min="1" />
+                        </div>
+                    </div>
+                    <div class="lc-edit-view-field-row">
+                        <div class="lc-edit-view-field">
+                            <label class="loot-creator-label" for="lc-edit-min" data-i18n="lc_min_amount">Min Amount</label>
+                            <input type="number" id="lc-edit-min" class="loot-creator-input" min="1" />
+                        </div>
+                        <div class="lc-edit-view-field">
+                            <label class="loot-creator-label" for="lc-edit-max" data-i18n="lc_max_amount">Max Amount</label>
+                            <input type="number" id="lc-edit-max" class="loot-creator-input" min="1" />
+                        </div>
+                    </div>
+                    <div class="lc-edit-view-field lc-edit-view-field-full">
+                        <label class="loot-creator-label" data-i18n="lc_rarity">Rarity</label>
+                        <div id="lc-edit-rarity-chips" class="lc-edit-rarity-chips" data-i18n-aria-label="lc_rarity_chips_aria" aria-label="Seçili rarities"></div>
+                        <div id="lc-edit-rarity-options" class="lc-edit-rarity-options" data-i18n-aria-label="lc_rarity_options_aria" aria-label="Rarity seçenekleri"></div>
+                    </div>
+                </div>
+                <div class="lc-edit-view-actions">
+                    <button type="button" id="lc-edit-back" class="loot-creator-btn loot-creator-btn-secondary"><i class="fas fa-arrow-left"></i> <span data-i18n="lc_back">Geri</span></button>
+                    <button type="button" id="lc-edit-save" class="loot-creator-btn loot-creator-btn-primary"><i class="fas fa-check"></i> <span data-i18n="save">Kaydet</span></button>
+                </div>
+            </div>
+        </div>
+        <div class="loot-creator-panel inv-blur-element" data-hlsl data-blur-strength="10">
+                <header class="loot-creator-header">
+                    <h2 class="loot-creator-title" data-i18n="lc_title">Loot Creator</h2>
+                    <button type="button" id="loot-creator-close" class="loot-creator-close" data-i18n-aria-label="close" aria-label="Kapat"><i class="fas fa-times"></i></button>
+                </header>
+                <div class="loot-creator-body">
+                    <!-- Adım 1: Loot Types + Prop Triggers + Static Points -->
+                    <div id="loot-creator-step-trigger" class="loot-creator-step">
+                        <div class="loot-creator-inner-panel">
+                            <h3 class="loot-creator-subtitle" data-i18n="lc_loot_types_subtitle">Loot Types (LootConfig.LootTypes)</h3>
+                            <p class="loot-creator-hint" data-i18n="lc_loot_types_hint">Eşya listesi ile loot tipi oluşturup düzenleyin.</p>
+                            <div id="lc-loot-types-list" class="loot-creator-triggers-list"></div>
+                            <button type="button" id="lc-new-loot-type" class="loot-creator-btn loot-creator-btn-primary" style="margin-top:8px" data-i18n="lc_new_loot_type">Yeni Loot Type</button>
+                        </div>
+                        <div class="loot-creator-inner-panel">
+                            <h3 class="loot-creator-subtitle" data-i18n="lc_trigger_subtitle">Tetikleyici (yeni prop / nokta)</h3>
+                            <div class="loot-creator-radio-row">
+                                <label class="loot-creator-radio-label"><input type="radio" name="lc_trigger" value="prop" checked /> <span data-i18n="lc_trigger_prop">Prop (model)</span></label>
+                                <label class="loot-creator-radio-label"><input type="radio" name="lc_trigger" value="coords" /> <span data-i18n="lc_trigger_coords">Koordinat</span></label>
+                            </div>
+                            <div id="loot-creator-prop-wrap" class="loot-creator-field-wrap">
+                                <label class="loot-creator-label" data-i18n="lc_prop_model_label">Prop modeli</label>
+                                <div class="loot-creator-input-row">
+                                    <input type="text" id="lc-prop-input" class="loot-creator-input" data-i18n-placeholder="lc_prop_placeholder" placeholder="örn. prop_postbox_01a" />
+                                    <button type="button" id="lc-spawn-preview" class="loot-creator-btn loot-creator-btn-secondary" data-i18n="lc_spawn_preview">Spawn / İncele</button>
+                                    <button type="button" id="lc-confirm-prop" class="loot-creator-btn loot-creator-btn-primary hidden" data-i18n="lc_confirm">Onayla</button>
+                                </div>
+                                <p id="lc-prop-message" class="loot-creator-hint"></p>
+                            </div>
+                            <div id="loot-creator-coords-wrap" class="loot-creator-field-wrap hidden">
+                                <label class="loot-creator-label" data-i18n="lc_location_label">Konum</label>
+                                <button type="button" id="lc-use-current-coords" class="loot-creator-btn loot-creator-btn-secondary" data-i18n="lc_use_current_coords">Mevcut konumu kullan</button>
+                                <p id="lc-coords-display" class="loot-creator-hint">—</p>
+                            </div>
+                            <div class="loot-creator-actions">
+                                <button type="button" id="lc-assign-prop-loot" class="loot-creator-btn loot-creator-btn-primary hidden" data-i18n="lc_assign_prop_btn">Prop için Loot Type seç →</button>
+                                <button type="button" id="lc-assign-point-loot" class="loot-creator-btn loot-creator-btn-primary hidden" data-i18n="lc_assign_point_btn">Nokta için Loot Type seç →</button>
+                            </div>
+                        </div>
+                        <div class="loot-creator-inner-panel">
+                            <h3 class="loot-creator-subtitle" data-i18n="lc_prop_triggers_subtitle">Prop Triggers (sadece loot type seçimi)</h3>
+                            <div id="lc-prop-triggers-list" class="loot-creator-triggers-list"></div>
+                        </div>
+                        <div class="loot-creator-inner-panel">
+                            <h3 class="loot-creator-subtitle" data-i18n="lc_static_points_subtitle">Static Loot Points (sadece loot type seçimi)</h3>
+                            <div id="lc-static-points-list" class="loot-creator-triggers-list"></div>
+                        </div>
+                    </div>
+                    <!-- Modal: Prop için Loot Type seç -->
+                    <div id="lc-modal-prop-trigger" class="loot-creator-modal hidden">
+                        <div class="loot-creator-modal-inner">
+                            <h3 class="loot-creator-subtitle" data-i18n="lc_modal_prop_title">Prop için Loot Type seç</h3>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_loot_type_label">Loot Type</label>
+                                <select id="lc-modal-prop-loot-type" class="loot-creator-input loot-creator-input-full"></select>
+                            </div>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_cooldown_seconds">Oyuncu cooldown (sn)</label>
+                                <input type="number" id="lc-modal-prop-cooldown" class="loot-creator-input" value="3" min="0" />
+                            </div>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_refresh_override_label">Refresh override (sn, boş = tip varsayılanı)</label>
+                                <input type="number" id="lc-modal-prop-refresh" class="loot-creator-input" data-i18n-placeholder="lc_optional_placeholder" placeholder="Boş bırakılabilir" min="0" />
+                            </div>
+                            <div class="loot-creator-actions">
+                                <button type="button" id="lc-modal-prop-cancel" class="loot-creator-btn loot-creator-btn-secondary" data-i18n="cancel">İptal</button>
+                                <button type="button" id="lc-modal-prop-save" class="loot-creator-btn loot-creator-btn-primary" data-i18n="save">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal: Static point için Loot Type seç -->
+                    <div id="lc-modal-static-point" class="loot-creator-modal hidden">
+                        <div class="loot-creator-modal-inner">
+                            <h3 class="loot-creator-subtitle" data-i18n="lc_modal_point_title">Nokta için Loot Type seç</h3>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_loot_type_label">Loot Type</label>
+                                <select id="lc-modal-point-loot-type" class="loot-creator-input loot-creator-input-full"></select>
+                            </div>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_point_id_label">Nokta Id</label>
+                                <input type="text" id="lc-modal-point-id" class="loot-creator-input" data-i18n-placeholder="lc_point_id_placeholder" placeholder="örn. crate_1" />
+                            </div>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_location_label">Konum</label>
+                                <p id="lc-modal-point-coords" class="loot-creator-hint">—</p>
+                            </div>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_radius_label">Radius</label>
+                                <input type="number" id="lc-modal-point-radius" class="loot-creator-input" value="1.5" min="0.5" step="0.1" />
+                            </div>
+                            <div class="loot-creator-actions">
+                                <button type="button" id="lc-modal-point-cancel" class="loot-creator-btn loot-creator-btn-secondary" data-i18n="cancel">İptal</button>
+                                <button type="button" id="lc-modal-point-save" class="loot-creator-btn loot-creator-btn-primary" data-i18n="save">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Adım 2: Loot Type oluştur/düzenle (eşya listesi + seçili grup) -->
+                    <div id="loot-creator-step-items" class="loot-creator-step hidden">
+                        <div class="loot-creator-inner-panel">
+                            <h3 class="loot-creator-subtitle" data-i18n="lc_loot_type_name_label">Loot Type adı</h3>
+                            <input type="text" id="lc-loot-type-name" class="loot-creator-input loot-creator-input-full" data-i18n-placeholder="lc_loot_type_name_placeholder" placeholder="örn. postbox_loot" />
+                        </div>
+                        <div class="loot-creator-split">
+                            <div class="loot-creator-inner-panel loot-creator-group-panel">
+                                <h3 class="loot-creator-subtitle" data-i18n="lc_selected_items_subtitle">Seçili eşyalar (loot grubu)</h3>
+                                <div id="lc-selected-group" class="loot-creator-selected-group"></div>
+                            </div>
+                        </div>
+                        <div class="loot-creator-inner-panel">
+                            <h3 class="loot-creator-subtitle" data-i18n="lc_general_settings">Genel ayarlar</h3>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_label_label">Etiket</label>
+                                <input type="text" id="lc-label" class="loot-creator-input loot-creator-input-full" data-i18n-placeholder="lc_label_placeholder" placeholder="Görünen ad" />
+                            </div>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_refresh_seconds_label">Yenileme (sn)</label>
+                                <input type="number" id="lc-refresh-seconds" class="loot-creator-input" value="900" min="1" />
+                            </div>
+                            <div class="loot-creator-form-row">
+                                <label class="loot-creator-label" data-i18n="lc_cooldown_seconds">Oyuncu cooldown (sn)</label>
+                                <input type="number" id="lc-cooldown" class="loot-creator-input" value="3" min="0" />
+                            </div>
+                        </div>
+                        <div id="lc-export-feedback" class="lc-export-feedback hidden" role="status" aria-live="polite"></div>
+                        <div class="loot-creator-actions loot-creator-actions-end">
+                            <button type="button" id="lc-back-to-trigger" class="loot-creator-btn loot-creator-btn-secondary">← <span data-i18n="lc_back">Geri</span></button>
+                            <button type="button" id="lc-save" class="loot-creator-btn loot-creator-btn-primary" data-i18n="save">Kaydet</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <script src="./script.js" defer></script>
+    <script src="./loot-creator.js" defer></script>
+    <script src="./gamerender.js" defer></script>
 </body>
+
 </html>
