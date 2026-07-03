@@ -74,13 +74,13 @@ Config.InventoryPlayerPreferences = {
         showHint = true,
         showItemRarity = true,
         inventoryCamera = true,
-        accent = "#d4a853",
+        accent = "#35e0c4",          -- Storyline mint — matches --accent in styles.css
         durabilityHigh = "#63d38c",
         durabilityLow = "#e36a6a",
         gridBorder = "#ffffff",
         gridBorderOpacity = 5,
-        invBg = "#0a0a0c",
-        invBgOpacity = 26,
+        invBg = "#0a0f0f",           -- Storyline dark teal-black panel base
+        invBgOpacity = 60,           -- matches the settings default in index.html
     },
     playerCanChange = {
         language = false,
@@ -143,11 +143,11 @@ Config.Webhooks = {
 -- Grid UI (NUI): slot size and spacing (sent to script.js)
 -- primaryFrameMaxRows/Cols: default frame max; each inventory can override with its own primaryFrameMaxRows/Cols in Config.Inventories
 Config.GridUI = {
-    cellSize = 36,    -- px per slot
+    cellSize = 72,    -- px per slot — Storyline scale; keep in sync with --cell-size in styles.css
     gridGap = 2,       -- px between slots
     gridPadding = 2,   -- px around grid
-    primaryFrameMaxRows = 24,   -- default (used when not defined for player or inventories)
-    primaryFrameMaxCols = 24,   -- default (used when not defined for player or inventories)
+    primaryFrameMaxRows = 10,   -- default (used when not defined for player or inventories); 10 × 72px ≈ 740px
+    primaryFrameMaxCols = 10,   -- default (used when not defined for player or inventories)
     -- Drag-drop / transfer throttle (ms). Lower = snappier but more server load; higher = fewer duplicate posts.
     transferLockMs = 220,       -- after a transfer, block new drag-start for this many ms (prevents double-fires)
     transferDebounceMs = 620,   -- minimum delay between two transferBetweenInventories posts (debounce)
@@ -251,9 +251,9 @@ Config.ItemRarity = {
 -- GRID & ITEM SIZES
 -- =============================================================================
 
-Config.GridCellSize = 80          -- Size of each grid cell in pixels (UI)
-Config.DefaultItemWidth = 3       -- Default item width (in grid cells) if undefined
-Config.DefaultItemHeight = 3      -- Default item height (in grid cells) if undefined
+Config.GridCellSize = 72          -- Size of each grid cell in pixels (UI) — matches Config.GridUI.cellSize
+Config.DefaultItemWidth = 1       -- Default item width (in grid cells) if undefined — Storyline: 1 item = 1 big slot
+Config.DefaultItemHeight = 1      -- Default item height (in grid cells) if undefined
 
 -- =============================================================================
 -- USER INTERFACE
@@ -429,9 +429,9 @@ Config.VehicleInventory = {
 
 Config.Inventories = {
     player = {
-        rows = 23,
-        cols = 20,
-        label = "Inventory",
+        rows = 6,
+        cols = 8,
+        label = "Inventar",
         maxWeight = 120000,
     },
     glovebox = {
@@ -448,8 +448,8 @@ Config.Inventories = {
         cols = 10,
         label = "Trunk",
         maxWeight = 200000,
-        primaryFrameMaxRows = 11,
-        primaryFrameMaxCols =11,
+        primaryFrameMaxRows = 10,
+        primaryFrameMaxCols = 10,
     },
     -- scrollable = true → panel shows a scroll bar if row count exceeds visible area (useful for police/EMS/mechanic stashes)
     -- scrollMaxRows = maximum visible rows before overflow
@@ -458,8 +458,8 @@ Config.Inventories = {
         cols = 20,
         label = "Stash",
         maxWeight = 200000,
-        primaryFrameMaxRows = 20,
-        primaryFrameMaxCols = 20,
+        primaryFrameMaxRows = 10,
+        primaryFrameMaxCols = 10,
     },
     -- Loot (EFT-style): panel boyutu config_loots.lua'dan (DefaultGrid / LootTypes[].grid). Buradaki rows/cols sadece fallback.
     loot = {
@@ -467,8 +467,8 @@ Config.Inventories = {
         cols = 20,
         label = "Loot",
         maxWeight = 1000000,
-        primaryFrameMaxRows = 20,
-        primaryFrameMaxCols = 20,
+        primaryFrameMaxRows = 10,
+        primaryFrameMaxCols = 10,
     },
     -- Police/EMS/Mechanic stash: same "stash" config is used. Open with:
     -- Server: exports[GetCurrentResourceName()]:OpenStashInventory(source, "police_stash", "Police Stash")
@@ -480,16 +480,16 @@ Config.Inventories = {
         cols = 10,
         label = "Bag",
         maxWeight = 30000,
-        primaryFrameMaxRows = 20,
-        primaryFrameMaxCols = 20,
+        primaryFrameMaxRows = 10,
+        primaryFrameMaxCols = 10,
     },
     drop = {
         rows = 20,
         cols = 20,
         label = "Searched Player",
         maxWeight = 99999999999999999,
-        primaryFrameMaxRows = 23,
-        primaryFrameMaxCols = 23,
+        primaryFrameMaxRows = 10,
+        primaryFrameMaxCols = 10,
     },
     crafting = {
         rows = 8,
@@ -514,23 +514,23 @@ Config.Inventories = {
         cols = 20,
         label = "Searched Player",
         maxWeight = 120000,
-        primaryFrameMaxRows = 23,
-        primaryFrameMaxCols = 23,
+        primaryFrameMaxRows = 10,
+        primaryFrameMaxCols = 10,
     },
     jacket = {
         rows = 20,
         cols = 20,
         label = "Jacket",
         maxWeight = 120000,
-        primaryFrameMaxRows = 23,
-        primaryFrameMaxCols = 23,
+        primaryFrameMaxRows = 10,
+        primaryFrameMaxCols = 10,
     },
     wallet = {
         rows = 12,
         cols = 12,
         label = "Wallet",
-        primaryFrameMaxRows = 20,
-        primaryFrameMaxCols = 20,
+        primaryFrameMaxRows = 10,
+        primaryFrameMaxCols = 10,
     },
 }
 
@@ -606,27 +606,21 @@ Config.BagContentsWeightMultiplier = 0.5   -- How much bag contents contribute t
 -- ITEM GRID SIZES & FOLDING
 -- =============================================================================
 
+-- Storyline coarse slots: most items take 1 big slot (default 1x1);
+-- only long/bulky items span multiple slots (e.g. shotgun = 2 slots wide).
 Config.Items = {
-    ["weapon_briefcase"] = { width = 6, height = 3 },
-    ["weapon_carbinerifle"] = { width = 3, height = 3 },
-    ["weapon_pumpshotgun"] = { width = 4, height = 3 },
-    ["weapon_pistol"] = { width = 4, height = 3 },
-    ["weapon_assaultrifle"] = { width = 8, height = 3 },
-    ["phone"] = { width = 2, height = 3},
-    ["simcard"] = { width = 1, height = 1 },
-    ["radio"] = { width = 2, height = 2 },
-    ["clothe_tshirt"] = { width = 7, height = 7 },
-    ["clothe_torso2"] = { width = 7, height = 7 },
-    ["clothe_bag"] = { width = 9, height = 4 },
-    ["clothe_watch"] = { width = 2, height = 2 },
-    ["clothe_bracelet"] = { width = 2, height = 2 },
-    ["veh_toolbox"] = { width = 5, height = 3 },
+    ["weapon_briefcase"] = { width = 2, height = 1 },
+    ["weapon_carbinerifle"] = { width = 2, height = 1 },
+    ["weapon_pumpshotgun"] = { width = 2, height = 1 },
+    ["weapon_assaultrifle"] = { width = 2, height = 1 },
+    ["veh_toolbox"] = { width = 2, height = 1 },
+    ["clothe_bag"] = { width = 2, height = 2 },
 }
 
+-- Coarse Storyline slots: folding only matters for multi-slot items
+-- (1x1 items cannot shrink further; bag 2x2 folds down to 1x1).
 Config.FoldedItems = {
-    ["clothe_tshirt"] = { width = 3, height = 3 },
-    ["clothe_torso2"] = { width = 3, height = 3 },
-    ["clothe_bag"] = { width = 2, height = 2 },
+    ["clothe_bag"] = { width = 1, height = 1 },
 }
 
 -- Stack limits: true = never stacks (each is unique in its own slot). Number = max stack size per slot.
