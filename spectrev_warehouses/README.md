@@ -17,10 +17,33 @@ Automatischer Rohstoff-Verarbeiter für FiveM mit **kaufbaren, upgradebaren Ware
 3. In der `server.cfg` **nach** den Abhängigkeiten starten: `ensure spectrev_warehouses`.
 4. `config.lua` anpassen (siehe unten).
 
+## ESX + Devix richtig verdrahten (wichtig!)
+Damit ESX-Geldoperationen (Kauf/Upgrade) nicht crashen, muss ESX auf Devix statt auf
+ox konfiguriert sein (sonst greift ESX' ox_inventory-Override, dessen `Inventory`-Variable
+bei Devix nie gesetzt wird → Crash in `removeAccountMoney`):
+
+- `es_extended/shared/config/main.lua` → `Config.CustomInventory = 'devix'`
+- `es_extended/server/bridge/inventory` → die von Devix bereitgestellte Bridge-Datei einsetzen
+  (siehe Devix-Doku „ESX - es_extended“).
+
+Das Script bucht Geld zusätzlich defensiv ab (pcall + Kontostand-Verifikation), läuft also
+auch dann, wenn die ESX-Config noch nicht sauber ist — der obige Fix ist aber die richtige
+serverweite Lösung.
+
+## Inventar-Backend
+Devix hat für Stashes eine **eigene API** (`AddItemStash`/`RemoveItemStash`/`GetStashItems`/
+`OpenStashInventory`); der ox_inventory-Bridge-`AddItem(source,…)` funktioniert für Stashes
+NICHT. Deshalb erkennt das Script das Backend und routet Stash-Operationen passend:
+- `Config.InventoryBackend = 'auto'` erkennt `devix-inventory` automatisch (sonst `'devix'`/`'ox'` erzwingen).
+- `Config.DevixResource` nur ändern, falls dein Devix-Inventar anders heißt.
+
+Die Warehouse-Kisten werden **owner-los** registriert; die Zugriffskontrolle macht das Script
+server-seitig über den Warehouse-Besitz (`spectrev_wh:requestOpen` prüft, bevor geöffnet wird).
+
 ## Wichtige Config-Punkte (must-do)
 | Punkt | Wo | Bedeutung |
 |---|---|---|
-| `Config.InventoryResource` | oben | Auf `'ox_inventory'` gelassen. Falls Devix anders heißt → hier ändern (und ggf. die `Inv.*`-Wrapper in `server/main.lua`). |
+| `Config.InventoryBackend` | oben | `'auto'` erkennt Devix. Bei Bedarf `'devix'` oder `'ox'` erzwingen. |
 | `Config.Recipes` | Mitte | **Platzhalter-Items** (`iron_ore` usw.) durch deine echten Item-Namen ersetzen. |
 | `Config.Interior.shellModel` | Interior | **Model-Name deiner Shell** eintragen. Oder `spawnShell = false` + `anchor` auf die Koordinaten deiner bestehenden Shell-Resource legen. |
 | `Config.Interior.*Spawn` / `points` | Interior | Auto-/Ped-Spawn und die Interaktionspunkte an deine Shell anpassen (Offsets zum `anchor`). |

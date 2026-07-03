@@ -4,18 +4,45 @@ local ESX = exports['es_extended']:getSharedObject()
 local Warehouses = {}
 
 -- ─────────────────────────────────────────────────────────────────────────────
---  Inventar-Wrapper  (nur diese Funktionen anpassen, falls Devix andere Exports hat)
+--  Inventar-Abstraktion  (Devix-Stash-API bzw. ox_inventory)
 -- ─────────────────────────────────────────────────────────────────────────────
-local RES = Config.InventoryResource
-local Inv = {
-    register  = function(id, label, slots, weight, owner)
-        return exports[RES]:RegisterStash(id, label, slots, weight, owner)
-    end,
-    add       = function(stash, item, count) return exports[RES]:AddItem(stash, item, count) end,
-    remove    = function(stash, item, count) return exports[RES]:RemoveItem(stash, item, count) end,
-    count     = function(stash, item) return exports[RES]:GetItem(stash, item, nil, true) or 0 end,
-    canCarry  = function(stash, item, count) return exports[RES]:CanCarryItem(stash, item, count) end,
-}
+-- Devix und ox_inventory sprechen Stashes UNTERSCHIEDLICH an:
+--   Devix: AddItemStash / RemoveItemStash / GetStashItems (dedizierte Stash-Exports)
+--   ox   : AddItem / RemoveItem / GetItem, wobei der Stash als "inv" übergeben wird
+-- Diese Schicht kapselt beide Wege hinter Inv.register/add/remove/count.
+local function detectBackend()
+    if Config.InventoryBackend == 'devix' or Config.InventoryBackend == 'ox' then
+        return Config.InventoryBackend
+    end
+    if GetResourceState(Config.DevixResource) == 'started' then return 'devix' end
+    return 'ox'
+end
+
+local BACKEND = detectBackend()
+local Inv = {}
+
+if BACKEND == 'devix' then
+    local dev = exports[Config.DevixResource]
+    -- Stash owner-los (feste ID) registrieren; Zugriffskontrolle macht dieses
+    -- Script server-seitig über den Warehouse-Besitz (siehe requestOpen).
+    function Inv.register(id, label, slots, weight) dev:RegisterStash(id, label, slots, weight) end
+    function Inv.add(stash, item, count) return dev:AddItemStash(stash, item, count) and true or false end
+    function Inv.remove(stash, item, count) return (dev:RemoveItemStash(stash, item, count)) and true or false end
+    function Inv.count(stash, item)
+        local items = dev:GetStashItems(stash) or {}
+        local total = 0
+        for _, it in pairs(items) do
+            if it and it.name == item then total = total + (it.amount or it.count or 1) end
+        end
+        return total
+    end
+else -- ox_inventory
+    local ox = exports.ox_inventory
+    function Inv.register(id, label, slots, weight) ox:RegisterStash(id, label, slots, weight) end
+    function Inv.add(stash, item, count) return ox:AddItem(stash, item, count) and true or false end
+    function Inv.remove(stash, item, count) return ox:RemoveItem(stash, item, count) and true or false end
+    function Inv.count(stash, item) return ox:GetItem(stash, item, nil, true) or 0 end
+end
 
 -- ─────────────────────────────────────────────────────────────────────────────
 --  Helfer
@@ -28,11 +55,11 @@ end
 
 local function stashId(kind, configId) return ('wh_%s_%s'):format(kind, configId) end
 
-local function registerStashes(configId, owner, level)
+local function registerStashes(configId, level)
     local lvl = Config.Levels[level]
-    Inv.register(stashId('input',  configId), 'Rohstoff-Einlass', lvl.inputSlots,  lvl.inputWeight,  owner)
-    Inv.register(stashId('output', configId), 'Ausgabe',          lvl.outputSlots, lvl.outputWeight, owner)
-    Inv.register(stashId('store',  configId), 'Lager',            lvl.storeSlots,  lvl.storeWeight,  owner)
+    Inv.register(stashId('input',  configId), 'Rohstoff-Einlass', lvl.inputSlots,  lvl.inputWeight)
+    Inv.register(stashId('output', configId), 'Ausgabe',          lvl.outputSlots, lvl.outputWeight)
+    Inv.register(stashId('store',  configId), 'Lager',            lvl.storeSlots,  lvl.storeWeight)
 end
 
 -- Bucht 'amount' vom konfigurierten Konto ab.
@@ -81,7 +108,7 @@ CreateThread(function()
                 level    = r.level,
                 progress = r.progress + 0.0,
             }
-            registerStashes(r.config_id, r.owner, r.level)
+            registerStashes(r.config_id, r.level)
         end
     end
     print(('[spectrev_warehouses] %d Warehouse(s) geladen.'):format(#rows))
@@ -129,7 +156,7 @@ lib.callback.register('spectrev_wh:buy', function(source, configId)
         'INSERT INTO spectrev_warehouses (config_id, owner, level, progress) VALUES (?, ?, 1, 0)',
         { configId, xPlayer.identifier }
     )
-    registerStashes(configId, xPlayer.identifier, 1)
+    registerStashes(configId, 1)
     TriggerClientEvent('spectrev_wh:refresh', -1)
     return true, 'Warehouse gekauft!'
 end)
@@ -169,6 +196,21 @@ AddEventHandler('playerDropped', function()
 end)
 
 -- ─────────────────────────────────────────────────────────────────────────────
+--  Stash öffnen (server-authoritativ: prüft Besitz, dann öffnet der Client)
+-- ─────────────────────────────────────────────────────────────────────────────
+local VALID_KINDS = { input = true, output = true, store = true }
+
+RegisterNetEvent('spectrev_wh:requestOpen', function(configId, kind)
+    local src = source
+    if not VALID_KINDS[kind] then return end
+    local wh = Warehouses[configId]
+    if not wh then return end
+    local xPlayer = ESX.GetPlayerFromId(src)
+    if not xPlayer or wh.owner ~= xPlayer.identifier then return end
+    TriggerClientEvent('spectrev_wh:doOpen', src, stashId(kind, configId))
+end)
+
+-- ─────────────────────────────────────────────────────────────────────────────
 --  Upgrade
 -- ─────────────────────────────────────────────────────────────────────────────
 lib.callback.register('spectrev_wh:upgrade', function(source, configId)
@@ -192,7 +234,7 @@ lib.callback.register('spectrev_wh:upgrade', function(source, configId)
     wh.level = nextLevel
     MySQL.update.await('UPDATE spectrev_warehouses SET level = ? WHERE config_id = ?', { nextLevel, configId })
     -- Stashes mit neuer Kapazität neu registrieren
-    registerStashes(configId, wh.owner, nextLevel)
+    registerStashes(configId, nextLevel)
     TriggerClientEvent('spectrev_wh:refresh', -1)
     return true, nextLevel
 end)
@@ -234,6 +276,30 @@ end)
 -- ─────────────────────────────────────────────────────────────────────────────
 --  Verarbeitungs-Tick  (automatisch, auch offline)
 -- ─────────────────────────────────────────────────────────────────────────────
+-- Versucht EINEN Durchlauf eines Rezepts. Da es für Stashes kein zuverlässiges
+-- "CanCarry" gibt, fügen wir die Outputs zuerst hinzu (add gibt bei vollem Stash
+-- false zurück) und rollen bei fehlendem Platz zurück. Erst wenn alle Outputs
+-- Platz hatten, werden die Inputs entfernt.
+local function tryCraft(input, output, recipe)
+    -- genug Input?
+    for _, ing in ipairs(recipe.input) do
+        if Inv.count(input, ing.name) < ing.count then return false end
+    end
+    -- Outputs mit Rollback bei fehlendem Platz
+    local added = {}
+    for _, out in ipairs(recipe.output) do
+        if Inv.add(output, out.name, out.count) then
+            added[#added + 1] = out
+        else
+            for _, a in ipairs(added) do Inv.remove(output, a.name, a.count) end
+            return false -- Ausgabe voll
+        end
+    end
+    -- Inputs verbrauchen
+    for _, ing in ipairs(recipe.input) do Inv.remove(input, ing.name, ing.count) end
+    return true
+end
+
 local function processCrafts(configId, maxCrafts)
     local input  = stashId('input',  configId)
     local output = stashId('output', configId)
@@ -242,20 +308,7 @@ local function processCrafts(configId, maxCrafts)
     for _ = 1, maxCrafts do
         local crafted = false
         for _, recipe in ipairs(Config.Recipes) do
-            local ok = true
-            -- genug Input?
-            for _, ing in ipairs(recipe.input) do
-                if Inv.count(input, ing.name) < ing.count then ok = false break end
-            end
-            -- Platz in der Ausgabe?
-            if ok then
-                for _, out in ipairs(recipe.output) do
-                    if not Inv.canCarry(output, out.name, out.count) then ok = false break end
-                end
-            end
-            if ok then
-                for _, ing in ipairs(recipe.input)  do Inv.remove(input,  ing.name, ing.count) end
-                for _, out in ipairs(recipe.output) do Inv.add(output, out.name, out.count) end
+            if tryCraft(input, output, recipe) then
                 done = done + 1
                 crafted = true
                 break

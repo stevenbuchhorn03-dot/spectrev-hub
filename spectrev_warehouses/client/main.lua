@@ -1,4 +1,12 @@
-local RES = Config.InventoryResource
+-- Backend-Erkennung (analog zum Server)
+local function detectBackend()
+    if Config.InventoryBackend == 'devix' or Config.InventoryBackend == 'ox' then
+        return Config.InventoryBackend
+    end
+    if GetResourceState(Config.DevixResource) == 'started' then return 'devix' end
+    return 'ox'
+end
+local BACKEND = detectBackend()
 
 local State = {}          -- [configId] = { owned, mine, level }
 local Current = nil       -- aktuell betretenes Warehouse: { cfg, level, veh, netId }
@@ -21,10 +29,20 @@ local function anchorPlus(offset)
     return vector3(a.x + offset.x, a.y + offset.y, a.z + offset.z)
 end
 
+-- Öffnen läuft server-validiert: Client fragt an -> Server prüft Besitz -> Server
+-- schickt 'spectrev_wh:doOpen' mit der Stash-ID zurück -> Client öffnet das UI.
 local function openStash(kind)
     if not Current then return end
-    exports[RES]:openInventory('stash', ('wh_%s_%s'):format(kind, Current.cfg.id))
+    TriggerServerEvent('spectrev_wh:requestOpen', Current.cfg.id, kind)
 end
+
+RegisterNetEvent('spectrev_wh:doOpen', function(stashIdStr)
+    if BACKEND == 'devix' then
+        exports[Config.DevixResource]:OpenStashInventory(stashIdStr)
+    else
+        exports.ox_inventory:openInventory('stash', stashIdStr)
+    end
+end)
 
 -- ─────────────────────────────────────────────────────────────────────────────
 --  Shell spawnen / entfernen

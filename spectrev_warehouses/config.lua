@@ -4,13 +4,18 @@ Config = {}
 --  ALLGEMEIN
 -- ═══════════════════════════════════════════════════════════════════════════
 
--- Name der Inventar-Resource. Devix basiert auf ox_inventory und teilt sich
--- (laut deiner Angabe) dieselben Exports. Falls dein Devix-Inventar unter einem
--- anderen Resourcennamen läuft, trage ihn hier ein (z.B. 'devix_inventory').
--- Die im Script genutzten Exports sind: RegisterStash, AddItem, RemoveItem,
--- GetItem, CanCarryItem, openInventory. Sollten diese bei Devix anders heißen,
--- musst du nur die Wrapper-Funktionen in server/main.lua (Inv.*) anpassen.
-Config.InventoryResource = 'ox_inventory'
+-- Inventar-Backend. Wichtig: Devix hat für Stashes eine EIGENE API
+-- (AddItemStash/RemoveItemStash/GetStashItems/OpenStashInventory) — der
+-- ox_inventory-Bridge-AddItem(source,...) funktioniert für Stashes NICHT, weil er
+-- das erste Argument als Spieler-Source interpretiert. Deshalb unterscheidet das
+-- Script zwei Backends und routet Stash-Operationen passend:
+--   'devix' -> exports['devix-inventory']:AddItemStash / RemoveItemStash / ...
+--   'ox'    -> exports.ox_inventory:AddItem(stashId,...) / RemoveItem / GetItem
+--   'auto'  -> erkennt Devix automatisch (GetResourceState('devix-inventory'))
+Config.InventoryBackend = 'auto'
+
+-- Nur relevant, falls dein Devix-Inventar NICHT 'devix-inventory' heißt.
+Config.DevixResource = 'devix-inventory'
 
 -- Von welchem ESX-Konto Kauf & Upgrades abgebucht werden: 'bank' oder 'money'.
 Config.PaymentAccount = 'bank'
