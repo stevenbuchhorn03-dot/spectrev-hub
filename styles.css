@@ -5253,7 +5253,10 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
     --accent-hover: #5ceed6;
     --accent-warm: #35e0c4;
     --font-title: "Poppins", "Montserrat", "Inter", sans-serif;
-    --clothes-cell-size: 64px;
+    /* Uniform Storyline slot size — keep in sync with
+       Config.GridUI.cellSize (72) in the devix-inventory config.lua */
+    --cell-size: 72px;
+    --clothes-cell-size: 72px;
     --inv-bg: rgba(10, 15, 15, 0.60);
     --sl-panel-border: rgba(120, 220, 200, 0.10);
     --sl-slot-bg: rgba(12, 18, 18, 0.45);
@@ -5347,8 +5350,8 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
 
 /* --- Clothing panel: slot columns flanking the glowing figure --- */
 .inventory-panel.clothes-panel {
-    width: 330px;
-    min-width: 330px;
+    width: 348px;
+    min-width: 348px;
     align-items: stretch;
     padding: 24px 18px 20px;
 }
@@ -5389,10 +5392,10 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
 }
 
 .clothes-slot {
-    width: 64px;
-    height: 64px;
-    min-width: 64px;
-    min-height: 64px;
+    width: var(--clothes-cell-size, 72px);
+    height: var(--clothes-cell-size, 72px);
+    min-width: var(--clothes-cell-size, 72px);
+    min-height: var(--clothes-cell-size, 72px);
     background: var(--sl-slot-bg);
     border: 1px solid var(--sl-slot-border);
     border-radius: 10px;
@@ -5535,3 +5538,25 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
 /* Resize handle: keep functional, visually quiet */
 .resize-handle { opacity: 0.35; }
 .resize-handle:hover { opacity: 0.85; }
+
+/* --- Uniform Storyline sizing: every slot type = 72px ---
+   Grid cells follow --cell-size (fallback; in-game the live resource
+   sizes cells from Config.GridUI.cellSize — set it to 72 there too). */
+.quick-slot {
+    width: 72px;
+    height: 72px;
+    min-width: 72px;
+    min-height: 72px;
+    background: var(--sl-slot-bg);
+    border: 1px solid var(--sl-slot-border);
+    border-radius: 10px;
+}
+.quick-slot-bar-box {
+    width: 72px;
+    height: 72px;
+    min-width: 72px;
+    min-height: 72px;
+    background: var(--sl-slot-bg);
+    border: 1px solid var(--sl-slot-border);
+    border-radius: 10px;
+}
