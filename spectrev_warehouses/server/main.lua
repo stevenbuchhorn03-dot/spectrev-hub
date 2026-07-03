@@ -35,11 +35,36 @@ local function registerStashes(configId, owner, level)
     Inv.register(stashId('store',  configId), 'Lager',            lvl.storeSlots,  lvl.storeWeight,  owner)
 end
 
+-- Bucht 'amount' vom konfigurierten Konto ab.
+--
+-- Absicherung: ESX' ox_inventory-Override (setAccount/addAccount/removeAccountMoney)
+-- greift intern auf das upvalue 'Inventory' zu. Feuert das aktive Inventar das Event
+-- 'ox_inventory:loadInventory' NICHT (z.B. Devix), bleibt 'Inventory' = nil und der
+-- Abbuch-Aufruf wirft einen Fehler. Deshalb buchen wir abgesichert ab und
+-- VERIFIZIEREN danach den Kontostand, statt dem (evtl. crashenden) Call zu vertrauen.
 local function chargePlayer(xPlayer, amount)
     local account = xPlayer.getAccount(Config.PaymentAccount)
     if not account or account.money < amount then return false end
-    xPlayer.removeAccountMoney(Config.PaymentAccount, amount)
-    return true
+
+    local before  = account.money
+    local target  = before - amount
+
+    pcall(function()
+        xPlayer.removeAccountMoney(Config.PaymentAccount, amount, 'spectrev_warehouses')
+    end)
+
+    -- Hat der Override den Betrag bereits abgezogen (vor dem Inventory-Zugriff)?
+    local after = xPlayer.getAccount(Config.PaymentAccount)
+    if after and after.money <= target then
+        return true
+    end
+
+    -- Fallback: Kontostand direkt setzen (ebenfalls abgesichert) und erneut prüfen.
+    pcall(function()
+        xPlayer.setAccountMoney(Config.PaymentAccount, target, 'spectrev_warehouses')
+    end)
+    local final = xPlayer.getAccount(Config.PaymentAccount)
+    return final ~= nil and final.money <= target
 end
 
 -- ─────────────────────────────────────────────────────────────────────────────
