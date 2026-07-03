@@ -5629,3 +5629,22 @@ html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
 
 /* Hint bar deleted from the layout (hidden stub kept for JS toggle target) */
 #inventory-hint-bar { display: none !important; }
+
+/* ==========================================================================
+   Locked position — inventory fixed top-left, not draggable / not centered
+   !important + transform:none beats any inline drag transform the live
+   resource might apply, so the window can never be moved off its spot.
+   ========================================================================== */
+#inventory-root {
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.inventory-window {
+    left: 32px !important;
+    top: 74px !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+    cursor: default !important;
+}

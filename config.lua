@@ -259,7 +259,7 @@ Config.DefaultItemHeight = 1      -- Default item height (in grid cells) if unde
 -- USER INTERFACE
 -- =============================================================================
 
-Config.DraggableInventory = true -- çalışmıyor 
+Config.DraggableInventory = false -- Locked in place (fixed top-left layout, no dragging)
 -- true: When inventory opens the camera smoothly pulls back from current position and FOV widens; closing restores previous camera.
 -- Can be disabled by the player in Settings.
 Config.InventoryCamera = true
