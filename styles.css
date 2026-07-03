@@ -1,0 +1,5441 @@
+/* ==========================================================================
+   Devix Inventory — Unified Dark Gold Theme
+   Consistent with devix-appearance styling
+   ========================================================================== */
+
+:root {
+    --cell-size: 36px;
+    --clothes-cell-size: 44px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --space-xs: 6px;
+    --space-sm: 10px;
+    --space-md: 14px;
+    --space-lg: 18px;
+    --space-xl: 22px;
+    --space-2xl: 28px;
+
+    /* HLSL transparent — envanter, quickbar, foodhint, paneller blur ile */
+    --bg-base: rgba(10, 10, 12, 0.26);
+    --bg-elevated: rgba(14, 14, 16, 0.24);
+    --bg-surface: rgba(18, 18, 20, 0.22);
+    --bg-overlay: rgba(24, 24, 26, 0.20);
+    --bg-slot: rgba(8, 8, 10, 0.24);
+    --bg-glass: rgba(255, 255, 255, 0.03);
+    /* Sadece tooltip + context-menu — koyu transparent, blur yok */
+    --bg-dark-overlay: rgba(8, 8, 10, 0.88);
+    --bg-dark-surface: rgba(12, 12, 14, 0.90);
+
+    --border-subtle: rgba(255, 255, 255, 0.04);
+    --border-default: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.10);
+    --border-glow: var(--accent-soft);
+
+    /* Warm gold accent — consistent with devix-appearance; overridden by settings (accent → --accent-*) */
+    --accent: #23d5a3;
+    --accent-hover: #45e6ba;
+    --accent-warm: #23d5a3;
+    --accent-muted: rgba(35, 213, 163, 0.35);
+    --accent-soft: rgba(35, 213, 163, 0.12);
+    --accent-bg-hi: rgba(35, 213, 163, 0.18);
+    --accent-bg-lo: rgba(35, 213, 163, 0.08);
+    --accent-border: rgba(35, 213, 163, 0.30);
+    --accent-border-hover: rgba(35, 213, 163, 0.50);
+    --accent-glow: rgba(35, 213, 163, 0.20);
+    --accent-glow-strong: rgba(35, 213, 163, 0.80);
+    --accent-stripe: 2px;
+
+    /* Text hierarchy */
+    --text-primary: #f0f0f2;
+    --text-secondary: rgba(255, 255, 255, 0.65);
+    --text-tertiary: rgba(255, 255, 255, 0.40);
+
+    --quality-100: #63d38c;
+    --quality-75: #9bd76c;
+    --quality-50: #e3c46a;
+    --quality-25: #e3a06a;
+    --quality-0: #e36a6a;
+    --valid-bg: rgba(99, 211, 140, 0.16);
+    --valid-border: #63d38c;
+    --invalid-bg: rgba(227, 106, 106, 0.16);
+    --invalid-border: #e36a6a;
+    --grid-cell-border: rgba(255, 255, 255, 0.06);
+    --inv-bg: rgba(10, 10, 12, 0.26);
+
+    --ease-out: cubic-bezier(0.2, 0.9, 0.2, 1);
+    --duration-fast: 0.1s;
+    --duration-normal: 0.18s;
+
+    /* Typography — Montserrat + Inter */
+    --font-title: "Montserrat", "Inter", sans-serif;
+    --font-body: "Inter", "Montserrat", sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background: transparent;
+    overflow: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Root & window — film grain wrapper
+   -------------------------------------------------------------------------- */
+#inventory-root {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+#inventory-root:not(.hidden) {
+    pointer-events: auto;
+}
+
+
+.inventory-window {
+    position: absolute;
+    min-width: 380px;
+    max-width: 95vw;
+    display: flex;
+    flex-direction: column;
+    background: var(--inv-bg, var(--bg-base));
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    overflow-x: hidden;
+    overflow-y: visible;
+    transform-origin: top left;
+    will-change: transform;
+    animation: windowIn var(--duration-normal) var(--ease-out);
+    border-top: 1px solid var(--border-default);
+}
+
+/* Sadece opacity: scale JS'te inline uygulanıyor, animasyonda transform yok (küçülme/büyüme olmasın) */
+@keyframes windowIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* HLSL blur arkada görünsün diye cam efekti (ince iç gölge + kenar) */
+.inventory-window-glass {
+    box-shadow: 
+        0 12px 36px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.inventory-window[data-draggable] .inventory-header {
+    cursor: move;
+}
+
+/* --------------------------------------------------------------------------
+   Header — Modern glass header with icon + weight bar
+   -------------------------------------------------------------------------- */
+.inventory-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: var(--space-md);
+    padding: 18px 22px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-default);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.inventory-title {
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    color: var(--text-primary);
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.header-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.weight-display {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: 120px;
+}
+
+.weight-label {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+}
+
+.weight-value {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.weight-value #weight-current {
+    color: var(--accent);
+    font-size: 1rem;
+}
+
+.weight-sep {
+    margin: 0 1px;
+    color: var(--text-tertiary);
+    font-size: 0.8rem;
+}
+
+/* Weight progress bar */
+.weight-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 2px;
+}
+
+.weight-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), rgba(35, 213, 163, 0.6));
+    border-radius: 2px;
+    transition: width 0.3s var(--ease-out), background 0.3s ease;
+    box-shadow: 0 0 8px rgba(35, 213, 163, 0.25);
+}
+
+.weight-bar-fill.warning {
+    background: linear-gradient(90deg, #ff9100, #ffb74d);
+    box-shadow: 0 0 8px rgba(255, 145, 0, 0.3);
+}
+
+.weight-bar-fill.danger {
+    background: linear-gradient(90deg, #ff5252, #ff8a80);
+    box-shadow: 0 0 8px rgba(255, 82, 82, 0.3);
+}
+
+.item-box-loot-hidden {
+    position: relative;
+    filter: grayscale(1) brightness(0.7);
+    opacity: 0.9;
+}
+
+.item-box-loot-hidden::after {
+    content: "?";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent);
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+    pointer-events: none;
+}
+
+/* EFT-style searching / inspect animation (loot hidden items only) — geliştirilmiş */
+.item-box-loot-hidden-searching {
+    pointer-events: none;
+}
+.item-box-loot-hidden-searching .item-loot-search-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.88) 0%, rgba(15, 18, 22, 0.92) 50%, rgba(0, 0, 0, 0.88) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 82, 82, 0.08);
+    animation: loot-overlay-pulse 0.8s ease-in-out infinite alternate;
+}
+.item-box-loot-hidden-searching .item-loot-search-icon {
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 4px;
+    filter: drop-shadow(0 0 6px rgba(255, 82, 82, 0.6));
+    animation: loot-icon-pulse 0.6s ease-in-out infinite alternate;
+}
+.item-box-loot-hidden-searching .item-loot-search-label {
+    font-size: 0.52rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.92);
+    margin-bottom: 8px;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 4px rgba(255, 82, 82, 0.2);
+    animation: loot-label-flicker 1.2s ease-in-out infinite;
+}
+.item-box-loot-hidden-searching .item-loot-search-bar {
+    width: 88%;
+    height: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+.item-box-loot-hidden-searching .item-loot-search-bar-fill {
+    position: relative;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, rgba(255, 82, 82, 0.9), var(--accent) 40%, rgba(255, 140, 120, 0.95));
+    border-radius: 3px;
+    box-shadow: 0 0 10px rgba(255, 82, 82, 0.45), 0 0 20px rgba(255, 82, 82, 0.2);
+    animation: loot-search-fill 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    overflow: hidden;
+}
+.item-box-loot-hidden-searching .item-loot-search-bar-fill::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
+    border-radius: inherit;
+    animation: loot-fill-shine 0.8s ease-out forwards;
+}
+.item-box-loot-hidden-searching .item-loot-search-scanline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 82, 82, 0.3) 20%, var(--accent) 50%, rgba(255, 82, 82, 0.3) 80%, transparent 100%);
+    opacity: 0.85;
+    animation: loot-search-scanline 0.8s linear forwards;
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(255, 82, 82, 0.4);
+}
+.item-box-loot-hidden-searching .item-loot-search-scanline-alt {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    opacity: 0.6;
+    animation: loot-search-scanline 0.8s linear 0.15s forwards;
+    pointer-events: none;
+}
+@keyframes loot-overlay-pulse {
+    from { box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 82, 82, 0.06); }
+    to   { box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 82, 82, 0.14); }
+}
+@keyframes loot-icon-pulse {
+    from { opacity: 0.85; transform: scale(0.98); filter: drop-shadow(0 0 4px rgba(255, 82, 82, 0.5)); }
+    to   { opacity: 1; transform: scale(1.05); filter: drop-shadow(0 0 10px rgba(255, 82, 82, 0.7)); }
+}
+@keyframes loot-label-flicker {
+    0%, 100% { opacity: 0.9; }
+    50%      { opacity: 1; text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 6px rgba(255, 82, 82, 0.35); }
+}
+@keyframes loot-search-fill {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+@keyframes loot-fill-shine {
+    0% { opacity: 0; transform: translateX(-100%); }
+    70% { opacity: 1; transform: translateX(100%); }
+    100% { opacity: 0; transform: translateX(100%); }
+}
+@keyframes loot-search-scanline {
+    from { top: 0; opacity: 0.6; }
+    5% { opacity: 0.9; }
+    to { top: 100%; opacity: 0.85; }
+}
+
+.btn-craft {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s var(--ease-out);
+}
+.btn-craft:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+}
+.btn-craft:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.btn-settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s var(--ease-out);
+}
+.btn-settings:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+}
+.btn-settings:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.btn-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s var(--ease-out);
+}
+
+.btn-close:hover {
+    color: #ff5252;
+    background: rgba(255, 82, 82, 0.1);
+    border-color: rgba(255, 82, 82, 0.2);
+    border-color: var(--border-strong);
+}
+
+.btn-close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Body — panels (sol kıyafet, orta grid) — Layout refresh
+   -------------------------------------------------------------------------- */
+.inventory-body {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px;
+    padding: 18px 20px 20px;
+    min-height: 200px;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.inventory-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.inventory-panel.clothes-panel {
+    flex: 0 0 auto;
+    min-width: 88px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 12px;
+}
+
+.clothes-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.clothes-slot {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    min-height: 54px;
+    background: var(--bg-slot);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.clothes-slot:hover {
+    border-color: rgba(35, 213, 163, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 1px rgba(35, 213, 163, 0.08);
+}
+
+.inventory-panel.primary {
+    flex: 0 0 auto;
+}
+
+/* Primary grid: max = referans hücre boyutuna göre; grid efektif cellSize ile frame'i doldurur, taşmaz */
+.primary-grid-frame {
+    display: block;
+    overflow: auto;
+    max-width: var(--primary-grid-max-w, 100%);
+    max-height: var(--primary-grid-max-h, none);
+    min-width: 0;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    -webkit-overflow-scrolling: touch;
+}
+/* Secondary grid frame (trunk, glovebox, stash, bag, drop): same scroll style, uses --primary-grid-max-* from JS */
+.secondary-grid-frame {
+    display: block;
+    overflow: auto;
+    max-width: var(--primary-grid-max-w, 100%);
+    max-height: var(--primary-grid-max-h, none);
+    min-width: 0;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    -webkit-overflow-scrolling: touch;
+}
+/* Trunk/glovebox: scaled panel can hide scrollbar; force scrollbar visibility and containment */
+.floating-panel-secondary .floating-panel-body .secondary-grid-frame {
+    overflow: auto;
+    min-height: 0;
+    min-width: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+    -webkit-overflow-scrolling: touch;
+}
+.primary-grid-frame::-webkit-scrollbar,
+.secondary-grid-frame::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.primary-grid-frame::-webkit-scrollbar-track,
+.secondary-grid-frame::-webkit-scrollbar-track {
+    background: transparent;
+}
+.primary-grid-frame::-webkit-scrollbar-thumb,
+.secondary-grid-frame::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+.primary-grid-frame::-webkit-scrollbar-thumb:hover,
+.secondary-grid-frame::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+.primary-grid-frame::-webkit-scrollbar-corner,
+.secondary-grid-frame::-webkit-scrollbar-corner {
+    background: transparent;
+}
+/* Ensure trunk/glovebox secondary panels get visible scrollbars (scaled container fix) */
+.floating-panel-secondary .floating-panel-body .secondary-grid-frame::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.floating-panel-secondary .floating-panel-body .secondary-grid-frame::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.15);
+}
+.floating-panel-secondary .floating-panel-body .secondary-grid-frame::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 3px;
+}
+.floating-panel-secondary .floating-panel-body .secondary-grid-frame::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+.floating-panel-secondary .floating-panel-body .secondary-grid-frame::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Trunk/glovebox: scroll on body (not on frame) so scrollbar is visible under scale; frame grows with content */
+.floating-panel-secondary-body-scroll .floating-panel-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+.floating-panel-secondary-body-scroll .floating-panel-body::-webkit-scrollbar { width: 6px; height: 6px; }
+.floating-panel-secondary-body-scroll .floating-panel-body::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.15); }
+.floating-panel-secondary-body-scroll .floating-panel-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 3px; }
+.floating-panel-secondary-body-scroll .floating-panel-body::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+.floating-panel-secondary-body-scroll .floating-panel-body::-webkit-scrollbar-corner { background: transparent; }
+.floating-panel-secondary-body-scroll .floating-panel-body .secondary-grid-frame {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+.primary-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+}
+
+.primary-panel-header .panel-title {
+    margin: 0;
+}
+
+.primary-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.primary-item-search {
+    flex: 1;
+    min-width: 80px;
+    max-width: 140px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background: var(--bg-slot);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+}
+
+.primary-item-search::placeholder {
+    color: var(--text-tertiary);
+}
+
+.primary-item-search:hover {
+    border-color: var(--border-strong);
+}
+
+.primary-item-search:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+/* Arama aktifken eşleşmeyen öğeler soluk */
+.grid-container .item-cell.item-cell-search-dimmed {
+    opacity: 0.28;
+    pointer-events: none;
+}
+
+/* Arama ile eşleşen öğe — güçlü parlama (accent ile) */
+.grid-container .item-cell.item-cell-search-match .item-box {
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4),
+                0 0 20px var(--accent-glow-strong),
+                0 0 40px var(--accent-muted),
+                inset 0 0 20px var(--accent-soft);
+    animation: item-search-glow 1.2s ease-in-out infinite;
+}
+
+@keyframes item-search-glow {
+    0%, 100% {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow-strong), 0 0 40px var(--accent-muted), inset 0 0 20px var(--accent-soft);
+    }
+    50% {
+        border-color: var(--accent-hover);
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3), 0 0 28px var(--accent-glow-strong), 0 0 56px var(--accent-muted), inset 0 0 28px var(--accent-soft);
+    }
+}
+
+.btn-sort-az {
+    position: relative;
+    flex-shrink: 0;
+    padding: 7px 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: linear-gradient(180deg, var(--accent-bg-hi) 0%, var(--accent-bg-lo) 100%);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+                0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: background var(--duration-normal) var(--ease-out),
+                color var(--duration-normal) var(--ease-out),
+                border-color var(--duration-normal) var(--ease-out),
+                box-shadow var(--duration-normal) var(--ease-out),
+                transform var(--duration-fast) var(--ease-out);
+}
+
+.btn-sort-az::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.btn-sort-az:hover {
+    color: var(--accent-hover);
+    background: linear-gradient(180deg, var(--accent-muted) 0%, var(--accent-soft) 100%);
+    border-color: var(--accent-border-hover);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                0 2px 8px var(--accent-glow),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.btn-sort-az:active {
+    transform: scale(0.97);
+    color: var(--accent);
+    background: linear-gradient(180deg, var(--accent-soft) 0%, var(--accent-bg-hi) 100%);
+    border-color: var(--accent-border);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15),
+                0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.btn-sort-az:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Slot arka plan ikonu — clothe_img PNG'leri, daha okunaklı ve yumuşak */
+.clothes-slot-bg-icon {
+    position: absolute;
+    inset: 5px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: brightness(0) invert(1) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+    opacity: 0.22;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.clothes-slot:hover .clothes-slot-bg-icon {
+    opacity: 0.38;
+    filter: brightness(0) invert(1) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+}
+
+/* Slotta item takılıyken arka plandaki boş ikon görünmesin */
+.clothes-slot.clothes-slot-has-item .clothes-slot-bg-icon {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.clothes-slot .clothes-slot-label,
+.clothes-slot .item-box {
+    position: relative;
+    z-index: 1;
+}
+
+.clothes-slot[data-slot-id] {
+    cursor: pointer;
+}
+
+.clothes-slot .clothes-slot-label {
+    position: absolute;
+    left: -4px;
+    right: -4px;
+    bottom: -1.4em;
+    font-size: 0.55rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    opacity: 0.7;
+}
+
+.clothes-slot .item-cell {
+    position: absolute;
+    inset: 3px;
+    margin: 0;
+    border-radius: 10px;
+}
+
+.clothes-slot .item-box {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+.clothes-slot .clothes-slot-item-box {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+}
+
+/* Boş kutu ikonu — clothe_img, hover'da hafif büyüme */
+.clothes-slot .clothes-slot-empty-icon {
+    width: 100%;
+    height: 100%;
+    padding: 6px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: brightness(0) invert(1) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+    opacity: 0.28;
+    transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease;
+}
+
+.clothes-slot:hover .clothes-slot-empty-icon {
+    opacity: 0.45;
+    transform: scale(1.06);
+    filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.clothes-slot .item-box .item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.clothes-slot .item-box:hover .item-image {
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Kıyafet slotunda durability (vest vb.) — üçgen göstergesi */
+.clothes-slot .clothes-slot-durability {
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 14px;
+    overflow: visible;
+}
+.clothes-slot .clothes-slot-durability .durability-triangle-wrap {
+    width: 100%;
+    height: 100%;
+}
+.clothes-slot .clothes-slot-durability .durability-triangle-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
+}
+.clothes-slot .clothes-slot-durability .durability-triangle-track {
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 1.2;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.clothes-slot .clothes-slot-durability .durability-triangle-fill {
+    stroke-width: 2.8;
+    fill: none;
+    transition: stroke-dasharray 0.35s ease, stroke 0.25s ease;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.clothes-slot .item-box .item-label {
+    display: none;
+}
+
+.clothes-slot .item-box .item-count {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.72rem;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+.clothes-slot.drop-target-valid {
+    border-color: var(--valid-border);
+    background: var(--valid-bg);
+    box-shadow: 0 0 12px rgba(99, 211, 140, 0.4);
+}
+
+.clothes-slot.drop-target-invalid {
+    border-color: var(--invalid-border);
+    background: var(--invalid-bg);
+}
+
+.inventory-panel.primary {
+    flex: 0 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   Çoklu ikinci envanter panelleri (container)
+   -------------------------------------------------------------------------- */
+.panel-secondary-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 150;
+    transform-origin: top left;
+}
+.panel-secondary-container:not(.hidden) {
+    display: block;
+}
+/* Bag/trunk seçiliyken drop'un üstünde olsun ki bırakma doğru panele gitsin */
+.panel-secondary-container:not(.hidden):has(.floating-panel-secondary.floating-panel-selected) {
+    z-index: 153;
+}
+
+/* Paneller JS ile position:fixed + left/top alıyor; tıklanabilir olsun */
+.panel-secondary-container .floating-panel {
+    pointer-events: auto;
+}
+
+.panel-secondary-container.hidden {
+    display: none !important;
+}
+
+.panel-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.panel-close-btn:hover {
+    color: var(--text-primary);
+    background: var(--border-default);
+}
+
+.panel-craft-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--accent-muted);
+    border: 1px solid var(--accent-border-hover);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    cursor: pointer;
+    white-space: nowrap;
+}
+.panel-craft-btn:hover {
+    background: var(--accent-bg-hi);
+    border-color: var(--accent-border-hover);
+    color: var(--accent-hover);
+}
+
+.panel-take-all-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(72, 187, 120, 0.2);
+    border: 1px solid rgba(72, 187, 120, 0.4);
+    border-radius: var(--radius-sm);
+    color: #5dd39e;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.panel-take-all-btn:hover {
+    background: rgba(72, 187, 120, 0.3);
+    border-color: rgba(72, 187, 120, 0.6);
+    color: #7ae0b0;
+}
+
+/* --------------------------------------------------------------------------
+   Floating panel — ikinci / drop envanter (taşınabilir)
+   -------------------------------------------------------------------------- */
+/* Arka plan ve kenar: ayarlardaki Envanter arka plan / Izgara kenar ile uyumlu (player inventory ile aynı) */
+.floating-panel {
+    position: fixed;
+    min-width: 200px;
+    max-width: 90vw;
+    background: var(--inv-bg, linear-gradient(145deg, var(--bg-elevated), var(--bg-base)));
+    border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.08));
+    border-radius: var(--radius-lg);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+    overflow: visible;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    animation: windowIn var(--duration-normal) var(--ease-out);
+    transform-origin: top left;
+    border-top: var(--accent-stripe) solid var(--accent-warm);
+}
+
+/* HLSL blur arkada; cam panel vurgusu */
+.floating-panel-glass {
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Info, context, notify, give-player vb. overlay’ler için HLSL cam vurgusu */
+.overlay-glass {
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.floating-panel.hidden {
+    display: none !important;
+}
+
+/* İkincil panel: boyut clamp ile sınırlı; içerik taşarsa scroll (iç container daralmasın, tam boyut korusun) */
+.floating-panel-secondary {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+.floating-panel-secondary::-webkit-scrollbar { width: 6px; height: 6px; }
+.floating-panel-secondary::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.15); }
+.floating-panel-secondary::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 3px; }
+.floating-panel-secondary::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+
+/* Drop panel: secondary container (z-index 150) üstünde olsun ki tıklanabilsin */
+#panel-drop-window:not(.hidden) {
+    z-index: 152;
+}
+
+/* Seçili ikincil panel veya drop panel — border vurgusu + z-index ile bırakma hedefi doğru seçilsin (bag/drop üst üste iken) */
+.floating-panel-secondary.floating-panel-selected,
+.floating-panel-drop.floating-panel-selected {
+    z-index: 160;
+    border: 2px solid var(--accent-warm);
+    box-shadow: 0 0 0 1px rgba(35, 213, 163, 0.25), 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Sürükleme sırasında kompozitör ipucu (cam/blur panellerde daha akıcı konum güncellemesi) */
+.floating-panel.floating-panel-dragging {
+    will-change: left, top;
+}
+
+.floating-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: 12px 14px;
+    background: var(--inv-bg, linear-gradient(180deg, var(--bg-overlay), var(--bg-elevated)));
+    border-bottom: 1px solid var(--accent-muted, rgba(35, 213, 163, 0.10));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    cursor: move;
+    user-select: none;
+    transition: background 0.2s ease;
+}
+
+.floating-panel-header:hover {
+    background: var(--bg-overlay);
+}
+
+.floating-panel-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.floating-panel-header-left .panel-weight,
+.panel-weight {
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.panel-drag-icon {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    opacity: 0.5;
+}
+
+.floating-panel-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    /* İkinci panellerde: içerik kadar büyür, max = JS --panel-max-body-*; player-inventory gibi taşmada scroll */
+    max-width: var(--panel-max-body-width, none);
+    max-height: var(--panel-max-body-height, none);
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+}
+
+/* Tüm ikincil paneller + drop: player-inventory gibi taşmada scroll, iç container boyutları sabit kalsın */
+.floating-panel-secondary .floating-panel-body,
+.floating-panel-drop .floating-panel-body {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+.floating-panel-secondary .floating-panel-body::-webkit-scrollbar,
+.floating-panel-drop .floating-panel-body::-webkit-scrollbar { width: 6px; height: 6px; }
+.floating-panel-secondary .floating-panel-body::-webkit-scrollbar-track,
+.floating-panel-drop .floating-panel-body::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.15); }
+.floating-panel-secondary .floating-panel-body::-webkit-scrollbar-thumb,
+.floating-panel-drop .floating-panel-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 3px; }
+.floating-panel-secondary .floating-panel-body::-webkit-scrollbar-thumb:hover,
+.floating-panel-drop .floating-panel-body::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+.floating-panel-secondary .floating-panel-body .secondary-grid-frame,
+.floating-panel-drop .floating-panel-body .secondary-grid-frame {
+    flex-shrink: 0;
+    min-width: max-content;
+    min-height: max-content;
+}
+.floating-panel-secondary .floating-panel-body .grid-container,
+.floating-panel-drop .floating-panel-body .grid-container {
+    flex: 0 0 auto;
+    min-width: max-content;
+    min-height: max-content;
+}
+
+.floating-panel-clothes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 4px;
+}
+.floating-panel-clothes .floating-panel-clothes-slot {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.floating-panel-clothes .clothes-slot-item-box {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.floating-panel-clothes .clothes-slot-item-box .item-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+}
+.floating-panel-clothes .clothes-slot-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+}
+.floating-panel-clothes .clothes-slot-empty-label {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 4px;
+}
+
+/* Footer drag handle for second inventory panels (allows dragging by bottom bar) */
+.panel-drag-footer-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    cursor: grab;
+    user-select: none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+    border-top: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.panel-drag-footer-handle:active { cursor: grabbing; }
+.panel-drag-footer-handle .panel-drag-hint {
+    width: 48px;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
+}
+
+/* Aranan oyuncu paneli: boşluk azalt, içerik yukarıdan hizala; yatay taşmada scroll (slotlar küçülmesin) */
+.floating-panel-searched-player .floating-panel-body {
+    align-content: flex-start;
+    min-height: 0;
+    max-height: var(--searched-panel-max-body, min(90vh, 708px));
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+.floating-panel-searched-player .floating-panel-body::-webkit-scrollbar { width: 6px; height: 6px; }
+.floating-panel-searched-player .floating-panel-body::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.15); }
+.floating-panel-searched-player .floating-panel-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 3px; }
+.floating-panel-searched-player .floating-panel-body::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+.floating-panel-searched-player .floating-panel-body::-webkit-scrollbar-corner { background: transparent; }
+
+/* Shop paneli: tüm itemler düzgün görünsün, taşma ve görsel bozulma olmasın */
+.floating-panel-shop {
+    min-width: 260px;
+    width: fit-content;
+    max-width: min(92vw, calc(var(--shop-cols, 20) * 38px + 56px));
+    height: fit-content;
+    max-height: 85vh;
+}
+
+.floating-panel-shop .floating-panel-header {
+    flex: 0 0 auto;
+}
+
+.floating-panel-shop .floating-panel-body {
+    padding: 12px 14px;
+    align-self: flex-start;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 0 0 auto;
+    height: auto;
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: var(--panel-max-body-height, none);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+.floating-panel-shop .floating-panel-body::-webkit-scrollbar { width: 6px; height: 6px; }
+.floating-panel-shop .floating-panel-body::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.15); }
+.floating-panel-shop .floating-panel-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 3px; }
+.floating-panel-shop .floating-panel-body::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+.floating-panel-shop .floating-panel-body::-webkit-scrollbar-corner { background: transparent; }
+
+.floating-panel-shop .floating-panel-body .grid-container {
+    min-height: 0;
+    flex: 0 0 auto;
+    width: max-content;
+}
+
+/* Stash / depo panelleri: scrollable = true ise satır sayısı aşılırsa scroll */
+.floating-panel-stash-scrollable .floating-panel-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: var(--panel-max-body-height, none);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+.floating-panel-stash-scrollable .floating-panel-body::-webkit-scrollbar { width: 6px; height: 6px; }
+.floating-panel-stash-scrollable .floating-panel-body::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.15); }
+.floating-panel-stash-scrollable .floating-panel-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 3px; }
+.floating-panel-stash-scrollable .floating-panel-body::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+.floating-panel-stash-scrollable .floating-panel-body::-webkit-scrollbar-corner { background: transparent; }
+.floating-panel-stash-scrollable .floating-panel-body .grid-container {
+    min-height: 0;
+    flex: 0 0 auto;
+}
+
+.shop-category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+}
+.shop-category-tab {
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.85);
+    cursor: pointer;
+    white-space: nowrap;
+}
+.shop-category-tab:hover {
+    background: rgba(255,255,255,0.12);
+}
+.shop-category-tab.active {
+    background: var(--accent, rgba(72, 187, 120, 0.4));
+    border-color: var(--accent, rgba(72, 187, 120, 0.7));
+    color: #fff;
+}
+
+.item-shop-price {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: #7ae0b0;
+    margin-top: 1px;
+}
+
+/* Shop: isim tooltip'te */
+.floating-panel-shop .item-cell .item-box .item-label,
+.floating-panel-shop .item-cell .item-box .item-stats {
+    display: none;
+}
+.item-box-footer-shop .item-shop-price,
+.floating-panel-shop .item-box .item-shop-price {
+    display: block;
+    margin: 0;
+    font-size: clamp(8px, calc(var(--cell-size, 36px) * 0.26), 10px);
+    font-weight: 600;
+    text-align: center;
+    color: #7ae0b0;
+    background: rgba(0, 0, 0, 0.62);
+    border: 1px solid rgba(122, 224, 176, 0.25);
+    border-radius: 2px;
+    padding: 1px 2px;
+    pointer-events: none;
+}
+
+/* Shop ödeme tipi toggle (Nakit / Banka) */
+.shop-money-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: radial-gradient(circle at top left, rgba(35, 213, 163, 0.14), transparent 55%);
+}
+
+.shop-money-toggle-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    font-size: 9px;
+    opacity: 0.85;
+}
+
+.shop-money-toggle-buttons {
+    display: inline-flex;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(0, 0, 0, 0.45);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+.shop-money-btn {
+    padding: 3px 8px;
+    font-size: 10px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.75);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 40px;
+    justify-content: center;
+}
+
+.shop-money-btn + .shop-money-btn {
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.shop-money-btn i {
+    font-size: 9px;
+}
+
+.shop-money-btn.active {
+    background: linear-gradient(135deg, rgba(35, 213, 163, 0.98), rgba(35, 213, 163, 0.82));
+    color: #0a0a0c;
+}
+
+.shop-money-btn:not(.active):hover {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+.floating-panel .panel-title {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.floating-panel .panel-title::after {
+    display: none;
+}
+
+.inventory-panel.secondary {
+    flex: 0 0 auto;
+}
+
+.panel-title,
+.panel-label {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin: 0 0 4px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    position: relative;
+}
+
+.panel-title::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 30px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.5;
+}
+
+/* --------------------------------------------------------------------------
+   Grid — Modern glass style
+   -------------------------------------------------------------------------- */
+.grid-container {
+    position: relative;
+    display: grid;
+    gap: 2px;
+    /* background: rgba(8, 8, 10, 0.20); */
+    padding: 2px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    align-content: start;
+}
+
+.grid-cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    min-width: var(--cell-size);
+    min-height: var(--cell-size);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--grid-cell-border, rgba(255, 255, 255, 0.03));
+    position: relative;
+    border-radius: var(--radius-sm);
+}
+
+.grid-cell:hover {
+    border-color: var(--accent-soft);
+}
+
+/* Debug: tarifte eşyanın bulunması gereken koordinatlar (crafting paneli) */
+.grid-cell.grid-cell-recipe-zone {
+    border: 2px solid rgba(255, 60, 60, 0.9);
+    box-shadow: inset 0 0 0 1px rgba(255, 60, 60, 0.35);
+}
+
+/* Item cell — optimized for drag performance; --cell-z konuma göre (sağ/alttaki üstte) */
+.item-cell {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    background: rgba(18, 18, 20, 0.32);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-sm);
+    cursor: grab;
+    overflow: hidden;
+    z-index: var(--cell-z, 2);
+    will-change: transform;
+    container-type: size;
+    container-name: item-cell;
+}
+
+.item-cell:not(.dragging) {
+    transition: opacity 0.12s ease, border-color 0.15s ease, filter 0.12s ease, transform 0.15s ease;
+}
+
+.item-cell:hover:not(.dragging) {
+    border-color: var(--accent-border);
+}
+
+.item-cell.item-cell-attachment-match {
+    border: 2px solid rgba(34, 197, 94, 0.9);
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5), 0 0 12px rgba(34, 197, 94, 0.35);
+}
+.item-cell.item-cell-attachment-match:hover:not(.dragging) {
+    border-color: rgba(34, 197, 94, 1);
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.6), 0 0 16px rgba(34, 197, 94, 0.5);
+}
+.item-cell.item-cell-attachment-dimmed {
+    opacity: 0.4;
+}
+.item-cell.item-cell-attachment-dimmed:hover:not(.dragging) {
+    opacity: 0.65;
+}
+
+/* Ctrl+click multi-select: accent border + glow (drag onto player to give) */
+.item-cell.grid-item-selected {
+    border: 2px solid var(--accent-border);
+    box-shadow: 0 0 0 1px var(--accent-soft), 0 0 12px var(--accent-glow);
+}
+.item-cell.grid-item-selected:hover:not(.dragging) {
+    border-color: var(--accent-border-hover);
+    box-shadow: 0 0 0 2px var(--accent-muted), 0 0 16px var(--accent-glow-strong);
+}
+
+.item-cell:active {
+    cursor: grabbing;
+}
+
+.item-cell.dragging {
+    cursor: grabbing;
+    opacity: 0.85;
+    z-index: 1000 !important;
+    pointer-events: none;
+    transition: none !important;
+}
+
+/* Taşınırken kaynak hücre: soluk ve sürüklenemez */
+.item-cell.item-cell-transferring {
+    opacity: 0.45;
+    pointer-events: none !important;
+    cursor: not-allowed;
+    user-select: none;
+}
+.item-cell.item-cell-transferring * {
+    pointer-events: none !important;
+}
+
+/* Hedefteki loading — köşe vurgulu çerçeve, dolum + alt şerit, iptal */
+.item-cell.item-cell-loading {
+    cursor: default;
+    z-index: 10;
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-sm);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.3),
+        0 4px 20px rgba(0, 0, 0, 0.45);
+    animation: item-loading-pulse 2.4s ease-in-out infinite;
+    overflow: hidden;
+}
+/* Köşe L vurguları — sol üst + sağ alt */
+.item-cell.item-cell-loading::before,
+.item-cell.item-cell-loading::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--accent-border-hover);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+    z-index: 5;
+    animation: item-loading-corner 2.4s ease-in-out infinite;
+}
+.item-cell.item-cell-loading::before {
+    top: 2px;
+    left: 2px;
+    border-top-width: 2px;
+    border-left-width: 2px;
+}
+.item-cell.item-cell-loading::after {
+    bottom: 2px;
+    right: 2px;
+    border-bottom-width: 2px;
+    border-right-width: 2px;
+}
+@keyframes item-loading-pulse {
+    0%, 100% { border-color: var(--accent-border); box-shadow: 0 0 0 1px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.45); }
+    50%  { border-color: var(--accent-border-hover); box-shadow: 0 0 0 1px rgba(0,0,0,0.25), 0 4px 24px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow); }
+}
+@keyframes item-loading-corner {
+    0%, 100% { opacity: 0.8; }
+    50%  { opacity: 1; }
+}
+.item-cell.item-cell-loading .item-box {
+    background: linear-gradient(175deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%);
+    border-radius: calc(var(--radius-sm) - 1px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.item-cell.item-cell-loading .item-image-wrap {
+    opacity: 0.88;
+    filter: brightness(1.05) saturate(0.97);
+}
+/* Alt etiket: pill */
+.item-cell.item-cell-loading .item-loading-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 6px;
+    padding: 2px 8px;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 10px;
+    border: 1px solid var(--accent-border);
+    z-index: 2;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    white-space: nowrap;
+}
+/* Dolum overlay */
+.item-cell.item-cell-loading .item-loading-fill-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+.item-cell.item-cell-loading .item-loading-fill-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 0;
+}
+.item-cell.item-cell-loading .item-loading-fill-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 0%;
+    min-height: 0;
+    background: linear-gradient(180deg,
+        var(--accent-muted) 0%,
+        var(--accent-soft) 60%,
+        var(--accent-bg-lo) 100%);
+    transition: height 0.12s var(--ease-out);
+    z-index: 1;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+/* Dolum hattının alt kenarı — parlayan çizgi */
+.item-cell.item-cell-loading .item-loading-fill-bar::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 235, 200, 0.9), transparent);
+    box-shadow: 0 0 8px var(--accent-glow-strong);
+    pointer-events: none;
+}
+.item-cell.item-cell-loading .item-loading-fill-bar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 100%);
+    pointer-events: none;
+}
+/* Alt ince animasyonlu şerit */
+.item-cell.item-cell-loading .item-box::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    border-radius: 0 0 calc(var(--radius-sm) - 1px) calc(var(--radius-sm) - 1px);
+    z-index: 2;
+    overflow: hidden;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-muted) 50%, var(--accent) 100%);
+    background-size: 200% 100%;
+    animation: item-loading-bar-shine 1.8s ease-in-out infinite;
+}
+@keyframes item-loading-bar-shine {
+    0%, 100% { background-position: 100% 0; opacity: 0.6; }
+    50% { background-position: 0% 0; opacity: 1; }
+}
+.item-cell.item-cell-loading .item-loading-cancel-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.85);
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    z-index: 10;
+    pointer-events: auto;
+    transition: background 0.2s ease, transform 0.15s ease, color 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.item-cell.item-cell-loading .item-loading-cancel-btn:hover {
+    background: rgba(200, 70, 70, 0.95);
+    color: #fff;
+    transform: scale(1.08);
+    box-shadow: 0 0 10px rgba(200, 70, 70, 0.35);
+}
+.item-cell.item-cell-loading .item-loading-cancel-btn:active {
+    transform: scale(0.95);
+}
+
+.item-cell .item-box {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    border-radius: calc(var(--radius-sm) - 1px);
+    padding: clamp(2px, calc(var(--cell-size, 36px) * 0.08), 4px);
+    box-sizing: border-box;
+    isolation: isolate;
+}
+
+/* Görsel katmanı — tam kutu, ortada max contain, footer altında */
+.item-cell .item-box .item-image-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: clamp(2px, calc(var(--cell-size, 36px) * 0.08), 5px);
+    pointer-events: none;
+    container-type: size;
+    container-name: item-img;
+}
+.item-image {
+    object-fit: contain;
+    object-position: center center;
+}
+.item-cell .item-box .item-image-wrap .item-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    object-fit: contain;
+    object-position: center center;
+    transform: translate(-50%, -50%) rotate(var(--item-image-rotation, 0deg));
+    transform-origin: center center;
+    pointer-events: none;
+    image-rendering: -webkit-optimize-contrast;
+}
+.item-cell .item-box .item-image-wrap.item-rot-swapped .item-image {
+    max-width: 100cqh;
+    max-height: 100cqw;
+}
+
+/* Stats + label / shop fiyat — görselin üstünde */
+.item-cell .item-box .item-box-footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    pointer-events: none;
+}
+
+/* Fallback when image is direct child (no wrap) */
+.item-cell .item-box > .item-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 0;
+    width: auto;
+    height: auto;
+    max-width: calc(100% - 6px);
+    max-height: calc(100% - 6px);
+    margin: 0;
+    object-fit: contain;
+    object-position: center center;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Küçük kutularda stats/label okunabilirliği */
+@container item-cell (max-height: 54px) {
+    .item-box {
+        padding: 2px;
+        gap: 1px;
+    }
+    .item-box .item-image-wrap {
+        padding: 2px;
+    }
+    .item-box .item-label {
+        font-size: 0.58rem;
+        padding: 1px 3px;
+        line-height: 1.1;
+    }
+    .item-box .item-stats {
+        display: none;
+    }
+}
+
+@container item-cell (max-height: 42px) {
+    .item-box .item-label {
+        display: none;
+    }
+    .item-box .item-image-wrap {
+        padding: 1px;
+    }
+    .floating-panel-shop .item-box-footer-shop .item-shop-price {
+        font-size: clamp(7px, calc(var(--cell-size, 36px) * 0.22), 8px);
+        padding: 0 1px;
+    }
+}
+
+/* Serial number: silah / benzersiz eşya datasında varsa hücrede göster */
+.item-cell .item-box .item-serial {
+    flex-shrink: 0;
+    font-size: 0.65rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    background: var(--accent-bg-lo);
+    border: 1px solid var(--accent-soft);
+    padding: 2px 4px;
+    border-radius: 2px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Hücrede etiket: sol üst (not ikonunun hemen yanında) */
+.item-cell .item-box .item-tag-pill {
+    position: absolute;
+    top: 3px;
+    left: 22px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 2px 5px;
+    border-radius: 999px;
+    background: rgba(56, 189, 248, 0.18);
+    border: 1px solid rgba(56, 189, 248, 0.55);
+    color: rgba(219, 239, 255, 0.95);
+    max-width: 55%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+    z-index: 2;
+}
+/* Not göstergesi: sol üst, yapışkan not ikonu — net belli olsun */
+.item-cell .item-box .item-note-indicator {
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: var(--accent-muted);
+    border: 1px solid var(--accent-border-hover);
+    box-shadow: 0 0 8px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    pointer-events: none;
+}
+.item-cell .item-box .item-note-indicator i {
+    font-size: 10px;
+    color: var(--accent);
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+/* Label: alt şerit — footer içinde, görselin üstünde */
+.item-cell .item-box .item-label {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.23);
+    border: 1px solid var(--border-subtle);
+    padding: 4px 5px;
+    border-radius: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    pointer-events: none;
+}
+
+/* Amount badge: top-right, flat */
+.item-cell .item-box .item-count {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.7rem;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.50);
+    border: 1px solid var(--border-subtle);
+    padding: 2px 5px;
+    border-radius: 3px;
+    line-height: 1.2;
+    z-index: 2;
+    min-width: 1.2em;
+    text-align: center;
+}
+
+/* Rotation feedback toggle class; animation intentionally disabled for stable feel. */
+.item-cell.item-rotated-bump {
+    transform-origin: 50% 50%;
+}
+
+/* Durability / quality strip — footer içinde label üstünde */
+.item-cell .item-box .item-stats {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    pointer-events: none;
+    padding: 2px 3px;
+    /* background: rgba(0, 0, 0, 0.45); */
+    border-radius: 2px 2px 0 0;
+}
+
+.item-cell .item-box .item-stats .item-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 16px;
+}
+
+.item-cell .item-box .item-stats .item-ammo-durability-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.item-cell .item-box .item-stats .item-ammo-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.1rem;
+    height: 0.55rem;
+    flex-shrink: 0;
+}
+.item-cell .item-box .item-stats .item-ammo-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.item-cell .item-box .item-stats .item-ammo-track {
+    flex: 1;
+    height: 6px;
+    background: var(--accent-bg-lo);
+    border: 1px solid var(--accent-soft);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+/* Durability: empty-border triangle, drain counter-clockwise (schema), static glow */
+.item-cell .item-box .item-stats .durability-triangle-wrap {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 20px;
+}
+.item-cell .item-box .item-stats .durability-triangle-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+}
+.item-cell .item-box .item-stats .durability-triangle-track {
+    stroke: rgba(255, 255, 255, 0.45);
+    stroke-width: 1.4;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.item-cell .item-box .item-stats .durability-triangle-fill {
+    stroke-width: 2.6;
+    fill: none;
+    transition: stroke-dasharray 0.3s ease, stroke 0.25s ease, opacity 0.2s ease;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.item-cell .item-box .item-stats .item-ammo-bar {
+    height: 100%;
+    border-radius: 2px;
+    min-width: 2px;
+    transition: width var(--duration-fast);
+}
+
+.item-cell .item-box .item-stats .item-ammo-pct {
+    font-family: var(--font-title);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 2.5em;
+    text-align: right;
+}
+
+.item-cell .item-box .item-stats .item-durability-pct {
+    font-family: var(--font-title);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 2em;
+    text-align: right;
+}
+
+/* Nadirlik (rarity): item-box'ta resmin arkasında radial-gradient + dış glow */
+.item-cell[class*="item-rarity-"] .item-box {
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7);
+    position: relative;
+}
+/* Gradient katmanı — item-image'in arkasında, ortada ışıma */
+.item-cell[class*="item-rarity-"] .item-box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+}
+.item-cell.item-rarity-common .item-box::before {
+    background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(255, 255, 255, 0.08), transparent 65%);
+}
+.item-cell.item-rarity-common .item-box {
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 0 12px rgba(255, 255, 255, 0.03);
+}
+.item-cell.item-rarity-uncommon .item-box::before {
+    background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(56, 189, 248, 0.22), transparent 65%);
+}
+.item-cell.item-rarity-uncommon .item-box {
+    box-shadow:
+        0 0 0 1px rgba(56, 189, 248, 0.55),
+        0 0 16px rgba(56, 189, 248, 0.40);
+}
+.item-cell.item-rarity-rare .item-box::before {
+    background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(129, 140, 248, 0.28), transparent 65%);
+}
+.item-cell.item-rarity-rare .item-box {
+    box-shadow:
+        0 0 0 1px rgba(129, 140, 248, 0.70),
+        0 0 18px rgba(129, 140, 248, 0.55);
+}
+.item-cell.item-rarity-epic .item-box::before {
+    background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(236, 72, 153, 0.30), transparent 65%);
+}
+.item-cell.item-rarity-epic .item-box {
+    box-shadow:
+        0 0 0 1px rgba(236, 72, 153, 0.80),
+        0 0 20px rgba(236, 72, 153, 0.60);
+}
+.item-cell.item-rarity-legendary .item-box::before {
+    background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(251, 191, 36, 0.35), transparent 65%);
+}
+.item-cell.item-rarity-legendary .item-box {
+    box-shadow:
+        0 0 0 1px rgba(251, 191, 36, 0.90),
+        0 0 22px rgba(251, 191, 36, 0.75);
+}
+
+/* Ayarlarda "Eşya nadirliği" kapalıysa item-box parlama/renk kapatılır */
+#inventory-root.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box::before,
+html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box::before {
+    background: none !important;
+}
+#inventory-root.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box,
+html.item-rarity-hidden .item-cell[class*="item-rarity-"] .item-box {
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Tooltip'te nadirlik satırı renklendirme */
+.tooltip-row.tooltip-rarity span:last-child {
+    font-weight: 600;
+}
+.tooltip-row.tooltip-rarity-common span:last-child {
+    color: rgba(255, 255, 255, 0.8);
+}
+.tooltip-row.tooltip-rarity-uncommon span:last-child {
+    color: #38bdf8;
+}
+.tooltip-row.tooltip-rarity-rare span:last-child {
+    color: #818cf8;
+}
+.tooltip-row.tooltip-rarity-epic span:last-child {
+    color: #ec4899;
+}
+.tooltip-row.tooltip-rarity-legendary span:last-child {
+    color: #fbbf24;
+}
+
+.tooltip-row.tooltip-tag span:last-child {
+    color: #38bdf8;
+    font-weight: 600;
+}
+.tooltip-row.tooltip-note span:last-child {
+    color: rgba(255, 255, 255, 0.9);
+    /* Uzun notların tooltip dışına taşmaması için 3 satırla sınırla */
+    max-height: 4.5em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+}
+
+.item-ghost {
+    position: fixed !important;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0.92;
+    border-color: var(--accent-border-hover) !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 12px var(--accent-glow);
+    transition: none !important;
+    will-change: left, top;
+}
+.item-ghost .item-image-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    padding: 4px;
+    box-sizing: border-box;
+    container-type: size;
+    container-name: item-img;
+    pointer-events: none;
+}
+.item-ghost .item-image-wrap .item-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    object-fit: contain;
+    object-position: center center;
+    transform: translate(-50%, -50%) rotate(var(--item-image-rotation, 0deg));
+    transform-origin: center center;
+    opacity: 0.9;
+    pointer-events: none;
+}
+.item-ghost .item-image-wrap.item-rot-swapped .item-image {
+    max-width: 100cqh;
+    max-height: 100cqw;
+}
+.item-ghost > .item-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    max-width: calc(100% - 8px);
+    max-height: calc(100% - 8px);
+    object-fit: contain;
+    object-position: center;
+    transform: translate(-50%, -50%);
+    opacity: 0.9;
+}
+.item-ghost .item-ghost-count,
+.item-ghost .item-ghost-batch-count {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    background: var(--accent);
+    color: #1a1a1a;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Scroll ile miktar değişince ghost kutusunda kısa animasyon */
+@keyframes item-ghost-amount-bump {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.08); }
+    70% { transform: scale(0.97); }
+    100% { transform: scale(1); }
+}
+.item-ghost.item-ghost-amount-bump {
+    animation: item-ghost-amount-bump 0.35s ease-out;
+}
+
+/* Toplu sürükleme: eşyalar yelpaze (poker/iskambil) gibi görünür */
+.item-ghost-batch-stack .item-ghost-fan {
+    display: block;
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+}
+.item-ghost-batch-stack .item-ghost-fan .item-ghost-fan-card {
+    position: absolute;
+    width: 72%;
+    height: 78%;
+    left: 14%;
+    top: 11%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 4px;
+    border: 1px solid var(--accent-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    background: rgba(28, 28, 28, 0.92);
+    pointer-events: none;
+}
+.item-ghost-batch-stack .item-ghost-fan .item-ghost-fan-card:nth-child(1) { transform: rotate(-14deg) translateY(-3%); z-index: 1; }
+.item-ghost-batch-stack .item-ghost-fan .item-ghost-fan-card:nth-child(2) { transform: rotate(-7deg) translateY(-1%); z-index: 2; }
+.item-ghost-batch-stack .item-ghost-fan .item-ghost-fan-card:nth-child(3) { transform: rotate(0deg); z-index: 3; }
+.item-ghost-batch-stack .item-ghost-fan .item-ghost-fan-card:nth-child(4) { transform: rotate(7deg) translateY(-1%); z-index: 2; }
+.item-ghost-batch-stack .item-ghost-fan .item-ghost-fan-card:nth-child(5) { transform: rotate(14deg) translateY(-3%); z-index: 1; }
+
+.item-ghost-fan {
+    display: block;
+    position: relative;
+}
+.item-ghost-fan .item-ghost-fan-card {
+    position: absolute;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 4px;
+    border: 1px solid var(--accent-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    background: rgba(28, 28, 28, 0.92);
+    pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Drop preview — green / red (ghost üstünde görünsün, işlevsel)
+   -------------------------------------------------------------------------- */
+.drop-preview {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    border: 3px solid;
+    border-radius: var(--radius-sm);
+    box-sizing: border-box;
+    will-change: transform, left, top, width, height;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.drop-preview .item-image-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 4px;
+    container-type: size;
+    container-name: item-img;
+    pointer-events: none;
+}
+.drop-preview .item-image-wrap .item-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    object-fit: contain;
+    object-position: center center;
+    transform: translate(-50%, -50%) rotate(var(--item-image-rotation, 0deg));
+    transform-origin: center center;
+    opacity: 0.45;
+    pointer-events: none;
+}
+.drop-preview .item-image-wrap.item-rot-swapped .item-image {
+    max-width: 100cqh;
+    max-height: 100cqw;
+}
+
+.drop-preview .drop-preview-image {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.drop-preview.hidden {
+    display: none !important;
+}
+
+.drop-preview-valid {
+    background: rgba(99, 211, 140, 0.55);
+    border-color: #63d38c;
+    box-shadow: 0 0 0 2px rgba(99, 211, 140, 0.6), 0 4px 16px rgba(99, 211, 140, 0.35);
+}
+
+.drop-preview-invalid {
+    background: rgba(227, 106, 106, 0.55);
+    border-color: #e36a6a;
+    box-shadow: 0 0 0 2px rgba(227, 106, 106, 0.6), 0 4px 16px rgba(227, 106, 106, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   Drop zone
+   -------------------------------------------------------------------------- */
+.drop-zone {
+    width: 88px;
+    min-height: 120px;
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-align: center;
+    padding: var(--space-sm);
+    transition: border-color var(--duration-fast), background var(--duration-fast), color var(--duration-fast);
+}
+
+.drop-zone i {
+    font-size: 1.25rem;
+    opacity: 0.7;
+}
+
+.drop-zone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Ayarlar paneli (blur, dayanıklılık/grid renkleri, hint)
+   -------------------------------------------------------------------------- */
+.settings-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: var(--space-lg);
+    box-sizing: border-box;
+}
+.settings-panel.hidden {
+    display: none !important;
+}
+/* Server Config.InventoryPlayerPreferences: hide individual settings rows */
+.settings-field-hidden {
+    display: none !important;
+}
+/* playerCanChange = false but hideNonChangeableRows = false: visible, not editable */
+.settings-field-readonly {
+    opacity: 0.55;
+    pointer-events: none;
+}
+.settings-field-readonly .settings-label {
+    cursor: not-allowed;
+}
+.settings-panel-inner {
+    width: 100%;
+    max-width: 360px;
+    background: var(--bg-dark-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border-default);
+}
+.settings-title {
+    margin: 0;
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.btn-settings-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+}
+.btn-settings-close:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+.settings-body {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+}
+.settings-row-toggle {
+    cursor: pointer;
+}
+.settings-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    flex: 1;
+}
+.settings-checkbox {
+    width: 40px;
+    height: 22px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+.settings-color {
+    width: 40px;
+    height: 28px;
+    padding: 2px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background: var(--bg-slot);
+    cursor: pointer;
+}
+.settings-color::-webkit-color-swatch-wrapper { padding: 0; }
+.settings-color::-webkit-color-swatch { border: none; border-radius: 4px; }
+.settings-select {
+    min-width: 140px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    background: var(--bg-slot);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+.settings-row-range {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+}
+.settings-range-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+}
+.settings-range {
+    flex: 1;
+    min-width: 80px;
+    height: 6px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+.settings-range-value {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    min-width: 2.5em;
+}
+.btn-settings-reset {
+    margin-top: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-settings-reset:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   Quick slots — footer (yatay 1–6) — Modern style
+   -------------------------------------------------------------------------- */
+.quick-slots-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--inv-bg, linear-gradient(180deg, rgba(14, 14, 16, 0.22), rgba(10, 10, 12, 0.26)));
+    border-top: 1px solid var(--accent-soft);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    cursor: move;
+    flex-shrink: 0;
+    width: 0;
+    min-width: 100%;
+    min-height: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.quick-slots-wrap .quick-slot {
+    cursor: pointer;
+}
+
+.quick-slots-label {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+    opacity: 0.8;
+}
+
+.quick-slots-keys {
+    color: var(--accent);
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+.quick-slots {
+    display: flex;
+    gap: 8px;
+}
+
+/* Envanter tuş ipuçları — estetik, okunabilir */
+.inventory-hint-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    letter-spacing: 0.03em;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 10px;
+    padding: 10px 16px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    background: linear-gradient(180deg, rgba(18, 18, 20, 0.5) 0%, rgba(12, 12, 14, 0.55) 100%);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+.inventory-hint-bar.hint-hidden {
+    display: none !important;
+}
+.inventory-hint-bar .hint-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+.inventory-hint-bar .hint-group:not(:last-child)::after {
+    content: "";
+    margin-left: 14px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    flex-shrink: 0;
+}
+.inventory-hint-bar .hint-group span {
+    display: inline;
+}
+.inventory-hint-bar kbd {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 7px;
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.95);
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.inventory-hint-bar .hint-group:hover kbd {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+.quick-slot {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: border-color 0.15s ease;
+}
+
+.quick-slot.has-item {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+}
+
+/* Quick slot güncellendiğinde mikro animasyon (küçük bir pulse) */
+.quick-slot.quick-slot-updated {
+    animation: quick-slot-updated-pulse 0.32s ease-out;
+}
+@keyframes quick-slot-updated-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 var(--accent-glow);
+    }
+    40% {
+        transform: scale(1.06);
+        box-shadow: 0 0 12px 0 var(--accent-glow-strong);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 var(--accent-glow);
+    }
+}
+
+.quick-slot:hover {
+    border-color: var(--accent-border);
+}
+
+.quick-slot:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.quick-slot .key {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.3);
+    z-index: 2;
+}
+.quick-slot.has-item .key {
+    color: var(--accent);
+}
+
+.quick-slot-item {
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    background: transparent;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    padding: 3px;
+}
+
+.quick-slot-item img {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    object-fit: contain;
+    object-position: center;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+.quick-slot-durability {
+    flex-shrink: 0;
+    padding: 0 2px 1px;
+}
+.quick-slot-durability .durability-triangle-wrap {
+    width: 18px;
+    height: 14px;
+}
+.quick-slot-durability .durability-triangle-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
+}
+.quick-slot-durability .durability-triangle-track {
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 1.2;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.quick-slot-durability .durability-triangle-fill {
+    stroke-width: 2.8;
+    fill: none;
+    transition: stroke-dasharray 0.35s ease, stroke 0.25s ease;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* --------------------------------------------------------------------------
+   Resize handle
+   -------------------------------------------------------------------------- */
+.resize-handle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 28px;
+    height: 28px;
+    cursor: nwse-resize;
+    background: var(--bg-base);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md) 0 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    font-size: 0.7rem;
+    z-index: 10;
+    transition: color var(--duration-fast), background var(--duration-fast);
+}
+
+.resize-handle:hover {
+    color: var(--accent);
+    background: var(--bg-surface);
+}
+
+.floating-panel .resize-handle-secondary {
+    right: 0;
+    bottom: 0;
+    border-radius: var(--radius-lg) 0 0 0;
+}
+
+/* --------------------------------------------------------------------------
+   Item tooltip — Modern glass card
+   -------------------------------------------------------------------------- */
+.item-tooltip.item-tooltip-dark {
+    background: linear-gradient(145deg, var(--bg-dark-surface), var(--bg-dark-overlay));
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+.item-tooltip {
+    position: fixed;
+    min-width: 220px;
+    max-width: 320px;
+    background: linear-gradient(145deg, var(--bg-surface), var(--bg-base));
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: var(--radius-lg);
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        0 0 40px rgba(35, 213, 163, 0.05);
+    z-index: 1500;
+    padding: var(--space-lg) var(--space-xl);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    pointer-events: none;
+    animation: tooltipIn 0.2s var(--ease-out);
+}
+
+.item-tooltip::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), rgba(35, 213, 163, 0.3));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+@keyframes tooltipIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.item-tooltip.hidden {
+    display: none !important;
+}
+
+.item-tooltip .tooltip-title {
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid rgba(35, 213, 163, 0.18);
+    text-shadow: 0 0 20px rgba(35, 213, 163, 0.25);
+}
+
+.item-tooltip .tooltip-desc {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-bottom: var(--space-sm);
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.item-tooltip .tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    color: var(--text-primary);
+    margin-top: 4px;
+    font-size: 0.85rem;
+    padding: 2px 0;
+}
+
+.item-tooltip .tooltip-row span:first-child {
+    color: var(--text-tertiary);
+}
+
+.item-tooltip .tooltip-serial-block {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+    background: linear-gradient(135deg, var(--accent-bg-hi), var(--accent-bg-lo));
+    border-radius: var(--radius-sm);
+    border-left: 2px solid var(--accent-border-hover);
+}
+.item-tooltip .tooltip-serial-value {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.03em;
+    color: var(--accent);
+    font-weight: 600;
+}
+.item-tooltip .tooltip-serial span:last-child {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+
+.item-tooltip .tooltip-info {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.item-tooltip .tooltip-info div {
+    margin-top: 3px;
+    opacity: 0.85;
+}
+
+.item-tooltip .tooltip-attachments-row {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.item-tooltip .tooltip-attachments-label {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+}
+.item-tooltip .tooltip-attachments {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.item-tooltip .tooltip-attachment {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.25);
+}
+.item-tooltip .tooltip-attachment img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.item-tooltip .tooltip-tint-row {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.item-tooltip .tooltip-tint-row .tooltip-tint-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary, rgba(255, 255, 255, 0.9));
+}
+
+/* Çanta (bag) içeriği — tooltip'te resim × miktar */
+.item-tooltip .tooltip-bag-contents-weight {
+    color: var(--text-tertiary);
+}
+.item-tooltip .tooltip-bag-contents {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.item-tooltip .tooltip-bag-contents-label {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    display: block;
+    margin-bottom: 6px;
+}
+.item-tooltip .tooltip-bag-contents-list {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.item-tooltip .tooltip-bag-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.20);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.item-tooltip .tooltip-bag-item img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    object-position: center;
+}
+.item-tooltip .tooltip-bag-amount {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary, rgba(255, 255, 255, 0.9));
+}
+
+/* --------------------------------------------------------------------------
+   Ver — yakındaki oyuncu listesi modal
+   -------------------------------------------------------------------------- */
+.give-player-list-root {
+    position: fixed;
+    inset: 0;
+    z-index: 2500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: giveListIn 0.2s var(--ease-out);
+}
+.give-player-list-root.hidden {
+    display: none !important;
+}
+.give-player-list-root:not(.hidden) {
+    pointer-events: auto;
+}
+.give-player-list-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+}
+.give-player-list-box {
+    position: relative;
+    min-width: 300px;
+    max-width: 90vw;
+    max-height: 75vh;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    z-index: 1;
+}
+.give-player-list-box-dark {
+    background: linear-gradient(145deg, var(--bg-dark-surface), var(--bg-dark-overlay));
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+.give-player-list-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+.give-player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 280px;
+    min-height: 80px;
+    padding-right: 4px;
+    -webkit-overflow-scrolling: touch;
+}
+.give-player-list::-webkit-scrollbar {
+    width: 6px;
+}
+.give-player-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 3px;
+}
+.give-player-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+.give-player-list-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    text-align: left;
+    flex-shrink: 0;
+}
+.give-player-list-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--accent-warm);
+}
+.give-player-list-btn .give-player-id {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+.give-player-list-cancel {
+    align-self: flex-end;
+    padding: 10px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+.give-player-list-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+@keyframes giveListIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   Context menu — Modern dropdown style
+   -------------------------------------------------------------------------- */
+.context-menu.context-menu-dark {
+    background: linear-gradient(145deg, var(--bg-dark-surface), var(--bg-dark-overlay));
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+.context-menu {
+    position: fixed;
+    min-width: 180px;
+    background: linear-gradient(145deg, var(--bg-surface), var(--bg-base));
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: var(--radius-md);
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    z-index: 2000;
+    overflow: hidden;
+    animation: contextIn 0.15s var(--ease-out);
+    padding: 4px;
+}
+
+@keyframes contextIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.context-menu button {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s var(--ease-out);
+    border-radius: 6px;
+}
+
+.context-menu button:hover {
+    background: linear-gradient(135deg, var(--accent-bg-hi), var(--accent-bg-lo));
+    color: var(--accent);
+}
+
+.context-menu button i {
+    width: 18px;
+    color: var(--accent);
+    opacity: 0.8;
+    transition: opacity 0.15s ease;
+}
+
+.context-menu button:hover i {
+    opacity: 1;
+}
+
+.context-menu-amount-row {
+    padding: var(--space-sm) var(--space-md);
+    border-top: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+.context-menu-amount-row .context-menu-amount-label {
+    font-size: 0.85rem;
+    color: var(--text-tertiary, rgba(255, 255, 255, 0.6));
+    flex-shrink: 0;
+}
+
+.context-menu-split {
+    padding: var(--space-sm) var(--space-md);
+    border-top: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.context-menu-split.hidden {
+    display: none !important;
+}
+
+.context-menu-custom-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.context-menu-custom-buttons.hidden {
+    display: none !important;
+}
+
+.context-menu-custom-buttons .context-menu-custom-btn {
+    width: 100%;
+    text-align: left;
+    padding: var(--space-sm) var(--space-md);
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+}
+
+.context-menu-custom-buttons .context-menu-custom-btn:hover {
+    background: var(--hover-bg);
+}
+
+.split-slider-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.context-menu-split input[type="range"],
+.context-menu-amount-row input[type="range"] {
+    flex: 1;
+    min-width: 0;
+    height: 6px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.split-value {
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.85rem;
+    min-width: 1.5em;
+    text-align: right;
+    color: var(--accent);
+}
+
+.split-amount-input {
+    width: 3.2em;
+    min-width: 3.2em;
+    padding: 4px 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.2));
+    border-radius: 4px;
+    background: var(--input-bg, rgba(0, 0, 0, 0.3));
+    color: var(--accent);
+    font-family: var(--font-body);
+    -moz-appearance: textfield;
+}
+.split-amount-input::-webkit-outer-spin-button,
+.split-amount-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.split-amount-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+.context-menu-amount-row .split-amount-input {
+    flex-shrink: 0;
+}
+
+.split-confirm-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    width: 100%;
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-muted);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--duration-fast), border-color var(--duration-fast);
+}
+
+.split-confirm-btn:hover {
+    background: var(--accent-muted);
+    border-color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Modal
+   -------------------------------------------------------------------------- */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    animation: fadeIn var(--duration-normal) var(--ease-out);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    min-width: 260px;
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.6);
+    animation: windowIn var(--duration-normal) var(--ease-out);
+}
+
+.modal-content h3 {
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    margin: 0 0 var(--space-md) 0;
+    color: var(--text-primary);
+}
+
+.modal-content input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    margin-bottom: var(--space-md);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.modal-content input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: flex-end;
+}
+
+.modal-actions button {
+    padding: var(--space-sm) var(--space-lg);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+#split-confirm {
+    background: var(--accent);
+    color: #0a0a0c;
+}
+
+#split-confirm:hover {
+    background: var(--accent-hover);
+}
+
+#split-cancel {
+    background: var(--border-default);
+    color: var(--text-secondary);
+}
+
+#split-cancel:hover {
+    background: var(--border-strong);
+    color: var(--text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Eşya bildirimi (eklendi / silindi / kullanıldı) — geliş/gidiş animasyonu
+   -------------------------------------------------------------------------- */
+@keyframes item-notify-in {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(48px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-6px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes item-notify-in-card {
+    0% {
+        opacity: 0.85;
+        transform: scale(0.92);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.item-notify-root {
+    position: fixed;
+    left: 50%;
+    bottom: 92px;
+    transform: translateX(-50%) translateY(32px);
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out), visibility 0s linear 0.4s;
+}
+
+.item-notify-root.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(32px);
+    transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out), visibility 0s linear 0.4s;
+}
+
+.item-notify-root:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    transition: none;
+    animation: item-notify-in 0.5s var(--ease-out) forwards;
+}
+
+.item-notify-root:not(.hidden) .item-notify-card {
+    animation: item-notify-in-card 0.4s var(--ease-out) 0.1s forwards;
+}
+
+.item-notify-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-xl);
+    min-width: 240px;
+    max-width: 360px;
+    background: linear-gradient(145deg, var(--bg-surface), var(--bg-base));
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: var(--radius-lg);
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    opacity: 0;
+    transform: scale(0.92);
+}
+
+/* Tip rengi: sol çizgi + ikon arka planı */
+.item-notify-root[data-type="added"] .item-notify-card {
+    border-left: 3px solid var(--quality-100);
+}
+.item-notify-root[data-type="added"] .item-notify-icon-wrap {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--quality-100);
+}
+
+.item-notify-root[data-type="removed"] .item-notify-card {
+    border-left: 3px solid var(--quality-0);
+}
+.item-notify-root[data-type="removed"] .item-notify-icon-wrap {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.item-notify-root[data-type="used"] .item-notify-card {
+    border-left: 3px solid var(--accent);
+}
+.item-notify-root[data-type="used"] .item-notify-icon-wrap {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.item-notify-root[data-type="add"] .item-notify-card {
+    border-left: 3px solid var(--quality-100);
+}
+.item-notify-root[data-type="add"] .item-notify-icon-wrap {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--quality-100);
+}
+
+.item-notify-root[data-type="remove"] .item-notify-card {
+    border-left: 3px solid var(--quality-0);
+}
+.item-notify-root[data-type="remove"] .item-notify-icon-wrap {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.item-notify-icon-wrap {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-notify-type-icon {
+    font-size: 1rem;
+}
+
+.item-notify-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    object-position: center;
+    border-radius: var(--radius-sm);
+    background: var(--bg-slot);
+    padding: 6px;
+    image-rendering: -webkit-optimize-contrast;
+    flex-shrink: 0;
+}
+
+.item-notify-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.item-notify-label {
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
+    color: var(--text-primary);
+}
+
+.item-notify-meta {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.item-notify-type {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 1px;
+    font-weight: 500;
+}
+
+.item-notify-root[data-type="added"] .item-notify-type,
+.item-notify-root[data-type="add"] .item-notify-type {
+    color: var(--quality-100);
+}
+.item-notify-root[data-type="removed"] .item-notify-type,
+.item-notify-root[data-type="remove"] .item-notify-type {
+    color: #f87171;
+}
+.item-notify-root[data-type="used"] .item-notify-type {
+    color: var(--accent);
+}
+
+.item-notify-amount-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--bg-base);
+    font-family: var(--font-title);
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.item-notify-amount-badge:empty {
+    display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Food hint — sağ üst input_key tarzı: [E] Ye · %20 kaldı
+   -------------------------------------------------------------------------- */
+.food-hint-root {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 850;
+    pointer-events: none;
+    transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+}
+
+.food-hint-root.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(12px);
+}
+
+.food-hint-root:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.food-hint-inner {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 16px 12px;
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 0 24px rgba(35, 213, 163, 0.06);
+}
+
+.food-hint-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 26px;
+    padding: 0 6px;
+    font-family: var(--font-title);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+}
+
+.food-hint-label {
+    font-family: var(--font-title);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.food-hint-durability {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-left: 4px;
+}
+
+.food-hint-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.food-hint-main {
+    display: flex;
+    align-items: baseline;
+}
+
+.food-hint-cancel {
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    opacity: 0.45;
+}
+
+/* --------------------------------------------------------------------------
+   Quick slot bar (TAB) — Modern glassmorphism hotbar
+   -------------------------------------------------------------------------- */
+.quick-slot-bar-root {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%) translateY(0);
+    z-index: 900;
+    transition: transform 0.5s var(--ease-out), opacity 0.4s var(--ease-out);
+    pointer-events: none;
+}
+
+.quick-slot-bar-root.quick-slot-bar-hidden {
+    transform: translateX(-50%) translateY(calc(100% + 40px));
+    opacity: 0;
+    visibility: hidden;
+}
+
+.quick-slot-bar-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: 14px 24px 16px;
+    background: var(--inv-bg, linear-gradient(180deg, rgba(18, 18, 20, 0.92), rgba(10, 10, 12, 0.95)));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 0 40px var(--accent-soft);
+}
+
+/* gamerender.js data-hlsl ile blur uygulanır */
+
+.quick-slot-bar-hint {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.quick-slot-bar-boxes {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.quick-slot-bar-box {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    min-height: 58px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+}
+
+.quick-slot-bar-box:hover {
+    border-color: var(--accent-border);
+}
+
+.quick-slot-bar-box.has-item {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+}
+
+.quick-slot-bar-box.has-item:hover {
+    border-color: var(--accent-border-hover);
+}
+
+/* Slot numarası — modern badge style */
+.quick-slot-bar-num {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.35);
+    line-height: 1;
+    z-index: 2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.quick-slot-bar-box.has-item .quick-slot-bar-num {
+    color: var(--accent);
+}
+
+.quick-slot-bar-item {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.quick-slot-bar-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+.quick-slot-bar-item img[src=""],
+.quick-slot-bar-item img:not([src]),
+.quick-slot-bar-box:not(.has-item) .quick-slot-bar-item img {
+    opacity: 0;
+}
+
+.quick-slot-bar-amount {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+    padding: 2px 6px;
+    border-radius: 6px;
+    min-width: 1.4em;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 3;
+}
+
+.quick-slot-bar-box:not(.has-item) .quick-slot-bar-amount {
+    display: none;
+}
+
+.quick-slot-bar-durability {
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 16px;
+    z-index: 2;
+    overflow: visible;
+}
+.quick-slot-bar-durability .durability-triangle-wrap {
+    width: 100%;
+    height: 100%;
+}
+.quick-slot-bar-durability .durability-triangle-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
+}
+.quick-slot-bar-durability .durability-triangle-track {
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 1.2;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.quick-slot-bar-durability .durability-triangle-fill {
+    stroke-width: 2.8;
+    fill: none;
+    transition: stroke-dasharray 0.35s ease, stroke 0.25s ease;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.quick-slot-bar-box:not(.has-item) .quick-slot-bar-durability {
+    display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Item not / etiket modal
+   -------------------------------------------------------------------------- */
+.item-meta-modal-root {
+    position: fixed;
+    inset: 0;
+    z-index: 950;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.item-meta-modal-root.hidden {
+    display: none;
+}
+.item-meta-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+.item-meta-modal {
+    position: relative;
+    width: 360px;
+    max-width: 90vw;
+    background: linear-gradient(180deg, rgba(10, 10, 14, 0.98), rgba(6, 6, 10, 0.98));
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.item-meta-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.item-meta-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.item-meta-close {
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(0, 0, 0, 0.65);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+.item-meta-close:hover {
+    background: rgba(239, 68, 68, 0.95);
+    color: #fff;
+}
+.item-meta-modal-body {
+    padding: 10px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.item-meta-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 0.72rem;
+}
+.item-meta-label {
+    color: var(--text-tertiary);
+}
+.item-meta-value {
+    color: var(--text-primary);
+    font-weight: 500;
+    max-width: 65%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.item-meta-serial {
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    opacity: 0.95;
+}
+.item-meta-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+}
+.item-meta-field-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.item-meta-textarea,
+.item-meta-input {
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(13, 13, 17, 0.96);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    padding: 6px 8px;
+    resize: vertical;
+}
+.item-meta-textarea:focus,
+.item-meta-input:focus {
+    outline: none;
+    border-color: var(--accent-border-hover);
+    box-shadow: 0 0 0 1px var(--accent-soft);
+}
+.item-meta-input {
+    height: 28px;
+}
+.item-meta-hint {
+    font-size: 0.68rem;
+    color: var(--text-tertiary);
+    opacity: 0.8;
+    margin: 0;
+}
+.item-meta-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 8px 14px 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.item-meta-btn {
+    min-width: 80px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.item-meta-btn-secondary {
+    background: rgba(24, 24, 32, 0.95);
+    color: var(--text-secondary);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+.item-meta-btn-secondary:hover {
+    background: rgba(38, 38, 48, 0.98);
+}
+.item-meta-btn-primary {
+    background: linear-gradient(135deg, rgba(35, 213, 163, 0.95), rgba(234, 179, 8, 0.95));
+    color: #0b0b10;
+}
+.item-meta-btn-primary:hover {
+    filter: brightness(1.05);
+}
+
+/* --------------------------------------------------------------------------
+   Silah parça menüsü (haç UI) — silaha bağımlı dinamik menü
+   -------------------------------------------------------------------------- */
+.weapon-attachment-root {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: -1;
+}
+.weapon-attachment-root:not(.hidden) {
+    pointer-events: auto;
+}
+.weapon-attachment-root.hidden {
+    display: none !important;
+}
+.wa-preview-capture {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    cursor: default;
+    pointer-events: auto;
+}
+.wa-slot-lines {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+.wa-slot-line {
+    stroke: rgba(35, 213, 163, 0.55);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+}
+/* Merkez (Onayla) 3D silah merkezini takip eder; kollar sabit haç pozisyonunda */
+.wa-viewport-item {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    z-index: 2;
+}
+.wa-viewport-arm {
+    z-index: 1;
+}
+/* UI kolları silahın bone/slot pozisyonuna yapışık (viewport ile güncellenir) */
+#wa-viewport-scope,
+#wa-viewport-magazine,
+#wa-viewport-barrel,
+#wa-viewport-grip { left: 50%; top: 50%; }
+.wa-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    z-index: 2;
+}
+.wa-btn-center {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-warm, #23d5a3);
+    background: rgba(20, 20, 22, 0.32);
+    color: var(--accent-warm, #23d5a3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: transform 0.15s, background 0.15s;
+}
+.wa-btn-center:hover {
+    background: rgba(35, 213, 163, 0.25);
+    transform: scale(1.05);
+}
+.wa-center-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+}
+.wa-arm {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    background: rgba(10, 10, 12, 0.30);
+    border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.08));
+    border-radius: var(--radius-lg, 10px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.wa-arm-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    white-space: nowrap;
+}
+.wa-arm-top {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: column;
+}
+.wa-arm-bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: column-reverse;
+}
+.wa-arm-left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: row;
+}
+.wa-arm-right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: row;
+}
+.wa-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+    max-width: 140px;
+}
+.wa-slot-cell {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.wa-slot-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.wa-slot-cell:hover {
+    border-color: var(--accent-warm, #23d5a3);
+    transform: scale(1.05);
+}
+.wa-slot-cell.selected {
+    border-color: var(--accent-warm, #23d5a3);
+    box-shadow: 0 0 0 2px rgba(35, 213, 163, 0.4);
+}
+.wa-slot-remove {
+    color: rgba(255, 120, 120, 0.9);
+    font-size: 0.9rem;
+}
+.wa-slot-remove:hover {
+    color: rgba(255, 150, 150, 1);
+}
+.wa-tint-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.6);
+    color: rgba(255, 120, 120, 0.95);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    z-index: 2;
+}
+.wa-tint-remove:hover {
+    background: rgba(80, 0, 0, 0.7);
+    color: rgba(255, 150, 150, 1);
+}
+/* Parça slot kutusu — envanter item-box ile aynı görünüm */
+.wa-slot-drop-box {
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    min-height: 56px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-sm, 6px);
+    background: rgba(18, 18, 20, 0.32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: default;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    padding: 4px;
+    overflow: hidden;
+    position: relative;
+}
+.wa-slot-drop-box:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(24, 24, 28, 0.42);
+    box-shadow: 0 0 0 1px rgba(35, 213, 163, 0.25);
+}
+.wa-slot-drop-box.wa-slot-drop-box-drop-over {
+    border-color: rgba(34, 197, 94, 0.9);
+    background: rgba(34, 197, 94, 0.15);
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.6), 0 0 14px rgba(34, 197, 94, 0.35);
+}
+.wa-slot-drop-box.wa-slot-drop-box-valid {
+    border-color: rgba(34, 197, 94, 0.8);
+    background: rgba(34, 197, 94, 0.12);
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
+}
+.wa-slot-drop-box img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    pointer-events: none;
+}
+.wa-slot-drop-box-empty {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 1.1rem;
+}
+.wa-slot-drop-box-empty i {
+    pointer-events: none;
+}
+.wa-slot-drop-box-label {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    font-size: 0.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+.wa-slot-drop-box:not(:has(img)) {
+    flex-direction: column;
+    gap: 2px;
+}
+.wa-tint-box.wa-tint-wrap {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+.wa-tint-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: rgba(10, 10, 12, 0.30);
+    border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.08));
+    border-radius: var(--radius-lg, 10px);
+    pointer-events: auto;
+}
+.wa-viewport-tint {
+    z-index: 3;
+}
+.wa-viewport-tint .wa-tint-wrap {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+}
+.wa-viewport-tint .wa-tint-drop-slot {
+    flex-shrink: 0;
+}
+.wa-tint-wrap.hidden { display: none; }
+.wa-tint-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    white-space: nowrap;
+}
+.wa-tint-buttons { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; align-items: stretch; }
+.wa-tint-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+/* Tint item-box: envanter hücresi gibi kutu + uygun tintler yeşil border */
+.wa-tint-item-cell {
+    width: 56px;
+    min-width: 56px;
+    height: 56px;
+    min-height: 56px;
+    border-radius: var(--radius-sm, 6px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(18, 18, 20, 0.32);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+}
+.wa-tint-item-cell .item-box {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    background: transparent;
+    border-radius: calc(var(--radius-sm) - 2px);
+    overflow: hidden;
+    padding: 0;
+    gap: 2px;
+}
+.wa-tint-item-cell .item-image-wrap {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+.wa-tint-item-cell .item-image-wrap .item-image {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    pointer-events: none;
+}
+.wa-tint-item-cell .item-label {
+    flex-shrink: 0;
+    font-size: 0.5rem;
+    color: rgba(255, 255, 255, 0.85);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.1;
+}
+.wa-tint-item-cell-match {
+    border: 2px solid rgba(34, 197, 94, 0.9);
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5), 0 0 12px rgba(34, 197, 94, 0.35);
+}
+.wa-tint-item-cell-match:hover {
+    border-color: rgba(34, 197, 94, 1);
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.6), 0 0 16px rgba(34, 197, 94, 0.5);
+    background: rgba(24, 24, 28, 0.42);
+}
+.wa-tint-item-cell.selected {
+    border-color: var(--accent-warm, #23d5a3);
+    box-shadow: 0 0 0 2px rgba(35, 213, 163, 0.5), 0 0 12px rgba(34, 197, 94, 0.25);
+    background: rgba(35, 213, 163, 0.12);
+}
+.wa-tint-item-cell.selected:hover {
+    border-color: var(--accent-warm, #23d5a3);
+    box-shadow: 0 0 0 2px rgba(35, 213, 163, 0.6), 0 0 16px rgba(35, 213, 163, 0.3);
+}
+.wa-tint-btn:hover { border-color: rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.1); }
+.wa-tint-btn.selected { border-color: var(--accent-warm, #23d5a3); background: rgba(35, 213, 163, 0.2); }
+
+.weapon-attachment-root #wa-confirm,
+.weapon-attachment-root .wa-center-label {
+    display: none !important;
+}
+
+/* Silah parçası ekranı tuş ipuçları */
+.wa-hint-bar {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.5);
+    z-index: 200;
+    pointer-events: none;
+}
+.wa-hint-bar span {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+.wa-hint-bar kbd {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.wa-close-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(20, 20, 22, 0.32);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 201;
+    transition: background 0.15s;
+}
+.wa-close-btn:hover {
+    background: rgba(200, 60, 60, 0.4);
+}
+
+/* ==========================================================================
+   Loot Creator — sağ panel, admin /lootcreator
+   ========================================================================== */
+.loot-creator-root {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    pointer-events: auto;
+    z-index: 150;
+}
+.loot-creator-root.hidden {
+    display: none !important;
+}
+/* Eşya listesi paneli: sağ panelin hemen solunda, orta boyut */
+.loot-creator-itemlist-panel {
+    width: 320px;
+    min-width: 280px;
+    max-width: 90vw;
+    height: 100%;
+    background: var(--bg-dark-surface);
+    border-left: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-md);
+    gap: var(--space-sm);
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.25);
+}
+.loot-creator-itemlist-panel .loot-creator-subtitle {
+    margin: 0 0 var(--space-xs) 0;
+    flex-shrink: 0;
+}
+.loot-creator-itemlist-panel #lc-item-search {
+    flex-shrink: 0;
+}
+.loot-creator-itemlist-panel .loot-creator-item-list {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+}
+.loot-creator-itemlist-panel .loot-creator-item-list::-webkit-scrollbar {
+    width: 8px;
+}
+.loot-creator-itemlist-panel .loot-creator-item-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.loot-creator-itemlist-panel .loot-creator-item-list::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+}
+.loot-creator-itemlist-panel .loot-creator-item-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+}
+.loot-creator-empty-hint {
+    color: var(--text-tertiary);
+    font-size: 0.85rem;
+    padding: var(--space-md);
+    text-align: center;
+}
+.loot-creator-triggers-list {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.loot-creator-triggers-list::-webkit-scrollbar {
+    width: 8px;
+}
+.loot-creator-triggers-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.loot-creator-triggers-list::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+}
+.loot-creator-triggers-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+}
+.loot-creator-trigger-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: 6px 8px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+}
+.loot-creator-trigger-info {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.loot-creator-btn-edit-row {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+}
+.loot-creator-btn-icon {
+    width: 32px;
+    height: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.loot-creator-btn-waypoint-row {
+    flex-shrink: 0;
+    background: rgba(70, 140, 230, 0.2);
+    color: #9cc8ff;
+    border-color: rgba(90, 150, 240, 0.5);
+}
+.loot-creator-btn-waypoint-row:hover {
+    background: rgba(70, 140, 230, 0.35);
+    color: #cfe4ff;
+}
+.loot-creator-btn-delete-row {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    background: rgba(200, 60, 60, 0.2);
+    color: #e88;
+    border-color: rgba(200, 80, 80, 0.5);
+}
+.loot-creator-btn-delete-row:hover {
+    background: rgba(200, 60, 60, 0.35);
+    color: #faa;
+}
+.loot-creator-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+.loot-creator-modal.hidden { display: none !important; }
+.loot-creator-modal-inner {
+    background: var(--bg-dark-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    min-width: 280px;
+    max-width: 90vw;
+}
+.loot-creator-panel {
+    width: 420px;
+    max-width: 100%;
+    height: 100%;
+    background: var(--bg-dark-surface);
+    border-left: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.4);
+}
+.loot-creator-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+}
+.loot-creator-title {
+    margin: 0;
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.loot-creator-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--duration-fast), color var(--duration-fast);
+}
+.loot-creator-close:hover {
+    background: var(--invalid-bg);
+    color: var(--invalid-border);
+}
+.loot-creator-body {
+    flex: 1;
+    overflow: hidden;
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    min-height: 0;
+}
+.loot-creator-step.hidden {
+    display: none !important;
+}
+.loot-creator-step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.loot-creator-inner-panel {
+    background: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+.loot-creator-subtitle {
+    margin: 0 0 var(--space-sm) 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+.loot-creator-radio-row {
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-sm);
+}
+.loot-creator-radio-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.loot-creator-field-wrap {
+    margin-bottom: var(--space-sm);
+}
+.loot-creator-field-wrap.hidden {
+    display: none !important;
+}
+.loot-creator-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+}
+.loot-creator-input,
+.loot-creator-input-full {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+.loot-creator-input-row {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+}
+.loot-creator-input-row .loot-creator-input {
+    flex: 1;
+    min-width: 120px;
+}
+.loot-creator-hint {
+    margin: 4px 0 0 0;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+}
+.loot-creator-btn {
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background var(--duration-fast), border-color var(--duration-fast);
+}
+.loot-creator-btn-primary {
+    background: var(--accent-bg-hi);
+    border-color: var(--accent-border);
+    color: var(--accent);
+}
+.loot-creator-btn-primary:hover:not(:disabled) {
+    background: var(--accent-bg-lo);
+    border-color: var(--accent-border-hover);
+}
+.loot-creator-btn-secondary {
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+}
+.loot-creator-btn-secondary:hover {
+    background: var(--bg-overlay);
+    color: var(--text-primary);
+}
+.loot-creator-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.loot-creator-actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+.loot-creator-actions-end {
+    justify-content: flex-end;
+    margin-top: var(--space-sm);
+}
+.lc-export-feedback {
+    margin-top: var(--space-sm);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.lc-export-feedback.hidden {
+    display: none !important;
+}
+.lc-export-feedback.lc-export-feedback-success {
+    background: rgba(99, 211, 140, 0.2);
+    border: 1px solid #63d38c;
+    color: #63d38c;
+}
+.lc-export-feedback.lc-export-feedback-error {
+    background: rgba(227, 106, 106, 0.2);
+    border: 1px solid #e36a6a;
+    color: #e36a6a;
+}
+.loot-creator-split {
+    display: block;
+    gap: var(--space-md);
+}
+@media (max-width: 700px) {
+    .loot-creator-split { grid-template-columns: 1fr; }
+}
+.loot-creator-list-panel {
+    order: 1;
+}
+.loot-creator-group-panel {
+    order: 2;
+}
+.loot-creator-list-panel .loot-creator-item-list,
+.loot-creator-group-panel .loot-creator-selected-group {
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+}
+.loot-creator-group-panel .loot-creator-selected-group::-webkit-scrollbar {
+    width: 8px;
+}
+.loot-creator-group-panel .loot-creator-selected-group::-webkit-scrollbar-track {
+    background: transparent;
+}
+.loot-creator-group-panel .loot-creator-selected-group::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+}
+.loot-creator-group-panel .loot-creator-selected-group::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+}
+.loot-creator-item-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 8px;
+}
+.loot-creator-item-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background var(--duration-fast), border-color var(--duration-fast);
+    text-align: center;
+}
+.loot-creator-item-box:hover {
+    background: var(--bg-overlay);
+    border-color: var(--border-strong);
+}
+.loot-creator-item-box-selected {
+    opacity: 0.65;
+    border-color: var(--accent-muted);
+    cursor: default;
+}
+.loot-creator-item-box-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    margin-bottom: 4px;
+    border-radius: 4px;
+}
+.loot-creator-item-box-label {
+    line-height: 1.2;
+    word-break: break-word;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.loot-creator-item-chip {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.loot-creator-item-chip-selected {
+    opacity: 0.6;
+    cursor: default;
+    border-color: var(--accent-muted);
+}
+.loot-creator-selected-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.loot-creator-selected-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+    font-size: 0.85rem;
+}
+.loot-creator-selected-row-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
+    background: var(--bg-base);
+}
+.loot-creator-selected-label {
+    flex: 1;
+    min-width: 0;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.loot-creator-selected-edit-btn {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+}
+.loot-creator-selected-row .loot-creator-num,
+.loot-creator-selected-row .loot-creator-rarity {
+    display: none;
+}
+.loot-creator-num {
+    width: 48px;
+    padding: 4px 6px;
+    border: 1px solid var(--border-default);
+    border-radius: 4px;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    text-align: center;
+}
+.loot-creator-rarity {
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid var(--border-default);
+    border-radius: 4px;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+}
+.loot-creator-remove {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--duration-fast), color var(--duration-fast);
+}
+.loot-creator-remove:hover {
+    background: var(--invalid-bg);
+    color: var(--invalid-border);
+}
+.loot-creator-form-row {
+    margin-bottom: var(--space-sm);
+}
+.loot-creator-form-row .loot-creator-input {
+    max-width: 200px;
+}
+
+/* Eşya listesi: liste görünümü / düzenleme görünümü */
+.lc-list-view,
+.lc-edit-view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    flex: 1;
+    min-height: 0;
+}
+.lc-list-view.hidden {
+    display: none !important;
+}
+.lc-edit-view {
+    overflow-y: auto;
+    padding-bottom: var(--space-sm);
+}
+.lc-edit-view.hidden {
+    display: none !important;
+}
+.lc-edit-view-title {
+    margin: 0 0 var(--space-sm) 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+.lc-edit-view-image-wrap {
+    width: 100%;
+    aspect-ratio: 1;
+    max-height: 180px;
+    background: var(--bg-base);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.lc-edit-view-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+}
+.lc-edit-view-separator {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--border-default) 20%, var(--border-default) 80%, transparent 100%);
+    border: none;
+    margin: var(--space-md) 0;
+    flex-shrink: 0;
+}
+.lc-edit-view-item-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding: 6px 10px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+    margin-bottom: var(--space-xs);
+    flex-shrink: 0;
+}
+.lc-edit-view-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    background: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    flex-shrink: 0;
+}
+.lc-edit-view-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+.lc-edit-view-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.lc-edit-view-field .loot-creator-input {
+    width: 100%;
+}
+.lc-edit-view-field-full {
+    grid-column: 1 / -1;
+}
+.lc-edit-view-actions {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    flex-shrink: 0;
+}
+.lc-edit-view-actions .loot-creator-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.lc-edit-view-actions .loot-creator-btn-primary {
+    flex: 1.2;
+}
+.lc-edit-clothe-wrap.hidden {
+    display: none !important;
+}
+
+/* Rarity seçenekleri ve chip'ler */
+.lc-edit-rarity-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 28px;
+    padding: 6px 0;
+}
+.lc-edit-rarity-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+}
+.lc-edit-rarity-chip.lc-edit-rarity-chip-common { border-color: var(--border-subtle); }
+.lc-edit-rarity-chip.lc-edit-rarity-chip-uncommon { border-color: #6b9b6b; background: rgba(107, 155, 107, 0.15); }
+.lc-edit-rarity-chip.lc-edit-rarity-chip-rare { border-color: #5a7fc9; background: rgba(90, 127, 201, 0.15); }
+.lc-edit-rarity-chip.lc-edit-rarity-chip-epic { border-color: #9b59b6; background: rgba(155, 89, 182, 0.15); }
+.lc-edit-rarity-chip.lc-edit-rarity-chip-legendary { border-color: #23d5a3; background: rgba(35, 213, 163, 0.2); }
+.lc-edit-rarity-chip-remove {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    line-height: 1;
+}
+.lc-edit-rarity-chip-remove:hover {
+    color: var(--invalid-border);
+    background: var(--invalid-bg);
+}
+.lc-edit-rarity-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+.lc-edit-rarity-option {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background var(--duration-fast), border-color var(--duration-fast);
+}
+.lc-edit-rarity-option:hover {
+    background: var(--bg-overlay);
+    border-color: var(--border-strong);
+}
+.lc-edit-rarity-option.lc-edit-rarity-option-uncommon { border-color: #6b9b6b; }
+.lc-edit-rarity-option.lc-edit-rarity-option-rare { border-color: #5a7fc9; }
+.lc-edit-rarity-option.lc-edit-rarity-option-epic { border-color: #9b59b6; }
+.lc-edit-rarity-option.lc-edit-rarity-option-legendary { border-color: #23d5a3; }
+.lc-edit-rarity-option-added {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   Storyline Look — teal glass re-theme overrides
+   Applies the Storyline reference styling (mint/teal accent, glass panels,
+   centered panel headings, clothing figure) on top of the Devix structure.
+   Only elements that map to real Devix functions are styled; purely
+   decorative Storyline chrome (side nav, HUD status icons) is not added.
+   ========================================================================== */
+
+/* Accent: Storyline mint/teal */
+:root {
+    --accent: #23d5a3;
+    --accent-hover: #45e6ba;
+    --accent-warm: #23d5a3;
+    --sl-panel-bg: rgba(9, 12, 14, 0.55);
+    --sl-panel-border: rgba(35, 213, 163, 0.14);
+    --sl-slot-bg: rgba(6, 9, 11, 0.5);
+    --sl-slot-border: rgba(255, 255, 255, 0.06);
+    --sl-green-a: #22c98f;
+    --sl-green-b: #17a877;
+}
+
+/* --- Window: let the two panels read as Storyline cards --- */
+.inventory-window,
+.inventory-window-glass {
+    background: rgba(8, 10, 12, 0.30);
+    border: 1px solid rgba(35, 213, 163, 0.10);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.inventory-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 16px 20px;
+}
+
+.inventory-title {
+    color: var(--accent);
+    letter-spacing: 0.10em;
+    text-shadow: 0 0 18px rgba(35, 213, 163, 0.35);
+}
+
+/* --- Panels as separate glass cards --- */
+.inventory-panel {
+    background: var(--sl-panel-bg);
+    border: 1px solid var(--sl-panel-border);
+    border-radius: 16px;
+    padding: 18px 16px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 8px 24px rgba(0, 0, 0, 0.30);
+}
+
+/* --- Panel headings: large, centered, teal (Storyline titles) --- */
+.panel-title,
+.panel-label {
+    font-family: var(--font-title);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    text-align: center;
+    color: var(--accent);
+    text-shadow: 0 0 18px rgba(35, 213, 163, 0.30);
+    border-bottom: none;
+    padding-bottom: 0;
+    margin: 0 0 14px 0;
+}
+.panel-title::after { display: none; }
+
+/* Primary (inventory) panel header: center the title, keep actions below */
+.primary-panel-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+}
+.primary-panel-header .panel-title { margin: 0; }
+.primary-panel-actions { justify-content: center; }
+
+/* --- Clothing panel: figure flanked by slot columns (Storyline) --- */
+.inventory-panel.clothes-panel {
+    min-width: 250px;
+    width: 250px;
+    align-items: stretch;
+    padding: 18px 16px;
+}
+
+.clothes-figure-wrap {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    width: 100%;
+}
+
+.clothes-figure {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 90%;
+    width: auto;
+    fill: var(--accent);
+    opacity: 0.18;
+    filter: drop-shadow(0 0 26px rgba(35, 213, 163, 0.35));
+    pointer-events: none;
+}
+
+/* Flat JS-filled slot list -> two edge columns around the figure */
+.clothes-slots {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    justify-content: space-between;
+    align-content: center;
+    row-gap: 14px;
+    column-gap: 20px;
+    width: 100%;
+    height: 100%;
+}
+
+.clothes-slot {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    min-height: 52px;
+    background: var(--sl-slot-bg);
+    border: 1px solid var(--sl-slot-border);
+    border-radius: 12px;
+}
+.clothes-slot:hover {
+    border-color: rgba(35, 213, 163, 0.45);
+    box-shadow: 0 0 0 1px rgba(35, 213, 163, 0.18), 0 0 16px rgba(35, 213, 163, 0.15);
+}
+
+/* --- Inventory grid cells: Storyline card slots --- */
+.grid-container {
+    border: none;
+    gap: 4px;
+}
+.grid-cell {
+    background: var(--sl-slot-bg);
+    border: 1px solid var(--sl-slot-border);
+    border-radius: 10px;
+}
+.grid-cell:hover {
+    border-color: rgba(35, 213, 163, 0.35);
+    box-shadow: 0 0 0 1px rgba(35, 213, 163, 0.15);
+}
+.item-cell {
+    border-radius: 10px;
+    background: rgba(10, 14, 16, 0.55);
+}
+
+/* --- Header icon buttons: teal glass --- */
+.btn-craft, .btn-settings, .btn-close {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+}
+
+/* --- Search + sort: Storyline pills --- */
+.primary-item-search {
+    border-radius: 20px;
+    background: rgba(6, 9, 11, 0.5);
+    max-width: 180px;
+}
+.btn-sort-az {
+    border-radius: 20px;
+}
+
+/* --- Quick-slots footer: teal glass hotbar --- */
+.quick-slots-wrap {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+.quick-slots-label { color: var(--text-tertiary); }
+.quick-slots-keys, #quick-slots-keys { color: var(--accent); }
+
+/* --- Weight fill uses accent already; give it the Storyline glow --- */
+.weight-bar-fill {
+    box-shadow: 0 0 10px rgba(35, 213, 163, 0.35);
+}
+
+/* --- Green pill action buttons (context menu primary / meta save / loot save) --- */
+.item-meta-btn-primary,
+.loot-creator-btn-primary {
+    background: linear-gradient(180deg, var(--sl-green-a), var(--sl-green-b));
+    border: none;
+    color: #04120d;
+    font-weight: 700;
+    border-radius: 22px;
+    box-shadow: 0 6px 18px rgba(23, 168, 119, 0.35);
+}
+.item-meta-btn-primary:hover,
+.loot-creator-btn-primary:hover {
+    filter: brightness(1.08);
+}
